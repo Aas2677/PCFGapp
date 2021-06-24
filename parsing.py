@@ -1,0 +1,736 @@
+from itertools import combinations,product
+import grammars 
+import grammarerrors
+import itertools 
+import timeit 
+import time 
+from collections import defaultdict
+import math 
+import copy 
+class ProbabilisticCYKParser:
+
+
+    def __init__(self,grammar : grammars.ProbabilisticGrammar):
+        self._grammar = grammar 
+        self._reference_table = {}
+        self._reference_list = [] 
+        self._parse_table = {}
+        self._sentence = None 
+        self._tokens = None 
+        self._nonatomic_reference_list = [] 
+        self._n_best_table = None
+        self._n_best_dict = defaultdict(int)
+        self._n_best_consider = {}
+        
+
+
+    def recogniser(self) -> None:
+        # setup leaf nodes 
+        for i,j in self._reference_list[0]:
+            atom = self._sentence[i]
+            for rule in self._grammar.collapsed_rules:
+                if rule.get_right()[0] == atom:
+                    self._parse_table[(i,j)].append(rule)
+                    
+
+        # parse upwards
+        for sub_word_length in self._nonatomic_reference_list:
+            for (start_one,stop_one),(start_two,stop_two) in self._reference_table[sub_word_length]:
+                left,right = self._parse_table[(start_one,stop_one)],self._parse_table[(start_two,stop_two)]
+                if left and right:
+                    for left_child,right_child in product(left,right):
+                        left_child_root = left_child.get_left()
+                        right_child_root = right_child.get_left()
+                        for rule in self._grammar.expansion_rules:
+                            right_side = rule.get_right()
+                            if left_child_root == right_side[0] and right_child_root == right_side[1]:
+                                self._parse_table[sub_word_length].append(rule)
+        
+
+                                
+    
+    def parse_string(self,records : bool = True) -> None:
+
+        # setup leaf nodes by adding the rules that create the terminals
+    
+        for i,j in self._reference_list[0]:
+            atom = self._tokens[i]
+            rules = self._grammar.terminal_dict[atom]
+            if rules:
+                
+                for r in rules:
+                    node = ProbabilisticNode(r,None,None, leaf  = True)
+                    self._parse_table[(i,j)].append(node)
+
+
+        
+
+        #parse upwards --- what a fucking mess. needs breaking up to use generators
+        for sub_word_length in self._nonatomic_reference_list:
+                for (start_one,stop_one),(start_two,stop_two) in self._reference_table[sub_word_length]:
+                    left,right = self._parse_table[(start_one,stop_one)], self._parse_table[(start_two,stop_two)]
+                    if left and right:
+                        for left_child,right_child in product(left,right):
+                            left_child_root = left_child.rule._left
+                            right_child_root = right_child.rule._left
+                            for rule in self._grammar.expansion_rules:
+                                right_side = rule._right
+                                if left_child_root._token == right_side[0]._token and right_child_root._token == right_side[1]._token:
+                                    # we have successfully found an acceptable subtree !! :)
+                                    self._parse_table[sub_word_length].append(ProbabilisticNode(rule,left_child,right_child))
+
+        return [x.tree_probability() for x in self._parse_table[0,len(self._tokens)]]
+
+       
+    
+    def experiment_parse(self):
+
+        for i,j in self._reference_list[0]:
+            atom = self._tokens[i]
+            rules = self._grammar.terminal_dict[atom]
+            if rules:
+                for r in rules:
+                    node = ProbabilisticNode(r,None,None,1, leaf  = True)
+                    self._parse_table[(i,j)].append(node)
+
+            
+        
+
+        #parse upwards --- what a fucking mess. needs breaking up to use generators
+        for sub_word_length in self._nonatomic_reference_list:
+                for (start_one,stop_one),(start_two,stop_two) in self._reference_table[sub_word_length]:
+                    left,right = self._parse_table[(start_one,stop_one)], self._parse_table[(start_two,stop_two)]
+                    if left and right:
+                        for left_child,right_child in product(left,right):
+                            left_child_root = left_child.rule._left._token
+                            right_child_root = right_child.rule._left._token
+
+                            rules = self._grammar.expansion_dict[left_child_root+right_child_root]
+                            if rules:
+                                for rule in rules:
+                                    right_side = rule._right
+                                    if left_child_root == right_side[0]._token and right_child_root == right_side[1]._token:
+                                        self._parse_table[sub_word_length].append(ProbabilisticNode(rule,left_child,right_child,1))
+
+        return [x.tree_probability() for x in self._parse_table[0,len(self._tokens)]]
+        
+        
+
+    def best_parse(self,input_string, is_sentence = True):
+
+        # Finds the best parse of the 
+
+        parse_table = defaultdict(int)
+        to_parse, tokens = self._preprocess_string(input_string, sentence = is_sentence)
+
+        # setup the leaf nodes 
+        length = len(tokens)
+        for n in range(length):
+            atom = tokens[n]
+            for nonterminal in self._grammar.token_nonterminals:
+                rule = self._grammar.terminal_rule_dict[nonterminal,atom]
+                if rule:
+                        parse_table[n,n,nonterminal] = ProbabilisticNode(rule,None, None, rule._probability,(j,k),leaf=True)
+
+        
+        for i in range(1,length):
+            for j in range(length - i):
+                k = j + i 
+                for nonterminal in self._grammar.token_nonterminals:
+                    highest_probability = 0 
+                    best_node = None 
+                    if self._grammar.expansion_lhs_lookup[nonterminal]:
+                        rules = self._grammar.expansion_lhs_lookup[nonterminal]
+                        for rule in rules:
+                            left,right = rule._right[0]._token,rule._right[1]._token
+
+                            for p in range(j,k):
+                                # left_cons,right_cons = parse_table[j,p,left],parse_table[p+1,k,right]
+                                if parse_table[j,p,left] and parse_table[p+1,k,right]:
+                                    this_probability = rule._probability * parse_table[j,p,left].cumulative_prob * parse_table[p+1,k,right].cumulative_prob
+                                    
+                                    if highest_probability < this_probability:
+                                        if highest_probability != 0:
+                                            if this_probability == 0:
+                                                print("oh")
+
+                        
+                                        highest_probability = this_probability
+                                        best_node = ProbabilisticNode(rule, parse_table[j,p,left],parse_table[p+1,k,right], this_probability,(j,k))
+
+
+                        
+
+                        if highest_probability:
+                           parse_table[j,k,nonterminal] = best_node
+
+        if parse_table[0,length-1,self._grammar.start._token]:
+            return parse_table[0,length-1,self._grammar.start._token]
+        else:
+            return grammarerrors.StringNotAccepted("The input is not generated by this grammar!")
+        
+
+    
+    def best_parse_all(self,input_string, is_sentence = True):
+
+        # Finds the best parse of the 
+
+        parse_table = defaultdict(int)
+        to_parse, tokens = self._preprocess_string(input_string, sentence = is_sentence)
+
+        # setup the leaf nodes 
+        length = len(tokens)
+        for n in range(length):
+            atom = tokens[n]
+            for nonterminal in self._grammar.token_nonterminals:
+                rule = self._grammar.terminal_rule_dict_logs[nonterminal,atom]
+                if rule:
+                        parse_table[n,n,nonterminal] = ProbabilisticNode(rule,None, None, rule._probability,(n,n),leaf=True)
+
+        
+        for i in range(1,length):
+            for j in range(length - i):
+                k = j + i 
+                for nonterminal in self._grammar.token_nonterminals:
+                    lowest_weight = None
+                    best_node = None 
+                    if self._grammar.expansion_lhs_lookup[nonterminal]:
+                        rules = self._grammar.expansion_lhs_lookup_logs[nonterminal]
+                        for rule in rules:
+                            left,right = rule._right[0]._token,rule._right[1]._token
+
+                            for p in range(j,k):
+                                # left_cons,right_cons = parse_table[j,p,left],parse_table[p+1,k,right]
+                                if parse_table[j,p,left] and parse_table[p+1,k,right]:
+                                    this_weight = math.fsum([rule._probability,parse_table[j,p,left].cumulative_prob, parse_table[p+1,k,right].cumulative_prob])
+                                    if lowest_weight == None:
+                                        lowest_weight = this_weight
+                                        best_node = ProbabilisticNode(rule, parse_table[j,p,left],parse_table[p+1,k,right], this_weight,(j,k))
+                                    else:
+                                
+                                        if this_weight < lowest_weight:
+                                            lowest_weight = this_weight
+                                            best_node = ProbabilisticNode(rule, parse_table[j,p,left],parse_table[p+1,k,right], this_weight,(j,k))
+
+                                   
+
+
+                        
+
+                        if lowest_weight != None:
+                           parse_table[j,k,nonterminal] = best_node
+
+        if parse_table[0,length-1,self._grammar.start._token]:
+            return parse_table,length
+        else:
+            return grammarerrors.StringNotAccepted("The input is not generated by this grammar!")
+
+    def n_best_parses(self, n : int , input_string : str, is_sentence = True ):
+
+        try:
+            self._n_best_table,length = self.best_parse_all(input_string, is_sentence = is_sentence)
+        except grammarerrors.StringNotAccepted as error :
+            return error
+        
+        # If the grammar does generate the input, we can proceed to recover the n-best parses
+        best_parse = self._n_best_table[0,length-1,self._grammar.start._token]
+       
+
+        # initial setup of n-best dictionary 
+
+        for key in self._n_best_table.keys():
+            if self._n_best_table[key]:
+                self._n_best_dict[key] = [self._n_best_table[key]]
+                self._n_best_consider[key] = []
+
+        
+
+        for k in range(2,n+1):
+            # print(k)
+            # print(self._n_best_dict[0,length-1,self._grammar.start._token][k-2])
+            try:
+                self.next_tree(self._n_best_dict[0,length-1,self._grammar.start._token][k-2],k)
+            except IndexError:
+                print("There aren't that many parses")
+                break 
+            
+        
+
+        return self._n_best_dict[0,length-1,self._grammar.start._token]
+    
+    def next_tree(self,node , n : int) -> None:
+        # Recursive descent to find nth best parse tree for input string after best_parse_all has found the best parse
+
+        
+
+        
+        
+        root_token = node.rule._left._token
+
+        # for reference, get the spans of the whole tree, left and right children
+        start_root,stop_root = node.span
+        start_left,stop_left =  node.left_child.span 
+        start_right,stop_right = node.right_child.span
+
+       
+
+        if n == 2:
+            if self._grammar.expansion_lhs_lookup[root_token]:
+                for rule in self._grammar.expansion_lhs_lookup_logs[root_token]:
+                    left,right = rule._right[0]._token,rule._right[1]._token
+                    for (left_start,left_stop),(right_start,right_stop) in self.partitions_2(start_root,stop_root):
+                        if self._n_best_table[left_start,left_stop,left] and self._n_best_table[right_start,right_stop,right]:
+                            this_weight = math.fsum([rule._probability,self._n_best_table[left_start,left_stop,left].cumulative_prob, self._n_best_table[right_start,right_stop,right].cumulative_prob])
+                            self._n_best_consider[start_root,stop_root,root_token].append(ProbabilisticNode(rule, self._n_best_table[left_start,left_stop,left],self._n_best_table[right_start,right_stop,right],this_weight,node.span,rank=2))
+
+                candidates = sorted(self._n_best_consider[start_root,stop_root,node.rule._left._token], key = lambda x : x.cumulative_prob)
+                candidates.pop(0)
+                self._n_best_consider[start_root,stop_root,node.rule._left._token] = candidates
+
+
+
+
+        
+        # if n == 2:
+        #     print(node.span)
+        #     for nonterminal in self._grammar.token_nonterminals:
+        #         if self._grammar.expansion_lhs_lookup[nonterminal]:    
+        #             for rule in self._grammar.expansion_lhs_lookup_logs[nonterminal]:
+        #                 left,right = rule._right[0]._token,rule._right[1]._token
+        #                 # print(left,right)
+
+        #                 for (left_start,left_stop),(right_start,right_stop) in self.partitions_2(start_root,stop_root):
+                            
+                            
+        #                     if self._n_best_table[left_start,left_stop,left] and self._n_best_table[right_start,right_stop,right]:
+        #                         this_weight = math.fsum([rule._probability,self._n_best_table[left_start,left_stop,left].cumulative_prob, self._n_best_table[right_start,right_stop,right].cumulative_prob])
+        #                         if node.rule._left._token == nonterminal:
+        #                             self._n_best_consider[start_root,stop_root,node.rule._left._token].append(ProbabilisticNode(rule, self._n_best_table[left_start,left_stop,left],self._n_best_table[right_start,right_stop,right],this_weight,node.span,rank=2))
+
+                                    
+
+        #                         # self._n_best_consider[start_root,stop_root,node.rule._left._token].append(ProbabilisticNode(rule, self._n_best_table[left_start,left_stop,left],self._n_best_table[right_start,right_stop,right],this_weight,node.span,rank=2))
+        #                        # print(rule, self._n_best_table[left_start,left_stop,left],self._n_best_table[right_start,right_stop,right],this_weight,node.span)
+        #     candidates = sorted(self._n_best_consider[start_root,stop_root,node.rule._left._token], key = lambda x : x.cumulative_prob)
+        #     for c in candidates:
+        #         print(c)
+            
+        #     candidates.pop(0)
+        #     self._n_best_consider[start_root,stop_root,node.rule._left._token] = candidates
+        #     print("after")
+        #     for c in self._n_best_consider[start_root,stop_root,node.rule._left._token]:
+        #         print(c)
+        #     print("\n")
+                                
+
+        
+        if node.right_child.rank == 1 and (node.left_child.span[1] > node.left_child.span[0]) and len(self._n_best_dict[start_left,stop_left,node.left_child.rule._left._token]) < node.left_child.rank + 1:
+            self.next_tree(node.left_child, node.left_child.rank + 1)
+        
+        if node.right_child.rank == 1 and len(self._n_best_dict[start_left,stop_left,node.left_child.rule._left._token]) >= node.left_child.rank + 1:
+            # print("exists 1")
+            # print(node.left_child.rank)
+
+            new_left_tree = self._n_best_dict[start_left,stop_left,node.left_child.rule._left._token][node.left_child.rank]
+            probability = math.fsum([node.rule._probability,new_left_tree.cumulative_prob,node.right_child.cumulative_prob])
+            self._n_best_consider[start_root,stop_root,node.rule._left._token].append((ProbabilisticNode(node.rule,new_left_tree,node.right_child,probability,node.span,rank=n)))
+            # if start_root == 0 and stop_root == 4 and node.rule._left._token == 'S':
+                # print(new_left_tree)
+        
+        if stop_root > (start_right + 1) and len(self._n_best_dict[start_right,stop_right,node.right_child.rule._left._token]) < node.right_child.rank + 1:
+            
+            self.next_tree(node.right_child, node.right_child.rank + 1)
+        
+        if len(self._n_best_dict[start_right,stop_right,node.right_child.rule._left._token]) >= node.right_child.rank + 1:
+            # print(node.right_child.rank)
+            # print("exists 2")
+            
+
+            new_right_tree = self._n_best_dict[start_right,stop_right,node.right_child.rule._left._token][node.right_child.rank]
+            probability = math.fsum([node.rule._probability,node.left_child.cumulative_prob,new_right_tree.cumulative_prob])
+            self._n_best_consider[start_root,stop_root,node.rule._left._token].append((ProbabilisticNode(node.rule,node.left_child,new_right_tree,probability,node.span,rank=n)))
+            # if start_root == 1 and stop_root == 4 and node.rule._left._token == 'V':
+            #     for p in  self._n_best_dict[start_right,stop_right,node.right_child.rule._left._token]:
+            #         print(p)
+            #     print(self._n_best_dict[start_right,stop_right,node.right_child.rule._left._token])
+            #     print(new_right_tree)
+        
+
+        candidates = sorted(self._n_best_consider[start_root,stop_root,node.rule._left._token], key = lambda x : x.cumulative_prob)
+        
+        
+        if candidates:
+            # print(next_best_tree)
+            next_best_tree = candidates[0]
+            
+            next_best_tree.rank = n
+            candidates.pop(0)
+            self._n_best_dict[start_root,stop_root,node.rule._left._token].append(next_best_tree)
+            self._n_best_consider[start_root,stop_root,node.rule._left._token] = candidates
+        else:
+            # next best tree doesn't exist 
+            print(f'{n}th best parse at {node.span} does not exist')
+            pass 
+            
+
+
+        
+
+        
+
+
+
+
+                
+           
+
+    
+
+        
+
+
+
+    def all_parse(self,input_string, is_sentence = True):
+
+        # finds the total probability of the input string being generated by the grammar. Throws error if not accepted
+
+        parse_table = defaultdict(int)
+        all_table = defaultdict(int)
+        to_parse, tokens = self._preprocess_string(input_string, sentence = is_sentence)
+
+        # setup the leaf nodes 
+        length = len(tokens)
+        for n in range(length):
+            atom = tokens[n]
+            for nonterminal in self._grammar.token_nonterminals:
+                rule = self._grammar.terminal_rule_dict[nonterminal,atom]
+                if rule:
+                        parse_table[n,n,nonterminal] = ProbabilisticNode(rule,None, None, rule._probability,(n,n),leaf = True)
+                        all_table[n,n,nonterminal] = [ProbabilisticNode(rule,None, None, rule._probability,(n,n),leaf = True)]
+
+        
+        for i in range(1,length):
+            for j in range(length - i):
+                k = j + i 
+                for nonterminal in self._grammar.token_nonterminals:
+                    possible = False
+                    total_node = None 
+                    if self._grammar.expansion_lhs_lookup[nonterminal]:
+                        # best_rule  = (self._grammar.expansion_lhs_lookup[nonterminal],key = lambda x : x._probability)
+                        rules = self._grammar.expansion_lhs_lookup[nonterminal]
+                        for rule in rules:
+
+                           left,right = rule._right[0]._token,rule._right[1]._token
+
+                           for p in range(j,k):
+                               if all_table[j,p,left] and all_table[p+1,k,right]:
+                                   for L,R in product(all_table[j,p,left], all_table[p+1,k,right]):
+                                       this_probability = rule._probability * L.cumulative_prob * R.cumulative_prob
+                                       if possible:
+                                           all_table[j,k,nonterminal].append(ProbabilisticNode(rule,L,R,this_probability,(j,k)))
+                                       else:
+                                            all_table[j,k,nonterminal] = []
+                                            all_table[j,k,nonterminal].append(ProbabilisticNode(rule,L,R,this_probability,(j,k)))
+                                            possible = True 
+
+
+                                #    this_probability = rule._probability * parse_table[j,p,left].cumulative_prob * parse_table[p+1,k,right].cumulative_prob
+                                #    if possible:
+                                #        total_node.cumulative_prob += this_probability
+                                #        all_table[j,k,nonterminal].append(ProbabilisticNode(rule,parse_table[j,p,left],parse_table[p+1,k,right],this_probability))
+                                #    else:
+                                #        total_node = ProbabilisticNode(rule, left, right, this_probability)
+                                #        all_table[j,k,nonterminal] = []
+                                #        all_table[j,k,nonterminal].append(ProbabilisticNode(rule,parse_table[j,p,left],parse_table[p+1,k,right],this_probability))
+                                #        possible = True 
+                                       
+
+
+                    if possible:
+                        parse_table[j,k,nonterminal] = total_node
+
+        if all_table[0,length-1,self._grammar.start._token]:
+            return all_table[0,length-1,self._grammar.start._token]
+        else:
+            return grammarerrors.StringNotAccepted("The input is not generated by this grammar!")
+    
+
+    
+
+
+
+    def total_probability(self,input_string, is_sentence = True):
+
+        # finds the total probability of the input string being generated by the grammar. Throws error if not accepted
+
+        parse_table = defaultdict(int)
+        to_parse, tokens = self._preprocess_string(input_string, sentence = is_sentence)
+
+        # setup the leaf nodes 
+        length = len(tokens)
+        for n in range(length):
+            atom = tokens[n]
+            for nonterminal in self._grammar.token_nonterminals:
+                rule = self._grammar.terminal_rule_dict[nonterminal,atom]
+                if rule:
+                        parse_table[n,n,nonterminal] = ProbabilisticNode(rule,None, None, rule._probability,(n,n))
+
+        
+        for i in range(1,length):
+            for j in range(length - i):
+                k = j + i 
+                for nonterminal in self._grammar.token_nonterminals:
+                    possible = False
+                    total_node = None 
+                    if self._grammar.expansion_lhs_lookup[nonterminal]:
+                        # best_rule  = (self._grammar.expansion_lhs_lookup[nonterminal],key = lambda x : x._probability)
+                        rules = self._grammar.expansion_lhs_lookup[nonterminal]
+                        for rule in rules:
+
+                           left,right = rule._right[0]._token,rule._right[1]._token
+
+                           for p in range(j,k):
+                               if parse_table[j,p,left] and parse_table[p+1,k,right]:
+                                   this_probability = rule._probability * parse_table[j,p,left].cumulative_prob * parse_table[p+1,k,right].cumulative_prob
+                                   if possible:
+                                       total_node.cumulative_prob += this_probability
+                                   else:
+                                       total_node = ProbabilisticNode(rule, left, right, this_probability,(j,k))
+                                       possible = True 
+                                       
+
+
+                    if possible:
+                        parse_table[j,k,nonterminal] = total_node
+
+        if parse_table[0,length-1,self._grammar.start._token]:
+            return parse_table[0,length-1,self._grammar.start._token]
+        else:
+            return grammarerrors.StringNotAccepted("The input is not generated by this grammar!")
+
+
+    
+    
+    
+
+    
+
+    def CKY(self):
+        x = self._tokens
+        n = len(x)
+        print(n)
+        pi = defaultdict(float)
+        bp = {}
+        N = [x._token for x in self._grammar.nonterminals]
+     
+
+        # base case 
+        for i in range(n):
+            w = x[i]
+
+            for X in N:
+                pi[i,i,X] = self._grammar.terminal_rule_dict[X,w]
+               
+        
+        # recursive case 
+
+        for l in range(1,n):
+            for i in range(n-l):
+                j = i + l 
+                
+                for X in N:
+                    
+                    max_score = 0 
+                    args = None 
+                    for R in self._grammar.expansion_rules:
+                        if R._left._token == X:
+                            Y,Z = R._right[0]._token,R._right[1]._token
+                            
+                            for s in range(i,j):
+                                
+                                if pi[i,s,Y] and pi[s+1,j,Z]:
+                                    
+                                    score = self._grammar.expansion_rule_dict[X,Y+Z] * pi[i,s,Y] * pi[s+1,j,Z]
+                
+                                    if max_score < score:
+                                        max_score = score 
+                                        args = Y,Z,s 
+                    
+                    if max_score:
+                        
+                        pi[i,j,X] = max_score
+                        
+                        bp[i,j,X] = args
+        if pi[0, n-1, 'S']:
+            print(pi[0,n-1,'S'])
+            return self.recover_tree(x, bp, 0, n-1, 'S')
+        else:
+            return 0
+
+    def recover_tree(self, x, bp, i, j, X):
+        """
+        Return the list of the parsed tree with back pointers.
+        """
+        if i == j:
+            return [X, x[i]]
+        else:
+            Y, Z, s = bp[i, j, X]
+            return [X, self.recover_tree(x, bp, i, s, Y), 
+                       self.recover_tree(x, bp, s+1, j, Z)]
+
+     
+
+
+
+
+
+
+
+            
+                                
+                     
+           
+    def _preprocess_string(self,string : str , sentence: bool = True) -> list:
+
+        # sentence flag means split the input on spaces. If the sentence flag is false, split every atom in the input  
+       if sentence:
+           to_parse = [grammars.Terminal(x) for x in string.split(" ") if x != '']
+           tokens =   [x for x in string.split(" ") if x != '']
+    
+           
+       else:
+           to_parse = [grammars.Terminal(x) for x in list(string)]
+           tokens = list(string)
+           
+
+       # Check if all the terminals are actually in the grammar's terminal alphabet, if not we can reject it straight away 
+       for terminal in to_parse:
+           if terminal not in self._grammar.alphabet:
+               raise grammarerrors.StringNotAccepted("The input string is not generated by this grammar!")
+
+       return to_parse,tokens
+
+
+    def setup_parser(self,input_string : str, sentence : bool = True) -> None:
+
+        # get a list of input tokens from the input string 
+        to_parse,tokens = self._preprocess_string(input_string, sentence = sentence)
+        self._sentence = to_parse
+        self._tokens = tokens
+
+        string_length = len(to_parse)
+       
+
+        # setup the dictionary keys for the parse chart 
+        self._reference_list = [self.n_lengths(string_length,n) for n in range(1,string_length+1)]
+
+        # setup the flat upward list 
+        self._nonatomic_reference_list = [i for sublist in self._reference_list[1:] for i in sublist]
+        
+        #setup the reference table for the leaf nodes
+        for index in self._reference_list[0]:
+            self._reference_table[index] = [index]
+
+
+        #setup the reference list for all other non leaf nodes 
+        for index in self._reference_list[1:]:
+            for i,j in index:
+                self._reference_table[(i,j)] = self.partitions(i,j)
+
+        #setup empty parse table:
+        self._parse_table = {key:[] for key in self._reference_table.keys()}
+
+
+    def n_lengths(self,list_len,n : int) -> list:
+        # returns all the n - length sub lists from a list or string
+       
+
+        return [ (i,j) for i,j in combinations(range(list_len+1), r=2) if j - i == n ]
+
+    
+    def partitions(self,x:int,y:int) -> list:
+
+        # returns the 2-partition indexes of a substring slice x:y 
+        # there should never be an occaision where x - y < 2 
+        difference = y - x 
+        partitions = []
+
+        if difference == 1:
+            return ValueError("Can't partition a single atom ")
+        else:
+            step =  1
+
+            while step < difference:
+                partitions.append(((x,x+step),(x+step,y)))
+                step += 1 
+
+            return partitions
+    
+    def partitions_2(self,x:int,y:int) -> list:
+    # attempt to make the partitions function a bit quicker
+            return (((x,x+step),(x+step+1,y)) for step in range(y))
+
+
+
+class CandidateContainer:
+
+    __slots__ = 'table_pointer','candidates'
+
+    def __init__(self,table_pointer,candiates : list):
+
+        self.table_pointer = table_pointer
+        self.candiates = [] 
+    
+class ProbabilisticNode:
+
+    __slots__ = 'rule','leaf','left_child','right_child','cumulative_prob','span','rank'
+    def __init__(self,rule, left ,right, prob,span,rank = 1, leaf = False):
+        self.leaf = leaf
+        self.rule = rule 
+        self.left_child = left 
+        self.right_child = right
+        self.cumulative_prob = prob
+        self.span = span 
+        self.rank = rank 
+
+    def __str__(self):
+        return f'{self.rule}, {self.cumulative_prob}'
+
+    def is_leaf(self) -> bool:
+        return self.left_child == None and self.right_child == None
+
+    
+    def get_full_tree(self) -> list:
+        
+        if self.leaf:
+            return [str(self.rule)]
+        else:
+            return [str(self.rule)] + [self.left_child.get_full_tree()] + [self.right_child.get_full_tree()]
+
+    def tree_probability(self) -> float:
+
+        if self.leaf:
+            return self.rule.get_probability()
+        else:
+            return self.rule.get_probability() * self.left_child.tree_probability() * self.right_child.tree_probability()
+
+
+
+
+
+
+
+
+# print(timeit.timeit('create_grammar(test_grammar)', 'from __main__ import create_grammar,test_grammar', number = 100))
+# print(timeit.timeit('test_a_parse(test_grammar_1)', 'from __main__ import test_a_parse,test_grammar_1',number = 1000))
+# print(timeit.timeit('test_setup(test_grammar_2,test_string)', 'from __main__ import test_setup,test_string,test_grammar_2'))
+
+
+
+
+
+
+
+
+
+
