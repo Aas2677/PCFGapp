@@ -10,22 +10,26 @@
         </title>
     </head>
     <body>
-        <h1>main page {{inp}}</h1>
+        <h1>main page {{inp}}</h1> 
+        <div class =  "content-section">
+
+    
         <form method="POST" action="">
             {{form.hidden_tag()}}
             <fieldset>
-                
+                <legend class="border-bottom mb-4">Your grammar</legend>
                     Enter you grammar in the textbox
                     <div>
-                        {{form.grammar.label()}}
+                        
                         {{form.grammar()}}
                     </div>
              
             </fieldset>
             <fieldset>
+                <legend class="border-bottom mb-4">Your Sentence</legend>
                 Enter your sentence here 
                 <div>
-                    {{form.sentence.label()}}
+                   
                     {{form.sentence()}}
 
                 </div>
@@ -33,10 +37,6 @@
             <div class="form-group">
                 {{ form.submitgrammar() }}
             </div>
-            <div>
-                {{form.submitsentence()}}
-            </div>
-
             <div>
                 {%with messages = get_flashed_messages(with_categories=true) %}
                   {% if messages %}
@@ -48,13 +48,47 @@
                   {% endif %}
                 {% endwith %}
             </div>
-            <div>
-                {% for parse in parses%}
-                {{parse}}
-                {% endfor %}
-            </div>
-
         </form>
+        </div>
+
+        <div>
+            {% if parses %}
+            <span hidden id = "parses">
+                {{ parses }}
+            </span>
+            {%for i in range(10) %}
+            <div class="tree">
+    
+                <ul>
+                    <li>
+                        <div><input type="checkbox"> Main <br/> <button> Test Btn </button></div>
+                        <ul>
+                            <li>
+                                <div><input type="checkbox"> Sub-1</div>
+                            </li>
+                            <li>
+                                <div><input type="checkbox"> Sub-2</div>
+                                <ul>
+                                    <li>
+                                        <div><input type="checkbox"> Sub-2-1</div>
+                                    </li>
+                                    <li>
+                                        <div><input type="checkbox"> Sub-2-2</div>
+                                    </li>
+                                </ul>  
+                            </li>
+                        </ul>
+                                    
+                    </li>
+                </ul>
+                                
+            </div>
+            {% endfor %}
+            <!-- {% for item in parses[0] %}
+            {{item}}
+            {% endfor %} -->
+            {% endif %}
+        </div>
       
     </body>
 </html>
