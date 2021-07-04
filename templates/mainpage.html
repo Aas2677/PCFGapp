@@ -4,13 +4,12 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-    
-        <title>
+        <script src="https://d3js.org/d3.v4.js"></script>
+        
 
-        </title>
     </head>
     <body>
-        <h1>main page {{inp}}</h1> 
+      
         <div class =  "content-section">
 
     
@@ -50,45 +49,28 @@
             </div>
         </form>
         </div>
+       
 
         <div>
             {% if parses %}
+            <div>
+                <button type = "button" onclick="this.innerHTML = 'Ooops!'">Show parses</button>
+            </div>
             <span hidden id = "parses">
                 {{ parses }}
             </span>
-            {%for i in range(10) %}
-            <div class="tree">
-    
-                <ul>
-                    <li>
-                        <div><input type="checkbox"> Main <br/> <button> Test Btn </button></div>
-                        <ul>
-                            <li>
-                                <div><input type="checkbox"> Sub-1</div>
-                            </li>
-                            <li>
-                                <div><input type="checkbox"> Sub-2</div>
-                                <ul>
-                                    <li>
-                                        <div><input type="checkbox"> Sub-2-1</div>
-                                    </li>
-                                    <li>
-                                        <div><input type="checkbox"> Sub-2-2</div>
-                                    </li>
-                                </ul>  
-                            </li>
-                        </ul>
-                                    
-                    </li>
-                </ul>
-                                
+            <span hidden id = "testarr">
+                {{ test_arr }}
+            </span>
+
+            <div class = "tree_diagram">
+                <script src="{{url_for('static', filename='tree.js')}}"></script>
             </div>
-            {% endfor %}
-            <!-- {% for item in parses[0] %}
-            {{item}}
-            {% endfor %} -->
+            
+           
             {% endif %}
         </div>
-      
+        
+       
     </body>
 </html>

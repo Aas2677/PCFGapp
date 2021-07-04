@@ -28,6 +28,7 @@ def hello():
     sentence = 0 
     accepted = False
     parses = None 
+    test_arr = [1,2,3,4,5,6]
     if form.validate_on_submit():
         grammar = str(form.grammar.data).strip('\n')
         sentence = str(form.sentence.data).strip('\n')
@@ -44,15 +45,13 @@ def hello():
             flash(f'Your input sentence is not accepted by this grammar ; {e}')
             accepted = False
 
-        
-
 
     else:
         flash_errors(form)
         grammar = 0 
         sentence = 0  
 
-    return render_template('mainpage.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=parses,accepted=accepted)
+    return render_template('mainpage.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=parses,accepted=accepted,test_arr=test_arr)
 
 
 
