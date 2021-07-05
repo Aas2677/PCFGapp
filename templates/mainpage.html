@@ -5,6 +5,7 @@
 
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
         <script src="https://d3js.org/d3.v4.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         
 
     </head>
@@ -52,10 +53,9 @@
        
 
         <div>
-            {% if parses %}
-            <div>
-                <button type = "button" onclick="this.innerHTML = 'Ooops!'">Show parses</button>
-            </div>
+            {% if accepted %}
+            <span> </span>
+            
             <span hidden id = "parses">
                 {{ parses }}
             </span>
@@ -65,6 +65,14 @@
 
             <div class = "tree_diagram">
                 <script src="{{url_for('static', filename='tree.js')}}"></script>
+                <div>
+                    
+                    a: <input type = "number" id="a">
+                    <button onclick = "render(document.getElementById('a').value)"> Show Parse</button>
+                    
+                  
+                    
+                </div>
             </div>
             
            

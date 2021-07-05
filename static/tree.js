@@ -1,4 +1,18 @@
-var tooltip = d3.select("body")
+function render(num){
+
+ 
+  // remove old tooltips 
+  $(".my-tooltip").remove();
+  $(".tooltip").remove();
+
+  d3.select("svg").remove();
+
+  
+
+
+
+
+  var tooltip = d3.select("body")
         .append("div")
         .attr("class", "my-tooltip")//add the tooltip class
         .style("position", "absolute")
@@ -34,19 +48,23 @@ function gettext(string) {
   }
 
 
-
 var testdata =  document.getElementById("parses").innerHTML
+var data = JSON.parse(testdata)
 
-var sixt =  new String(testdata.getBytes("UTF-8"),"UTF-16")
+
+// update the tree button 
 
 
-var l = testdata.split(',')
- console.log(sixt)
+// console.log(data["1"])
 
 
 
 
 var treeData2 = {'name': 'S', 'rule': 'S -> [X, V] (1.0)', 'cumulative_prob': 0.0005070000000000004, 'children': [{'name': 'X', 'rule': 'X -> [scientists] (0.1)', 'cumulative_prob': 0.10000000000000002, 'children': [{'name': 'scientists'}]}, {'name': 'V', 'rule': 'V -> [M, X] (0.65)', 'cumulative_prob': 0.005070000000000001, 'children': [{'name': 'M', 'rule': 'M -> [see] (1.0)', 'cumulative_prob': 1.0, 'children': [{'name': 'see'}]}, {'name': 'X', 'rule': 'X -> [X, Q] (0.4)', 'cumulative_prob': 0.0078, 'children': [{'name': 'X', 'rule': 'X -> [cells] (0.15)', 'cumulative_prob': 0.15, 'children': [{'name': 'cells'}]}, {'name': 'Q', 'rule': 'Q -> [T, X] (1.0)', 'cumulative_prob': 0.13, 'children': [{'name': 'T', 'rule': 'T -> [with] (1.0)', 'cumulative_prob': 1.0, 'children': [{'name': 'with'}]}, {'name': 'X', 'rule': 'X -> [microscopes] (0.13)', 'cumulative_prob': 0.13, 'children': [{'name': 'microscopes'}]}]}]}]}]};
+
+var treeData3 = data[num]
+
+
 
 // Setup SVG Element - Start
 
@@ -81,18 +99,22 @@ var treemap = d3.tree()
 
 // Get the root
 
-root = d3.hierarchy(treeData2, function(d) { return d.children; });
+
+
+treedata = data[num]
+root = d3.hierarchy(treedata, function(d) { return d.children; });
 
 root.x0 = 0;
 root.y0 = width / 3;
 
-// Collapse all children, except root's
+   // Collapse all children, except root's
 
 root.children.forEach(collapse);
-// root.children = null;
+   // root.children = null;
 
-// Let's draw the tree
+   // Let's draw the tree
 draw(root);
+
 
 // console.log(root);
 
@@ -296,3 +318,7 @@ function mouseout() {
   .style("opacity", 1e-6);
 }
 
+
+
+
+}

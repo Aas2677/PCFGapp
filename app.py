@@ -29,6 +29,7 @@ def hello():
     accepted = False
     parses = None 
     test_arr = [1,2,3,4,5,6]
+    data = {}
     if form.validate_on_submit():
         grammar = str(form.grammar.data).strip('\n')
         sentence = str(form.sentence.data).strip('\n')
@@ -37,8 +38,13 @@ def hello():
         grammar_object = ProbabilisticGrammar.from_string(grammar)
         parser = ProbabilisticCYKParser(grammar_object)
         try:
-            x = parser.n_best_parses(20,sentence)
-            parses = [parse.get_full_tree() for parse in x]
+            data = {}
+            raw_parses = parser.n_best_parses(20,sentence)
+            parses = [parse.get_full_tree() for parse in raw_parses]
+
+            for i in range(len(parses)):
+                data[i+1] = parses[i]
+            
             accepted = True
             flash("Your sentence is accepted by this grammar")
         except Exception as e :
@@ -51,7 +57,7 @@ def hello():
         grammar = 0 
         sentence = 0  
 
-    return render_template('mainpage.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=parses,accepted=accepted,test_arr=test_arr)
+    return render_template('mainpage.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,test_arr=test_arr)
 
 
 
