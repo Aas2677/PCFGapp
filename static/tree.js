@@ -1,11 +1,16 @@
 function render(num){
 
- 
-  // remove old tooltips 
+  
+
+
+  // remove old tooltips and svg 
   $(".my-tooltip").remove();
   $(".tooltip").remove();
 
   d3.select("svg").remove();
+
+
+
 
   
 
@@ -19,33 +24,7 @@ function render(num){
         .style("z-index", "10")
         .style("visibility", "hidden");
 
-var treeData =
-  {
-    "name": "Top Level",
-    "children": [
-      { 
-        "name": "Level 2: A",
-        "children": [
-          { "name": "Son of A", "children" : [{"name" : "level3"},{ "name": "Son of A" },
-          { "name": "Daughter of A" }]},
-          { "name": "Daughter of A" },
-          { "name": "Daughter2 of A" , "children" : [{"name" : "level3"},{ "name": "Son of A" },
-          { "name": "Daughter of A" }]}
-        ]
-      },
-      { "name": "Level 2: B",
-        "children": [
-          { "name": "Son of A" },
-          { "name": "Daughter of A" }
-        ] 
-      }
-    ]
-  };
 
-
-function gettext(string) {
-    return string;
-  }
 
 
 var testdata =  document.getElementById("parses").innerHTML
@@ -57,28 +36,34 @@ var data = JSON.parse(testdata)
 
 // console.log(data["1"])
 
-
-
-
-var treeData2 = {'name': 'S', 'rule': 'S -> [X, V] (1.0)', 'cumulative_prob': 0.0005070000000000004, 'children': [{'name': 'X', 'rule': 'X -> [scientists] (0.1)', 'cumulative_prob': 0.10000000000000002, 'children': [{'name': 'scientists'}]}, {'name': 'V', 'rule': 'V -> [M, X] (0.65)', 'cumulative_prob': 0.005070000000000001, 'children': [{'name': 'M', 'rule': 'M -> [see] (1.0)', 'cumulative_prob': 1.0, 'children': [{'name': 'see'}]}, {'name': 'X', 'rule': 'X -> [X, Q] (0.4)', 'cumulative_prob': 0.0078, 'children': [{'name': 'X', 'rule': 'X -> [cells] (0.15)', 'cumulative_prob': 0.15, 'children': [{'name': 'cells'}]}, {'name': 'Q', 'rule': 'Q -> [T, X] (1.0)', 'cumulative_prob': 0.13, 'children': [{'name': 'T', 'rule': 'T -> [with] (1.0)', 'cumulative_prob': 1.0, 'children': [{'name': 'with'}]}, {'name': 'X', 'rule': 'X -> [microscopes] (0.13)', 'cumulative_prob': 0.13, 'children': [{'name': 'microscopes'}]}]}]}]}]};
-
-var treeData3 = data[num]
+var treeData = data[num]
 
 
 
 // Setup SVG Element - Start
 
-var margin = {top: 20, right: 20, bottom: 30, left: 20},
+var margin = {top: 20, right: 30, bottom: 20, left: 30},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-var svg = d3.select(".tree_diagram")
-        .append("svg")
+var vis = d3.select(".tree_box")
+        .append("svg:svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
+        .call(d3.zoom().on("zoom", function() {
+          vis.attr("transform",d3.event.transform)
+        }))
+        .style("background-color","#f3e4f3")
+      .append("svg:g")
+        .attr("class","drawarea")
+      .append("svg:g")
+        .attr("transform", "translate(" + margin.bottom + "," + margin.top + ")");
+        
 
-var g = svg.append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var i = 0,
+    duration = 750,
+    root;
+
 
 
 // setup the tooltip 
@@ -86,11 +71,9 @@ var div = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("opacity", 1e-6);
 
-// Setup SVG Element - End
 
-var i = 0,
-    duration = 750,
-    root;
+
+
 
 // Setup tree
 
@@ -131,7 +114,7 @@ function draw(source) {
   nodes.forEach(function(d){ d.y = d.depth * 100});
 
   // Add unique id for each node, else it won't work
-  var node = g.selectAll('g.node')
+  var node = vis.selectAll('g.node')
       .data(nodes, function(d) {return d.id || (d.id = ++i);   });
 
 
@@ -213,7 +196,7 @@ function draw(source) {
   
   // Let's draw links
 
-  var link = g.selectAll('path.link')
+  var link = vis.selectAll('path.link')
       .data(links, function(d) { return d.id; });
   
   // Work on enter links, draw straight lines
@@ -248,8 +231,21 @@ function draw(source) {
     d.y0 = d.y;
   });
 
-}
+//   d3.select("svg")
+//     .call(d3.behavior.zoom()
+//       .scaleExtent([0.5, 5])
+//       .on("zoom", zoom));
+
+
+// var zoom = d3.zoom()
+//       .scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
+//       .extent([[0, 0], [width, height]])
+//       .on("zoom", zoom);
   
+
+//  }
+}
+
 function diagonal(s, d) {
   
   // Here we are just drawing lines, we can also draw curves, comment out below path for it.
@@ -264,6 +260,9 @@ function diagonal(s, d) {
 
   return path
 }
+
+// var diagonal = d3.svg.diagonal()
+//     .projection(function(d) { return [d.y, d.x]; });
 
 function collapse(d) {
   if(d.children) {
@@ -317,8 +316,6 @@ function mouseout() {
   .duration(0)
   .style("opacity", 1e-6);
 }
-
-
 
 
 }
