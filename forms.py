@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm 
-from wtforms import StringField,SubmitField,TextAreaField
-from wtforms.validators import DataRequired,ValidationError,Length
+from wtforms import StringField,SubmitField,TextAreaField,IntegerField
+from wtforms.validators import DataRequired,ValidationError,Length,NumberRange
 from grammars import ProbabilisticGrammar
 import grammarerrors
 
@@ -18,11 +18,13 @@ def validate_grammar(self,grammar):
 
        
 class  TextInputForm(FlaskForm):
-    grammar = TextAreaField('Input your grammar here', render_kw={"rows": 7, "cols": 100}, validators = [DataRequired(),Length(min=2, max=2000),validate_grammar ]) # add in validators as another argument into stringfield 
-    sentence = TextAreaField('Input your test sentence here',render_kw={"rows": 7, "cols": 100}, validators = [ DataRequired()])
-    submitgrammar = SubmitField('Validate grammar and find parses')
-    submitsentence = SubmitField('Check if all words are in the grammar') # deprecated 
+    grammar = TextAreaField('Input your grammar here', render_kw={"rows": 7, "cols": 100}, validators = [DataRequired(),Length(min=2, max=2000),validate_grammar ]) # add in validators as another argument into stringfield
 
+    sentence = TextAreaField('Input your test sentence here',render_kw={"rows": 7, "cols": 100}, validators = [ DataRequired()])
+
+    n_parses  = IntegerField( validators = [DataRequired(),NumberRange(1,100)])
+    submitgrammar = SubmitField('Validate grammar and find parses')
+    
 
 
 

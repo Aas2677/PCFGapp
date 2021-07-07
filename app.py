@@ -33,13 +33,15 @@ def hello():
     if form.validate_on_submit():
         grammar = str(form.grammar.data).strip('\n')
         sentence = str(form.sentence.data).strip('\n')
+        number_of_parses = int(form.n_parses.data)
         
         # setup the parser:
         grammar_object = ProbabilisticGrammar.from_string(grammar)
         parser = ProbabilisticCYKParser(grammar_object)
         try:
             data = {}
-            raw_parses = parser.n_best_parses(20,sentence)
+            
+            raw_parses = parser.n_best_parses(number_of_parses,sentence)
             parses = [parse.get_full_tree() for parse in raw_parses]
 
             for i in range(len(parses)):
@@ -57,7 +59,7 @@ def hello():
         grammar = 0 
         sentence = 0  
 
-    return render_template('mainpage.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,test_arr=test_arr)
+    return render_template('mainpage.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,test_arr=test_arr,num_parses = len(parses))
 
 
 

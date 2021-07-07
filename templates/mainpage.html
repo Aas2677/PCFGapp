@@ -6,7 +6,7 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
         <script src="https://d3js.org/d3.v4.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        
+       
 
     </head>
     <body>
@@ -35,6 +35,7 @@
                 </div>
             </fieldset>
             <div class="form-group">
+                Number of parses: {{form.n_parses()}}
                 {{ form.submitgrammar() }}
             </div>
             <div>
@@ -59,6 +60,9 @@
             <span hidden id = "parses">
                 {{ parses }}
             </span>
+            <span hidden id = "max_number_parses">
+                {{ num_parses }}
+            </span>
             <span hidden id = "testarr">
                 {{ test_arr }}
             </span>
@@ -67,14 +71,14 @@
                 <script src="{{url_for('static', filename='tree.js')}}"></script>
                 <div>
                     
-                    a: <input type = "number" id="a">
-                    <button onclick = "render(document.getElementById('a').value)"> Show Parse</button>
+                    a: <input type = "number" min="1",max="100" id="a" ,name = "input_a">
+                    <button id = "show_parses" onclick = "render(document.getElementById('a').value)"> Show Parse</button>
                     
                   
                     
                 </div>
             </div>
-            
+            <script src="{{url_for('static', filename='monitoring.js')}}"></script>
            
             {% endif %}
         </div>
