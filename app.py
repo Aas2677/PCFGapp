@@ -27,13 +27,15 @@ def hello():
     grammar = 0 
     sentence = 0 
     accepted = False
-    parses = None 
+    parses = []
     test_arr = [1,2,3,4,5,6]
     data = {}
+    total = False  
     if form.validate_on_submit():
         grammar = str(form.grammar.data).strip('\n')
         sentence = str(form.sentence.data).strip('\n')
         number_of_parses = int(form.n_parses.data)
+        total_needed = form.show_total.data
         
         # setup the parser:
         grammar_object = ProbabilisticGrammar.from_string(grammar)
@@ -43,6 +45,11 @@ def hello():
             
             raw_parses = parser.n_best_parses(number_of_parses,sentence)
             parses = [parse.get_full_tree() for parse in raw_parses]
+            
+            # only update the total if the user has checked the box to indicate they want this information 
+            if total_needed:
+                total_probability_node = parser.total_probability(sentence)
+                total = total_probability_node.cumulative_prob
 
             for i in range(len(parses)):
                 data[i+1] = parses[i]
@@ -59,9 +66,7 @@ def hello():
         grammar = 0 
         sentence = 0  
 
-    return render_template('mainpage.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,test_arr=test_arr,num_parses = len(parses))
-
-
+    return render_template('mainpage.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,test_arr=test_arr,total = total, num_parses = number_of_parses)
 
 
 

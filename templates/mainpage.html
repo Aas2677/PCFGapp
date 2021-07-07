@@ -33,6 +33,10 @@
                     {{form.sentence()}}
 
                 </div>
+                <div>
+                    Check to show total probability of parsing this sentence
+                    {{form.show_total}}
+                </div>
             </fieldset>
             <div class="form-group">
                 Number of parses: {{form.n_parses()}}
@@ -51,6 +55,7 @@
             </div>
         </form>
         </div>
+
        
 
         <div>
@@ -66,6 +71,11 @@
             <span hidden id = "testarr">
                 {{ test_arr }}
             </span>
+            {% if total %}
+            <div id = "total_probability">
+                 The total probability of generating this string is: {{total}}
+            </div>
+            {% endif %}
 
             <div class = "tree_box">
                 <script src="{{url_for('static', filename='tree.js')}}"></script>

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm 
-from wtforms import StringField,SubmitField,TextAreaField,IntegerField
+from wtforms import StringField,SubmitField,TextAreaField,IntegerField,BooleanField
 from wtforms.validators import DataRequired,ValidationError,Length,NumberRange
 from grammars import ProbabilisticGrammar
 import grammarerrors
@@ -21,8 +21,8 @@ class  TextInputForm(FlaskForm):
     grammar = TextAreaField('Input your grammar here', render_kw={"rows": 7, "cols": 100}, validators = [DataRequired(),Length(min=2, max=2000),validate_grammar ]) # add in validators as another argument into stringfield
 
     sentence = TextAreaField('Input your test sentence here',render_kw={"rows": 7, "cols": 100}, validators = [ DataRequired()])
-
     n_parses  = IntegerField( validators = [DataRequired(),NumberRange(1,100)])
+    show_total = BooleanField('Would you like to calculae the total probability of this sentence?')
     submitgrammar = SubmitField('Validate grammar and find parses')
     
 

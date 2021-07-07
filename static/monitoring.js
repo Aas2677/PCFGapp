@@ -16,10 +16,11 @@ const max_parses = document.getElementById("max_number_parses").innerHTML
 const parse_button =  document.getElementById("show_parses") 
 
 
-// console.log(n_best_input.value)
 
 
+//hide the show parses button if user tries to request a parse number that doesn't exist 
 function restrict_parse_button(){
+   
     if( parseInt(n_best_input.value) > parseInt(max_parses)){
        
         parse_button.style.visibility = "hidden"

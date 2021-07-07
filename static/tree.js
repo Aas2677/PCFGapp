@@ -231,27 +231,11 @@ function draw(source) {
     d.y0 = d.y;
   });
 
-//   d3.select("svg")
-//     .call(d3.behavior.zoom()
-//       .scaleExtent([0.5, 5])
-//       .on("zoom", zoom));
-
-
-// var zoom = d3.zoom()
-//       .scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
-//       .extent([[0, 0], [width, height]])
-//       .on("zoom", zoom);
   
-
-//  }
 }
 
 function diagonal(s, d) {
   
-  // Here we are just drawing lines, we can also draw curves, comment out below path for it.
-
-  // var path = `M ${s.x} ${s.y}
-  //         L ${d.x} ${d.y}`;
   
   var path = `M ${s.x} ${s.y}
           C ${(s.x + d.x) / 2} ${s.y},
@@ -261,8 +245,7 @@ function diagonal(s, d) {
   return path
 }
 
-// var diagonal = d3.svg.diagonal()
-//     .projection(function(d) { return [d.y, d.x]; });
+
 
 function collapse(d) {
   if(d.children) {
@@ -282,13 +265,13 @@ function click(d)
       d._children = null;
     }
   // If d has a parent, collapse other children of that parent
-  if (d.parent) {
-    d.parent.children.forEach(function(element) {
-      if (d !== element) {
-        collapse(element);
-      }
-    });
-  }
+  // if (d.parent) {
+  //   d.parent.children.forEach(function(element) {
+  //     if (d !== element) {
+  //       collapse(element);
+  //     }
+  //   });
+  // }
 
   draw(d);
 }
