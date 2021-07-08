@@ -46,11 +46,14 @@ var margin = {top: 20, right: 30, bottom: 20, left: 30},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
+var zoom = d3.zoom();
+
+
 var vis = d3.select(".tree_box")
         .append("svg:svg")
         .attr("width", width + margin.right + margin.left)
         .attr("height", height + margin.top + margin.bottom)
-        .call(d3.zoom().on("zoom", function() {
+        .call(zoom.on("zoom", function() {
           vis.attr("transform",d3.event.transform)
         }))
         .style("background-color","#f3e4f3")
@@ -231,7 +234,7 @@ function draw(source) {
     d.y0 = d.y;
   });
 
-  
+
 }
 
 function diagonal(s, d) {
@@ -290,6 +293,7 @@ function mousemove(d) {
       "<tr><td>NonTerminal: </td><td>"+d.data.name+"</td></tr>"+
       "<tr><td>Rule: </td><td>"+d.data.rule+"</td></tr>"+
       "<tr><td>Cumulative Probability: </td><td>"+d.data.cumulative_prob+"</td></tr>"+
+      "<tr><td>Derivation Step: </td><td>"+d.data.step+"</td></tr>"+
       
       "</table>"
   );

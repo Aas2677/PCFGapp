@@ -2,7 +2,7 @@ from flask import Flask,url_for,render_template,flash,redirect,session,g,abort,r
 from forms import TextInputForm
 import grammarerrors
 from grammars import ProbabilisticGrammar
-from parsing import ProbabilisticCYKParser,ProbabilisticNode
+from parsing import *
 import json
 
 app = Flask(__name__)
@@ -30,12 +30,16 @@ def hello():
     parses = []
     test_arr = [1,2,3,4,5,6]
     data = {}
-    total = False  
+    total = False
+    table = False 
+    number_of_parses = False   
     if form.validate_on_submit():
         grammar = str(form.grammar.data).strip('\n')
         sentence = str(form.sentence.data).strip('\n')
         number_of_parses = int(form.n_parses.data)
         total_needed = form.show_total.data
+        table_needed = form.show_table.data 
+
         
         # setup the parser:
         grammar_object = ProbabilisticGrammar.from_string(grammar)
@@ -46,10 +50,19 @@ def hello():
             raw_parses = parser.n_best_parses(number_of_parses,sentence)
             parses = [parse.get_full_tree() for parse in raw_parses]
             
+            
+            
             # only update the total if the user has checked the box to indicate they want this information 
             if total_needed:
                 total_probability_node = parser.total_probability(sentence)
                 total = total_probability_node.cumulative_prob
+
+            # only generate the leftmost derivation tables if the user wants them 
+            if table_needed:
+                # lots of duplicate work done in the derivation builders, should come back to refactor 
+                tables = [get_derivation_table(parse,grammar_object.processed_rules) for parse in parses_d]
+                pass 
+
 
             for i in range(len(parses)):
                 data[i+1] = parses[i]
@@ -57,6 +70,7 @@ def hello():
             accepted = True
             flash("Your sentence is accepted by this grammar")
         except Exception as e :
+            print(e)
             flash(f'Your input sentence is not accepted by this grammar ; {e}')
             accepted = False
 

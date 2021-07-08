@@ -23,6 +23,7 @@ class  TextInputForm(FlaskForm):
     sentence = TextAreaField('Input your test sentence here',render_kw={"rows": 7, "cols": 100}, validators = [ DataRequired()])
     n_parses  = IntegerField( validators = [DataRequired(),NumberRange(1,100)])
     show_total = BooleanField('Would you like to calculae the total probability of this sentence?')
+    show_table = BooleanField('Show derivation table')
     submitgrammar = SubmitField('Validate grammar and find parses')
     
 

@@ -73,6 +73,9 @@ class NonTerminal:
     def get_token(self):
         return self._token
 
+    def __str__(self):
+        return self._token
+
 
 
 
@@ -114,7 +117,7 @@ class ProductionRule:
 
         # f'{self._left} -> {self._right} -- [{self._probability}]'
         
-        return f'{self._left} -> {self._right}'
+        return f'{self._left} -> {self._right} ({round(math.exp( -1* self._probability),3)})'
 
     
     def get_left(self):
@@ -334,20 +337,23 @@ class ProbabilisticGrammar:
         # return true if rule in CNF, false otherwise 
 
         if length > 2:
+            print("1")
             return False 
         else:
             if empty:
                 if not start:
+                    print("empty")
                     return False 
             else:
                 if self.start in rhs:             
-                    return False 
+                    pass
                 elif length == 2 and all([type(atom) == NonTerminal for atom in rhs]):
                     return True 
                 elif length == 1 and types[0] == Terminal:
                   
                     return True 
-                else:                  
+                else:
+                    print("other")                  
                     return False 
 
     def check_consistency(self):

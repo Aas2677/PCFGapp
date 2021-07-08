@@ -1,4 +1,5 @@
 from itertools import combinations,product
+from os import error
 import grammars 
 import grammarerrors
 import itertools 
@@ -177,7 +178,7 @@ class ProbabilisticCYKParser:
 
         full_parses = [parse.get_full_tree() for parse in parses]
 
-        return [json.dumps(p).encode("utf-16be") for p in full_parses]
+        return [json.dumps(p) for p in full_parses]
    
 
     
@@ -715,42 +716,280 @@ class ProbabilisticNode:
         return self.left_child == None and self.right_child == None
 
     
-    def get_full_tree(self) -> list:
+    def get_full_tree(self,table=False) -> list:
 
         # recursivley builds a dicitonary with all relevant details of the full parse tree and each sub-tree 
+        # if table is set to true, return the actual rule objects, otherwise return string representaitons of everything 
 
         local_dict = {}
 
-        # setup the name,rule and cumulative probabilities of the node.
-        local_dict["name"] = f'{self.rule._left}'
-        local_dict["rule"] = str(self.rule)
-        local_dict["cumulative_prob"] = math.exp(-1 * self.cumulative_prob)
-        local_dict["children"] = [] 
-        
-        
-        if self.leaf:
-            # if the node is a leaf, then there's no more recursive calls to build the full dictionary
-            local_dict["children"].append({"name": str(self.rule._right[0])})
-            return local_dict
-        else:
-            # otherwise  we need to recursivley build the 
+
+        if table:
+            local_dict["name"] = self.rule._left
+            local_dict["rule"] = self.rule
+            local_dict["rule_probability"] = round(math.exp( -1* self.rule._probability),3)
             local_dict["children"] = [] 
-            local_dict["children"].append(self.left_child.get_full_tree())
-            local_dict["children"].append(self.right_child.get_full_tree())
 
-        return local_dict
+            if self.leaf:
+                local_dict["children"].append({"name": self.rule._right[0]})
+                return local_dict
+            else:
+
+                # otherwise  we need to recursivley build the 
+                local_dict["children"] = [] 
+                local_dict["children"].append(self.left_child.get_full_tree(table=True))
+                local_dict["children"].append(self.right_child.get_full_tree(table=True))
+                
+                return local_dict
 
 
-            # return [str(self.rule)] + [self.left_child.get_full_tree()] + [self.right_child.get_full_tree()]
+
+
+            
+        else:
+
+
+
+
+            # setup the name,rule and cumulative probabilities of the node.
+            local_dict["name"] = f'{self.rule._left}'
+            local_dict["rule"] = str(self.rule)
+            local_dict["cumulative_prob"] = math.exp(-1 * self.cumulative_prob)
+            local_dict["children"] = [] 
+        
+        
+            if self.leaf:
+                # if the node is a leaf, then there's no more recursive calls to build the full dictionary
+                local_dict["children"].append({"name": str(self.rule._right[0])})
+                return local_dict
+            else:
+                # otherwise  we need to recursivley build the 
+                local_dict["children"] = [] 
+                local_dict["children"].append(self.left_child.get_full_tree())
+                local_dict["children"].append(self.right_child.get_full_tree())
+
+                helper = MiniBuilder(local_dict)
+
+                return helper.add_steps()
+
+
+   
+        
+
+
+
 
     def tree_probability(self) -> float:
 
-        # deprecated, use cumulative_prob attribute 
+        # deprecated, use cumulative_prob attribute (parsing algorithm has been changed to keep track of cumulative probabilities of trees )
 
         if self.leaf:
             return self.rule.get_probability()
         else:
             return self.rule.get_probability() * self.left_child.tree_probability() * self.right_child.tree_probability()
+    
+    
+    
+
+class MiniBuilder:
+
+    """just adds 'step' information to a parse tree so that it can be cross referenced with the leftmost derivation table
+    ---- probably doesn't need a class :)
+    
+    ---- Input is the dictionary represenation of the parse tree, not the probabilistic node object"""
+
+
+    def __init__(self,tree:dict) -> None:
+        self.step = 0 
+        self.tree = tree
+
+    
+    def x(self):
+        self.step = 1
+
+
+    def add_steps(self):
+        self.tree["step"] = 0 
+        self.step += 1 
+
+        children = self.tree["children"]
+
+        # traverse down the tree 
+        self.recurse_steps(children)
+
+        return self.tree
+    
+    def recurse_steps(self,children):
+
+        children = [child for child in children if "children" in child]
+
+        for child in children:
+            child["step"] = self.step 
+            self.step += 1 
+        
+        children_of_children = list(itertools.chain(*[child["children"] for child in children]))
+
+        if children_of_children:
+            self.recurse_steps(children_of_children)
+        
+
+
+
+
+
+class DerivationBuilder:
+    """class to help build a leftmost derivation table using the probabilistic nodes generated by the parsing
+    algorthm"""
+    
+
+    def __init__(self,tree,ruleset:list) -> None:
+       
+        self.step = 0 
+        self.rules = self.rank_rules(ruleset)
+        self.tree = tree 
+        self.table = {}
+        self.current_string = None
+
+    def rank_rules(self,ruleset):
+        # Take the rules dictionary and rank all of the rules in descensing order for each nonterminal
+
+        for nonterminal in ruleset.keys():
+            ruleset[nonterminal] = sorted(ruleset[nonterminal],key = lambda x: x._probability)
+        
+        return ruleset
+
+
+    def build_leftmost_derivation(self):
+
+        # The first 2 entries of the parse table need to be created just from the root node, then we can recurse 
+
+
+
+        
+        # instantiate inner dict
+        self.table[0] = {}
+
+        rule = self.tree["rule"]
+        self.table[0]["nonterminal"] = "Not applicable"
+        self.table[0]["rule"]  = "Not applicable"
+        self.table[0]["probability"] = 1
+        self.table[0]["rule_rank"] = "Not applicable"
+        self.current_string = f'{self.tree["name"]}'
+        self.table[0]["current_string"] = self.current_string
+        self.step += 1
+
+        self.table[1] = {}
+
+
+       
+        self.table[1]["nonterminal"] = str(self.tree["name"])
+        self.table[1]["rule"]  = str(rule)
+        self.table[1]["probability"] = self.tree["rule_probability"]
+        self.table[1]["rule_rank"] = self.rules[self.tree["name"]].index(rule)+1 
+        if len(rule) == 1:
+            self.current_string = f'{rule._right[0]}'
+        else:
+            self.current_string = f'{str(rule._right[0])} {str(rule._right[1])}'
+        
+
+      
+        self.table[1]["current_string"] = self.current_string
+        self.step += 1
+
+        
+
+        # recursivley build children 
+
+        self.build_recurse(self.tree["children"])
+
+        # return finished table
+        return self.table
+
+
+    def build_recurse(self,children):
+
+        # if a child is a leaf node, we can ignore it 
+        children = [child for child in children if "children" in child]
+
+
+
+        # add the children on this level first from left to right 
+        for child in children:
+            # no need to operate on leaves 
+            try:
+                self.table[self.step] = {}
+                rule = child["rule"]
+
+                self.table[self.step]["rule"] = str(rule)
+                self.table[self.step]["nonterminal"] = str(child["name"])
+                self.table[self.step]["probability"] = child["rule_probability"]
+                self.table[self.step]["rule_rank"] = self.rules[child["name"]].index(rule) + 1
+                if len(rule) == 1:
+                    self.current_string = self.current_string.replace(str(child["name"]),str(rule._right[0]),1)
+
+                else:
+                    self.current_string = self.current_string.replace(str(child["name"]),f'{str(rule._right[0])} {str(rule._right[1])}',1)
+                
+                self.table[self.step]["current_string"] = self.current_string
+
+                self.step += 1 
+            except KeyError:
+                # leaf node
+                pass 
+
+                
+        # recurse on children of children as a flattened list (if they exist)
+        children_of_children = list(itertools.chain(*[child["children"] for child in children]))
+
+        if children_of_children:
+                    self.build_recurse(children_of_children) 
+
+
+
+
+# Extra aux functions outside classes 
+
+def get_derivation_table(trees:dict,rules) -> dict:
+
+    # Quick function to turn tree format dict into table format dict 
+
+    derivations_list = [] 
+    helper = DerivationBuilder(trees[0],rules)
+
+    for tree in trees:
+        # setup derivation builder 
+        helper = DerivationBuilder(tree,rules) 
+
+
+        
+
+        # turns the parse trees into parse table form 
+
+        helper = DerivationBuilder(tree,rules)
+
+        derivations_list.append(helper.build_leftmost_derivation())
+
+
+        
+        
+
+            
+                
+            
+
+
+
+
+
+
+
+            
+
+    
+
+    
+
+
 
 
 
