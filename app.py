@@ -31,7 +31,7 @@ def hello():
     test_arr = [1,2,3,4,5,6]
     data = {}
     total = False
-    table = False 
+    tables = 0
     number_of_parses = False   
     if form.validate_on_submit():
         grammar = str(form.grammar.data).strip('\n')
@@ -49,6 +49,7 @@ def hello():
             
             raw_parses = parser.n_best_parses(number_of_parses,sentence)
             parses = [parse.get_full_tree() for parse in raw_parses]
+            parses_d = [parse.get_full_tree(table=True) for parse in raw_parses]
             
             
             
@@ -60,7 +61,8 @@ def hello():
             # only generate the leftmost derivation tables if the user wants them 
             if table_needed:
                 # lots of duplicate work done in the derivation builders, should come back to refactor 
-                tables = [get_derivation_table(parse,grammar_object.processed_rules) for parse in parses_d]
+                # tables = [get_derivation_table(parse,grammar_object.processed_rules) for parse in parses_d]
+                tables = json.dumps({i+1: get_derivation_table(parse,grammar_object.processed_rules) for i,parse in enumerate(parses_d)})
                 pass 
 
 
@@ -80,7 +82,7 @@ def hello():
         grammar = 0 
         sentence = 0  
 
-    return render_template('mainpage.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,test_arr=test_arr,total = total, num_parses = number_of_parses)
+    return render_template('mainpage.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,test_arr=test_arr,total = total, num_parses = number_of_parses,tables=tables)
 
 
 

@@ -72,6 +72,11 @@
             <span hidden id = "max_number_parses">
                 {{ num_parses }}
             </span>
+            {% if tables %}
+            <span hidden id = "derivation_tables">
+                {{ tables }}
+            </span>
+            {% endif %}
             <span hidden id = "testarr">
                 {{ test_arr }}
             </span>
@@ -81,16 +86,23 @@
             </div>
             {% endif %}
 
+            
             <div class = "tree_box">
                 <script src="{{url_for('static', filename='tree.js')}}"></script>
                 <div>
                     
                     a: <input type = "number" min="1",max="100" id="a" ,name = "input_a">
-                    <button id = "show_parses" onclick = "render(document.getElementById('a').value)"> Show Parse</button>
+                    <button id = "show_parses" onclick = "render(document.getElementById('a').value,parses = {{parses}},tables = {{tables}})"> Show Parse</button>
                     
                   
                     
+                </div>  
+
                 </div>
+                <div class = "table_box", id="table_box">
+
+                </div>
+
             </div>
             <script src="{{url_for('static', filename='monitoring.js')}}"></script>
            

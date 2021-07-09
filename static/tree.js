@@ -1,4 +1,7 @@
-function render(num){
+function render(num,parses,tables){
+
+ 
+
 
   
 
@@ -8,6 +11,110 @@ function render(num){
   $(".tooltip").remove();
 
   d3.select("svg").remove();
+
+
+  // function to render table 
+
+  function render_table(num){
+    
+    var rawtabledata =  document.getElementById("derivation_tables").innerHTML
+    var tabledata = JSON.parse(rawtabledata)
+    var thistable = tabledata[num]
+    // console.log(thistable)
+
+    var list_data = [] 
+
+    for(var i in thistable){
+      list_data.push(thistable[i])
+    }
+
+    // add rankings to elements 
+    for(var i in list_data){
+      list_data[i]["step"] = i
+    }
+
+    console.log(list_data)
+
+
+    var sortValueAscending = function (a, b) { return valueFunc(a) - valueFunc(b) }
+    var sortValueDescending = function (a, b) { return valueFunc(b) - valueFunc(a) }
+    var sortNameAscending = function (a, b) { return textFunc(a).localeCompare(textFunc(b)); }
+    var sortNameDescending = function (a, b) { return textFunc(b).localeCompare(textFunc(a)); }
+    var metricAscending = true;
+    var nameAscending = true;
+
+
+
+
+
+
+     // some setup for the tables 
+     var table = document.getElementById("table_box");
+     var width = table.offsetWidth 
+     var height = table.offsetHeight 
+
+     var tablewidth = (width - 25) +"px";
+     var dheight = (height-60) + "px";
+     
+
+     var columns = ["nonterminal","rule","rule_rank","current_string"]
+
+     var valueFunc = function(data) { return data.value; }
+     var textFunc = function(data) { return data.fullname; }
+
+
+     var outerTable = d3.select("#table_box").append("table").attr("width", width+"px");
+
+     outerTable.append("tr").append("td")
+        .append("table").attr("class", "headerTable").attr("width", tablewidth)
+        .append("tr").selectAll("th").data(columns).enter()
+		    .append("th").text(function (column) { return column; })
+        .on("click", function (d) {
+            // Choose appropriate sorting function.
+            if (d === columns[1]) {
+			    var sort = metricAscending ? sortValueAscending : sortValueDescending;
+                metricAscending = !metricAscending;
+            } else if(d === columns[0]) {
+				var sort = nameAscending ? sortNameAscending : sortNameDescending
+                nameAscending = !nameAscending;
+            }
+			
+            var rows = tbody.selectAll("tr").sort(sort);
+        });
+
+     var inner = outerTable.append("tr").append("td")
+        .append("div").attr("class", "scroll").attr("width", width+"px").attr("style", "height:" + dheight + ";")
+        .append("table").attr("class", "bodyTable").attr("border", 1).attr("width", tablewidth).attr("height", height+"px").attr("style", "table-layout:fixed");
+    
+
+     var tbody = inner.append("tbody");
+      // Create a row for each object in the data and perform an intial sort.
+     var rows = tbody.selectAll("tr").data(list_data).enter().append("tr").sort(sortValueDescending);
+
+     var cells = rows.selectAll("td")
+        .data(function (d) {
+            return columns.map(function (column) {
+                return { column: column, text: textFunc(d), value: valueFunc(d)};
+            });
+          }).enter().append("td")
+		      .text(function (d) {
+			         if (d.column === columns[0]) return d.text;
+			         else if (d.column === columns[1]) return d.value;
+		        });
+
+      
+    
+  
+    
+
+
+
+
+  }
+
+  if(tables){
+    render_table(num=num)
+  }
 
 
 
@@ -26,9 +133,12 @@ function render(num){
 
 
 
+// get the tree data from the html 
+var treedata =  document.getElementById("parses").innerHTML
+var data = JSON.parse(treedata)
 
-var testdata =  document.getElementById("parses").innerHTML
-var data = JSON.parse(testdata)
+
+
 
 
 // update the tree button 
@@ -36,7 +146,7 @@ var data = JSON.parse(testdata)
 
 // console.log(data["1"])
 
-var treeData = data[num]
+var treeData = parses[num]
 
 
 

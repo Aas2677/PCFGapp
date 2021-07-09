@@ -949,27 +949,17 @@ class DerivationBuilder:
 
 # Extra aux functions outside classes 
 
-def get_derivation_table(trees:dict,rules) -> dict:
+def get_derivation_table(tree:dict,rules) -> dict:
 
     # Quick function to turn tree format dict into table format dict 
 
     derivations_list = [] 
-    helper = DerivationBuilder(trees[0],rules)
+    helper = DerivationBuilder(tree,rules)
 
-    for tree in trees:
-        # setup derivation builder 
-        helper = DerivationBuilder(tree,rules) 
+    return helper.build_leftmost_derivation()
 
-
+    
         
-
-        # turns the parse trees into parse table form 
-
-        helper = DerivationBuilder(tree,rules)
-
-        derivations_list.append(helper.build_leftmost_derivation())
-
-
         
         
 

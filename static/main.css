@@ -46,3 +46,30 @@ svg {
   border-radius: 8px;
 
 }
+
+#table_box {
+  width: 500px;
+  height: 500px;
+}
+
+.bodyTable td {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.bodyTable tr {
+  height: 40px;
+}
+
+.bodyTable tr:hover {
+  background-color:grey;
+}
+
+.headerTable th:hover {
+  background-color:grey;
+}
+
+.scroll {
+  overflow: auto;
+}
