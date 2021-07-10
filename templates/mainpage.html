@@ -1,63 +1,87 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <!-- bootstrap,custom and tabulator stylesheets -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+        <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
+
+        <!-- scripts for d3,tabulator and jquery -->
         <script src="https://d3js.org/d3.v4.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
+
        
 
     </head>
     <body>
-      
+
+        <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #b7d5eb;">
+        <a class="navbar-brand" href="#">PCFG Explorer</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="#">Options</a>
+            </li>
+        </ul>
+        </div>
+        </nav>
+            
         <div class =  "content-section">
+           
 
     
-        <form method="POST" action="">
+        <form method="POST" action="" class = "main_form" id= "main_form"> 
             {{form.hidden_tag()}}
-            <fieldset>
-                <legend class="border-bottom mb-4">Your grammar</legend>
-                    Enter you grammar in the textbox
-                    <div>
-                        
-                        {{form.grammar()}}
-                    </div>
-             
-            </fieldset>
-            <fieldset>
-                <legend class="border-bottom mb-4">Your Sentence</legend>
-                Enter your sentence here 
-                <div>
-                   
-                    {{form.sentence()}}
+            <div class = "form-group">
+                <label for="Enter your grammar here">Enter your Grammar</label>
+                <small id="grammar_instructions" class = "form-text text-muted">Read the <a href = "{{url_for('about')}}">about</a> page for syntax and usage information</small>
 
-                </div>
-                <div>
+                      <div>{{ form.grammar()}}</div>
+
+            </div>
+            <div class = "form-group">
+                <label for="Enter your grammar here" class = "box_labels">Enter your string or sentence</label>
+                <small id="grammar_instructions" class = "form-text text-muted"></small>
+
+                      <div>{{ form.sentence(id="testha")}}</div>
+                      
+            </div>
+                 <div class = "form-group">
+            <label for="Check to show total probability of your string"></label>
+            
                     Check to show total probability of parsing this sentence
-                    {{form.show_total}}
-                </div>
-                <div>
+                    {{form.show_total(type = "checkbox")}}
+              
                     Check to show a full left-most derivation table for your parses
                     {{form.show_table}}
                 </div>
-            </fieldset>
-            <div class="form-group">
+               
+          
                 Number of parses: {{form.n_parses()}}
                 {{ form.submitgrammar() }}
-            </div>
-            <div>
-                {%with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                  {% for category,message in messages %}
-                  <div class="alert alert-{{ category }}">
-                      {{ message }}
-                  </div>
-                  {% endfor %}
-                  {% endif %}
-                {% endwith %}
-            </div>
+           
         </form>
+        <div>
+            {%with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+              {% for category,message in messages %}
+              <div class="alert alert-{{ category }}">
+                  {{ message }}
+              </div>
+              {% endfor %}
+              {% endif %}
+            {% endwith %}
+        </div>
         </div>
 
        

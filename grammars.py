@@ -116,8 +116,14 @@ class ProductionRule:
     def __str__(self) -> str:
 
         # f'{self._left} -> {self._right} -- [{self._probability}]'
+        if len(self._right) ==1:
+            return f'{self._left} → {self._right[0]} ({round(math.exp( -1* self._probability),3)})'
+        else:
+            return  f'{self._left} → {self._right[0],self._right[1]} ({round(math.exp( -1* self._probability),3)})'
+
+
         
-        return f'{self._left} -> {self._right} ({round(math.exp( -1* self._probability),3)})'
+        return f'{self._left} → {self._right} ({round(math.exp( -1* self._probability),3)})'
 
     
     def get_left(self):

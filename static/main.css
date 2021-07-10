@@ -42,7 +42,7 @@ svg {
   height: 500px;
   padding: 2px;
   background: #f3e4f3;
-  border: solid 1px rgb(14, 13, 13);
+  border: solid 10px rgb(14, 13, 13);
   border-radius: 8px;
 
 }
@@ -50,6 +50,28 @@ svg {
 #table_box {
   width: 500px;
   height: 500px;
+}
+
+.main_form{
+  position: ;
+  width: 500px;
+  height: 100vh;
+  padding: 3px;
+  background: #e3f2fd;
+  border: solid 2px rgb(141, 141, 213);
+  border-radius: 8px;
+
+
+}
+
+body{
+  background-color: #e2dfdf ;
+}
+
+textarea {
+  resize: none;
+  position: relative;
+  left: 20px
 }
 
 .bodyTable td {

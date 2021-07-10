@@ -107,7 +107,7 @@ def parse():
 #     return render_template('trees.html',title = 'PCFG exporer',tree_list = test_tree,m = kek)
 
 @app.route("/about")
-def copy():
+def about():
     return "<h1>About this tool</h1>"
 
 

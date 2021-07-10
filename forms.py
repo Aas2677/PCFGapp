@@ -18,9 +18,9 @@ def validate_grammar(self,grammar):
 
        
 class  TextInputForm(FlaskForm):
-    grammar = TextAreaField('Input your grammar here', render_kw={"rows": 7, "cols": 100}, validators = [DataRequired(),Length(min=2, max=2000),validate_grammar ]) # add in validators as another argument into stringfield
+    grammar = TextAreaField('Input your grammar here', render_kw={"rows": 7, "cols": 50}, validators = [DataRequired(),Length(min=2, max=2000),validate_grammar ]) # add in validators as another argument into stringfield
 
-    sentence = TextAreaField('Input your test sentence here',render_kw={"rows": 7, "cols": 100}, validators = [ DataRequired()])
+    sentence = TextAreaField('Input your test sentence here',render_kw={"rows": 7, "cols": 50}, validators = [ DataRequired()])
     n_parses  = IntegerField( validators = [DataRequired(),NumberRange(1,100)])
     show_total = BooleanField('Would you like to calculae the total probability of this sentence?')
     show_table = BooleanField('Show derivation table')
