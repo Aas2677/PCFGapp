@@ -8,7 +8,7 @@ $("[type='number']").keypress(function (evt) {
 
 
 // add eventlistener to the nth parse button 
-const n_best_input = document.getElementById("a")
+const n_best_input = document.getElementById("nth_parse")
 n_best_input.addEventListener('change',restrict_parse_button);
 
 //keep track of the maximum number of parses we have gerated 

@@ -89,7 +89,7 @@
                 
                 <div class = "submit_area">
                     <div class = "number_parses">
-                     {{form.n_parses()}}
+                     {{form.n_parses(class="rounded")}}
                     </div>
                     <div class = "final_submit">
                 {{ form.submitgrammar() }}
@@ -113,7 +113,7 @@
 
        
 
-        <div>
+        <div class = top_parse_bar>
             {% if accepted %}
             <span> </span>
             
@@ -132,25 +132,32 @@
                 {{ test_arr }}
             </span>
             {% if total %}
-            <div id = "total_probability">
+            <div  class = "total_probability" id = "total_probability">
                  The total probability of generating this string is: {{total}}
             </div>
             {% endif %}
+            {% endif %}
             </div>
+       
+
 
             
             <div class = "tree_box">
-                <script src="{{url_for('static', filename='tree.js')}}"></script>
-                <div>
-                    
-                    a: <input type = "number" min="1",max="100" id="a" ,name = "input_a">
-                    <button id = "show_parses" onclick = "render(document.getElementById('a').value,parses = {{parses}},tables = {{tables}})"> Show Parse</button>
-                    
-                  
-                    
-                </div>  
 
-                </div>
+                {% if accepted %}
+                <div class = show_parses>
+               
+            
+                    <input type = "number" min="1",max="100" id="nth_parse" ,name = "input_a">
+                   <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}})"> Show Parse</button>
+               
+                    </div>
+                <script src="{{url_for('static', filename='tree.js')}}"></script>
+                {% endif %}
+                
+
+            </div>
+
                 <div class = "table_box", id="table_box">
 
                 </div>
@@ -158,7 +165,7 @@
             </div>
             <script src="{{url_for('static', filename='monitoring.js')}}"></script>
            
-            {% endif %}
+          
         
         
        </div>
