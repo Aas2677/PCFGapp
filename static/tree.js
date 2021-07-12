@@ -108,8 +108,8 @@ var zoom = d3.zoom();
 
 var vis = d3.select(".tree_box")
         .append("svg:svg")
-        .attr("width", width + margin.right + margin.left)
-        .attr("height", height + margin.top + margin.bottom)
+        // .attr("width", width + margin.right + margin.left)
+        // .attr("height", height + margin.top + margin.bottom)
         .call(zoom.on("zoom", function() {
           vis.attr("transform",d3.event.transform)
         }))

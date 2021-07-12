@@ -12,6 +12,7 @@ def validate_grammar(self,grammar):
     try:
         formal_grammar = ProbabilisticGrammar.from_string(string_representation)
         if not formal_grammar.CNF:
+            print("shit")
             raise ValidationError("Your grammar is not in Chomsky normal form, check your production rules")
     except grammarerrors.StringInputException:
             raise ValidationError("Please follow the conventions for entering your grammar")
@@ -24,7 +25,7 @@ class  TextInputForm(FlaskForm):
     n_parses  = IntegerField( validators = [DataRequired(),NumberRange(1,100)])
     show_total = BooleanField('Would you like to calculae the total probability of this sentence?')
     show_table = BooleanField('Show derivation table')
-    submitgrammar = SubmitField('Validate grammar and find parses')
+    submitgrammar = SubmitField('Submit to parser')
     
 
 

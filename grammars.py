@@ -343,11 +343,14 @@ class ProbabilisticGrammar:
         # return true if rule in CNF, false otherwise 
 
         if length > 2:
+            print(rhs)
+            print("ength")
             print("1")
             return False 
         else:
             if empty:
                 if not start:
+                    print(rhs)
                     print("empty")
                     return False 
             else:
@@ -359,6 +362,7 @@ class ProbabilisticGrammar:
                   
                     return True 
                 else:
+                    print(rhs)
                     print("other")                  
                     return False 
 
