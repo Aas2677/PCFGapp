@@ -18,4 +18,13 @@ class StringNotAccepted(Exception):
     def __init__(self, message = "String is not accepted"):
         self.message = message 
         super().__init__(self.message)
+
+
+class JSONFileError(Exception):
+
+    def __init__(self, message = "There is a missing category "):
+        self.message = message 
+        super().__init__(self.message)
+    
+    
     

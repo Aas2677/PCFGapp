@@ -3,6 +3,8 @@ import grammarerrors
 import aux 
 from collections import defaultdict
 import math
+import json 
+
 
 def GetNonTerminals(items):
     pass 
@@ -19,7 +21,7 @@ class Terminal:
     def __eq__(self,other):
         # equals override to check if 2 non-terminal symbols are the same
         if not (isinstance(other, NonTerminal) or isinstance(other,Terminal)):
-            raise grammarerrors.GrammarException("The argument is not a terminal or non-terminal object")
+            raise grammarerrors.GrammarException("The argument is not a terminal or non-terminal object terter")
         else:
             return self._token == other._token 
 
@@ -53,7 +55,7 @@ class NonTerminal:
     def __eq__(self,other):
         # equals override to check if 2 non-terminal symbols are the same
         if not (isinstance(other, NonTerminal) or isinstance(other,Terminal)):
-            raise grammarerrors.GrammarException("The argument is not a terminal or non-terminal object")
+            raise grammarerrors.GrammarException("The argument is not a terminal or non-terminal object nonon")
         else:
             return self._token == other._token 
 
@@ -123,7 +125,7 @@ class ProductionRule:
 
 
         
-        return f'{self._left} → {self._right} ({round(math.exp( -1* self._probability),3)})'
+       
 
     
     def get_left(self):
@@ -163,7 +165,7 @@ class ProbabilisticGrammar:
 
     """ class to represent a probabilistic context-free grammar"""
 
-    def __init__(self,processed_rules,collapsed_rules,processed_rules_log,collapsed_rules_log,nonterminals,alphabet,start = NonTerminal('S'), tolerance = 0.02):
+    def __init__(self,processed_rules,collapsed_rules,processed_rules_log,collapsed_rules_log,nonterminals,alphabet,bad_rules = False,start = NonTerminal('S'), tolerance = 0.02):
         # initially set CNF check to true 
         self.CNF = True 
         self.consistent = True 
@@ -190,15 +192,13 @@ class ProbabilisticGrammar:
         self.terminal_lhs_lookup = self.make_lookup(1)
         self.expansion_lhs_lookup = self.make_lookup(2)
         self.expansion_lhs_lookup_logs = self.make_lookup(2,logs=True)
+        self.ignored_rules = bad_rules 
        
       
 
   
     
-    @classmethod
-    def from_file(cls,file):
-        # function to generate grammar from a JSON file input -- not completed yet 
-        pass 
+    
     
 
     @classmethod 
@@ -230,7 +230,11 @@ class ProbabilisticGrammar:
                processed_rules_log[lhs] = []
 
 
-        
+        # Check for duplicate rules, only recognise the first delaration of a specific lhs/rhs combination 
+       duplicate_checker = []
+       ignored_rules = False 
+
+
         # parse the right hand sides of rules to identify terminals and non-terminals 
        for lhs,atoms,probability in rules:
            processed_atoms = [NonTerminal(atom) if atom in non_terminals else Terminal(atom) for atom in atoms]
@@ -241,11 +245,15 @@ class ProbabilisticGrammar:
 
 
            # add standard and negative log versions of each to to the respective reference list/dictionary
-        
-           processed_rules[NonTerminal(lhs)].append(ProductionRule(NonTerminal(lhs), processed_atoms, probability))
-           processed_rules_log[NonTerminal(lhs)].append(ProductionRule(NonTerminal(lhs), processed_atoms, -1* math.log(probability)))
-           collapsed_rules.append(ProductionRule(NonTerminal(lhs), processed_atoms, probability))
-           collapsed_rules_log.append(ProductionRule(NonTerminal(lhs), processed_atoms, -1* math.log(probability)))
+           checker_tuple = (lhs,*atoms)
+
+           if checker_tuple not in duplicate_checker:
+              processed_rules[NonTerminal(lhs)].append(ProductionRule(NonTerminal(lhs), processed_atoms, probability))
+              processed_rules_log[NonTerminal(lhs)].append(ProductionRule(NonTerminal(lhs), processed_atoms, -1* math.log(probability)))
+              collapsed_rules.append(ProductionRule(NonTerminal(lhs), processed_atoms, probability))
+              collapsed_rules_log.append(ProductionRule(NonTerminal(lhs), processed_atoms, -1* math.log(probability)))
+           else:
+               ignored_rules = True 
       
 
 
@@ -254,7 +262,101 @@ class ProbabilisticGrammar:
             
     
 
-       return cls(processed_rules,collapsed_rules,processed_rules_log,collapsed_rules_log,processed_non_terminals,alphabet,processed_start)
+       return cls(processed_rules,collapsed_rules,processed_rules_log,collapsed_rules_log,processed_non_terminals,alphabet,start = processed_start, bad_rules = ignored_rules)
+
+    
+
+    @classmethod 
+    def from_json(cls,input_file):
+
+       # function to generate a grammar from a json input 
+       
+
+       try:
+           data = json.load(input_file)
+           rules = data["rules"]
+           non_terminals = data["non_terminals"]
+           terminals = data["terminals"]
+           start = NonTerminal(data["start_symbol"])
+       except Exception as e:
+            print("fuck me ")
+            return grammarerrors.JSONFileError(f'{e}')
+
+
+       # create  terminal/ nonterminal  alphabet
+       alphabet = [Terminal(letter) for letter in list(dict.fromkeys(terminals))]
+       processed_non_terminals = [NonTerminal(token) for token in list(dict.fromkeys(non_terminals))]
+   
+
+       # initialise empty processed rules dictionary 
+       processed_rules = {}
+       processed_rules_log = {}
+       collapsed_rules = []
+       collapsed_rules_log = [] 
+
+       
+
+       
+
+       # create the keys for the unprocessed r
+       for letter in processed_non_terminals:
+
+           if letter not in processed_rules.keys():
+               processed_rules[letter] = [] 
+               processed_rules_log[letter] = []
+
+
+       # duplicate checker
+       duplicate_checker = [] 
+
+
+        # set flag for incorrectly specificed rules 
+       ignored_rules = False
+
+        # parse the right hand sides of rules
+       for rule in rules:
+            try:
+               # If the lhs not in the nonterminal alphabet or is also declared a terminal, then ignore 
+               if not rule["nonterminal"] in non_terminals or rule["nonterminal"] in terminals:
+                   ignored_rules = True 
+                
+               else:
+                   
+                   # since the terminals and nonterminals are asked for in the json, we should not see any new characters in the rules. If not, we'll ignore the rule. 
+                   if all(atom in terminals or atom in non_terminals  for atom in rule["expansion"]):
+                       rhs = [NonTerminal(atom) if atom in non_terminals else Terminal(atom) for atom in rule["expansion"]]
+                       new_rule = ProductionRule(NonTerminal(rule["nonterminal"]),rhs,float(rule["probability"]))
+                       new_rule_log = ProductionRule(NonTerminal(rule["nonterminal"]),rhs,-1* math.log(float(rule["probability"])))
+                       
+                       checker_tuple = (rule["nonterminal"],*rule["expansion"])
+                       
+                       # if rule not already declared, add to rules, else ignore the ducplicate declaration 
+                       if checker_tuple not in duplicate_checker:
+                
+                           processed_rules[NonTerminal(rule["nonterminal"])].append(new_rule)
+                           processed_rules_log[NonTerminal(rule["nonterminal"])].append(new_rule_log)
+                           collapsed_rules.append(new_rule)
+                           collapsed_rules_log.append(new_rule_log)
+                           duplicate_checker.append(checker_tuple)
+                  
+                       
+
+                       
+            except Exception as e :
+                print(e)
+                ignored_rules = True 
+                continue
+                
+            
+    
+       return cls(processed_rules,collapsed_rules,processed_rules_log,collapsed_rules_log,processed_non_terminals,alphabet,start=start,bad_rules = ignored_rules)
+
+
+
+
+
+
+
     
    
 
@@ -318,7 +420,7 @@ class ProbabilisticGrammar:
 
 
     def check_CNF(self):
-        pass
+        
 
         # Test the rules to check if the grammar is in CNF 
 
@@ -342,29 +444,49 @@ class ProbabilisticGrammar:
 
         # return true if rule in CNF, false otherwise 
 
-        if length > 2:
-            print(rhs)
-            print("ength")
-            print("1")
+
+
+        # CNF prohibits empty producitons 
+        if empty:
             return False 
-        else:
-            if empty:
-                if not start:
-                    print(rhs)
-                    print("empty")
-                    return False 
-            else:
-                if self.start in rhs:             
-                    pass
-                elif length == 2 and all([type(atom) == NonTerminal for atom in rhs]):
-                    return True 
-                elif length == 1 and types[0] == Terminal:
+
+        # singleton rules can't have a nonterminal lhs 
+        if length == 1:
+            if not types[0] == Terminal:
+                return False
+        
+        if length == 2:
+            if not all([atom_type == NonTerminal for atom_type in types]):
+                return False 
+
+        if length > 2:
+            return False 
+        
+        # checks passed 
+        return True 
+
+
+        # if length > 2:
+
+        #     return False 
+        # else:
+        #     if empty:
+        #         if not start:
+        #             print(rhs)
+        #             print("empty")
+        #             return False 
+        #     else:
+        #         if self.start in rhs:             
+        #             pass
+        #         elif length == 2 and all([type(atom) == NonTerminal for atom in rhs]):
+        #             return True 
+        #         elif length == 1 and types[0] == Terminal:
                   
-                    return True 
-                else:
-                    print(rhs)
-                    print("other")                  
-                    return False 
+        #             return True 
+        #         else:
+        #             print(rhs)
+        #             print("other")                  
+        #             return False 
 
     def check_consistency(self):
     
