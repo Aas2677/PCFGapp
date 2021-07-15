@@ -44,7 +44,7 @@ class  TextInputForm(FlaskForm):
 
 
 class  FileInputForm(FlaskForm):
-    grammar = FileField(Grammar file input , validators = [FileAllowed(['json'], '.json files only') ]) # add in validators as another argument into stringfield
+    grammar = FileField('Grammar file input' , validators = [FileAllowed(['json'], '.json files only') ]) # add in validators as another argument into stringfield
 
     sentence = TextAreaField('Input your test sentence here',render_kw={"rows": 7, "cols": 50}, validators = [ FileRequired(),FileAllowed(['json'],'JSON files only')])
     n_parses  = IntegerField( validators = [DataRequired(),NumberRange(1,100)])
