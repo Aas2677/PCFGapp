@@ -43,20 +43,27 @@
         <div class = "main_form_float">
         <form method="POST" action="" class = "main_form" id= "main_form"> 
             {{form.hidden_tag()}}
+
+               <div class = grammar_box>
             
                 <label for="Enter your grammar here">Enter your Grammar</label>
-                <small id="grammar_instructions" class = "form-text text-muted">Read the <a href = "{{url_for('about')}}">about</a> page for syntax and usage information</small>
+                <small id="grammar_instructions" class = "form-text text-muted">Read the <a href = "{{url_for('home')}}">about</a> page for syntax and usage information</small>
 
                       <div>{{ form.grammar()}}</div>
+                      </div>
 
             
-           
-                <label for="Enter your grammar here" class = "box_labels">Enter your string or sentence</label>
-                <small id="grammar_instructions" class = "form-text text-muted"></small>
+                <div class = " sentence_box">
+                <label for="Enter your sentnce here" class = "box_labels">Enter your string or sentence</label>
+                
+
+               
+                
 
                       <div>
                           {{ form.sentence()}}
 
+                      </div>
                       </div>
                 
                       <div class="table_toggles">

@@ -1,3 +1,4 @@
+from math import prod
 import re
 import grammarerrors
 
@@ -47,9 +48,12 @@ def parse_string(input,separator = ","):
                    probability = float(just_numbers.findall(probabilities[0])[0])
 
 
-                # strip out the RHS variables and terminals. assume that spaces indicate seperate atoms
-                   product =  list(filter(lambda x : x != '',(re.sub(probability_strip,"",product)).split(" ")))
-                
+                # strip out the RHS variables and terminals. assume that spaces indicate seperate atoms. Get rid of escapes.
+                   product =  list(filter(lambda x : x != '' and x != '\r\n' and x != '\r' and x != '\n',(re.sub(probability_strip,"",product)).split(" ")))
+                   print(product)
+                   product = [re.sub('\n','', re.sub('\r','',item))for item in product]
+                   print(product)
+                  
 
 
                    if len(product) == 0:

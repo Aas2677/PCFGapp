@@ -47,7 +47,7 @@ def string_input():
            number_of_parses = int(form.n_parses.data)
            total_needed = form.show_total.data
            table_needed = form.show_table.data 
-
+           
         
            # setup the parser:
            grammar_object = ProbabilisticGrammar.from_string(grammar)
@@ -108,12 +108,13 @@ def file_input():
        tables = 0
        number_of_parses = False   
        if form.validate_on_submit():
-           grammar = form.grammar.data s
+           grammar = form.grammar.data 
            print(grammar)
            sentence = str(form.sentence.data).strip('\n')
            number_of_parses = int(form.n_parses.data)
            total_needed = form.show_total.data
            table_needed = form.show_table.data 
+           
 
         
            # setup the parser:

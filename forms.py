@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm 
-from wtforms import StringField,SubmitField,TextAreaField,IntegerField,BooleanField
+from wtforms import StringField,SubmitField,TextAreaField,IntegerField,BooleanField,SelectField
 from flask_wtf.file import FileField,FileRequired,FileAllowed
 from wtforms.validators import DataRequired,ValidationError,Length,NumberRange
 from grammars import ProbabilisticGrammar
@@ -65,11 +65,4 @@ class  FileInputForm(FlaskForm):
 
 
 
-
-
-
-    # def validate_grammar(self,form,field):
-    #     number = int(field.data)
-    #     if number // 3 != 0:
-    #         raise ValidationError("not a multipule of 3")
 

@@ -448,18 +448,22 @@ class ProbabilisticGrammar:
 
         # CNF prohibits empty producitons 
         if empty:
+            print('empty',rhs)
             return False 
 
         # singleton rules can't have a nonterminal lhs 
         if length == 1:
             if not types[0] == Terminal:
+                print('1',rhs)
                 return False
         
         if length == 2:
             if not all([atom_type == NonTerminal for atom_type in types]):
+                print('2',rhs)
                 return False 
 
         if length > 2:
+            print('2+',rhs)
             return False 
         
         # checks passed 
