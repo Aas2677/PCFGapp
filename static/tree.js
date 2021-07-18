@@ -41,7 +41,9 @@ function render(num,parses,tables){
   var table = new Tabulator("#table_box", {
 
     data:list_data,
-    width:"500px",
+    width:"100%",
+   
+    layout:"fitDataFill",
     // virtualDomHoz:true,
     columns:[
       {title:"step",field:"step"},

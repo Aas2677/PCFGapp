@@ -61,7 +61,7 @@ svg {
 }
 svg{
   width: 100%;
-  height: 100%;
+  height: 90%;
   float: auto;
 }
 
@@ -166,7 +166,7 @@ textarea:hover{
     top:3%;
     padding:3px;
     float: left;
-    left: 4%;
+    left: 2%;
     border-radius: 12px;
     border: 2px solid rgb(135, 142, 235);
     background: rgb(248, 242, 236);
@@ -185,6 +185,8 @@ textarea:hover{
   position: relative;
   padding: 3px;
   float:left; 
+  left: 10%;
+  top: 2%;
   border-radius: 25px;
   border: 2px solid #73AD21;
   background: #eee;
@@ -200,6 +202,57 @@ textarea:hover{
  
 }
 
+#total_probability{
+  position: relative;
+  float: left;
+  font-size: 1.1vw;
+  left: 40%;
+  /* border-radius: 3px;
+  border: 2px solid rgb(135, 142, 235); */
+  top: 10%;
+  color: #457dd1;
+  
+}
+
+.show_parses{
+  position: relative;
+  float: left;
+  top: 0.5%;
+  font-size: 1.1vw;
+  border-radius: 5px;
+  background: #f3e4f3;
+  width: 100%;
+  height: 7.5%;
+
+}
+#show_parses{
+  position: relative;
+  height: 99%;
+  float: left;
+  padding: 3px;
+  border-radius: 5px;
+  background: rgb(147, 149, 209);
+  font-size: 0.7vw;
+ 
+  color:#ffffff
+
+}
+
+#show_parses:hover{
+  color: #455ad1;
+}
+
+#nth_parse{
+  position: relative;
+  float: left;
+  font-size: 1.1vw;
+  height:99%;
+
+}
+
+
+
+
 .leftmost_toggle{
   position: relative;
   padding: 6px;
@@ -208,6 +261,7 @@ textarea:hover{
   border: 2px solid #457dd1;
   background: #eee;
   top: 12%;
+  left:10%;
   width: 80%;
   font-size: 0.9vw;
 }
@@ -218,10 +272,11 @@ textarea:hover{
 .submit_area{
   position: relative;
   float:left;
-  width: 100%;
-  height: 40%;
+  width: 50%;
+  height: 30%;
   top: 20%;
-  left:2%;
+  left:11%;
+  
   
   
 
@@ -247,8 +302,9 @@ textarea:hover{
   width: 100%;
   height: 15%;
   top: 5%;
+ 
   border-radius: 13px;
-  border: solid 2px rgb(135, 160, 214);
+  border: solid 1px rgb(135, 160, 214);
   overflow: auto;
   background-color: #e3f2fd;
 }
@@ -278,7 +334,8 @@ textarea:hover{
 
   position: relative;
   float:left;
-  padding: 3px;
+  top: 5%;
+  height:75%;
 
 }
 
@@ -286,7 +343,8 @@ textarea:hover{
   position: relative;
   float:left;
   padding: 1px;
-  bottom:1.5%;
+  bottom:2.5%;
+  width: 65%;
 }
 
 #n_parses{
@@ -294,6 +352,10 @@ textarea:hover{
   width: 32%;
   float: left;
   padding: 3px;
+  border-radius: 5px;
+
+  background: rgb(247, 247, 239);
+ 
 
 }
 
@@ -303,10 +365,17 @@ textarea:hover{
   float: left;
   padding: 3px;
   border-radius: 5px;
+  background: rgb(123, 182, 104);
+ 
+  color:snow
+ 
 }
 
+
+
 #submitgrammar:hover{
-  box-shadow: 2px 4px #83aedc;
+  background: rgb(97, 165, 70);
+  color: rgb(26, 86, 141);
   
 }
 

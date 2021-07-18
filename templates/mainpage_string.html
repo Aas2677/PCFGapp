@@ -95,6 +95,7 @@
                
                 
                 <div class = "submit_area">
+                   
                     <div class = "number_parses">
                      {{form.n_parses(class="rounded")}}
                     </div>
@@ -147,11 +148,7 @@
             <span hidden id = "testarr">
                 {{ test_arr }}
             </span>
-            {% if total %}
-            <div  class = "total_probability" id = "total_probability">
-                 The total probability of generating this string is: {{total}}
-            </div>
-            {% endif %}
+
             {% endif %}
             </div>
        
@@ -166,6 +163,11 @@
             
                     <input type = "number" min="1",max="100" id="nth_parse" ,name = "input_a">
                    <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}})"> Show Parse</button>
+                   {% if total %}
+                      <div  class = "total_probability" id = "total_probability">
+                          Total probability: {{total}}
+                     </div>
+                   {% endif %}
                
                     </div>
                 <script src="{{url_for('static', filename='tree.js')}}"></script>
