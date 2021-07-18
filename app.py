@@ -14,10 +14,10 @@ def flash_errors(form):
     """Flashes form errors"""
     for field, errors in form.errors.items():
         for error in errors:
-            flash(u"Error in the %s field - %s" % (
+            flash(u"Error in the %s field - %s." % (
                 getattr(form, field).label.text,
                 error
-            ), 'error')
+            ), '3')
 
 
 
@@ -78,10 +78,16 @@ def string_input():
                    data[i+1] = parses[i]
             
                accepted = True
-               flash("Your sentence is accepted by this grammar")
-           except Exception as e :
+               flash("Your sentence is accepted by this grammar.",'1')
+               if not grammar_object.consistent:
+                   flash(' Warning - your grammar is inconsistent. Parsing can see be carried out, but there will not be a proper probability distribution over parses.','2')
+
+               if grammar_object.ignored_rules:
+                    flash ('Warning - some rules in your grammar were ignored as duplicates or incorrect construction.','2')
+           except Exception as e:
                print(e)
-               flash(f'Your input sentence is not accepted by this grammar ; {e}')
+               
+               flash('Your input sentence is not accepted by this grammar.','3')
                accepted = False
 
 

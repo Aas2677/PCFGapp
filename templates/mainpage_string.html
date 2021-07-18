@@ -46,22 +46,22 @@
 
                <div class = grammar_box>
             
-                <label for="Enter your grammar here">Enter your Grammar</label>
+               
                 <small id="grammar_instructions" class = "form-text text-muted">Read the <a href = "{{url_for('home')}}">about</a> page for syntax and usage information</small>
 
-                      <div>{{ form.grammar()}}</div>
+                      <div>{{ form.grammar(placeholder="Enter your grammar here. Read the home page for syntax directions." )}}</div>
                       </div>
 
             
                 <div class = " sentence_box">
-                <label for="Enter your sentnce here" class = "box_labels">Enter your string or sentence</label>
+             
                 
 
                
                 
 
                       <div>
-                          {{ form.sentence()}}
+                          {{ form.sentence(placeholder="Enter your test string here.")}}
 
                       </div>
                       </div>
@@ -88,7 +88,7 @@
                         </div>
                       </div>
                     
-                        </div>
+                        
                         
    
                
@@ -102,14 +102,23 @@
                 {{ form.submitgrammar() }}
                 </div>
                 </div>
+                </div>
                 <div class = "alert_box">
                     {%with messages = get_flashed_messages(with_categories=true) %}
                       {% if messages %}
+                      <ul>
                       {% for category,message in messages %}
-                      <div class="alert alert-{{ category }}">
-                          {{ message }}
-                      </div>
+                         {% if category == '1'%}
+                         <li class = "alert1" >{{message}}</li>
+                         {% elif category == '2' %}
+                         <li class = "alert2" >{{message}}</li>
+                         {% else %}
+                         <li class = "alert3">{{message}}</li>
+                         {% endif %}
+
+                     
                       {% endfor %}
+                      </ul>
                       {% endif %}
                     {% endwith %}
                 </div>

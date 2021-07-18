@@ -79,6 +79,21 @@ svg{
     border-radius: 8px;
 }
 
+
+ul {
+  padding-left: 2rem;
+ 
+}
+
+ul li {
+  padding-left: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  
+}
+
+
+
 .tree_box{
 
   position: relative;
@@ -126,8 +141,14 @@ textarea {
   resize: none;
   position: relative;
   left :2%;
-
+  background-color: rgb(250, 244, 244);
+  border-radius: 7px;
+  border: 2px solid rgb(135, 142, 235);
   width: 95%;
+}
+
+textarea:hover{
+  box-shadow: 4px 6px #7f84aecd;
 }
 
 
@@ -141,10 +162,22 @@ textarea {
 
     position: relative;
     width: 95%;
-    height: 8%;
-    top:1%;
+    height: 18%;
+    top:3%;
     padding:3px;
     float: left;
+    left: 4%;
+    border-radius: 12px;
+    border: 2px solid rgb(135, 142, 235);
+    background: rgb(248, 242, 236);
+
+}
+
+
+.table_toggles:hover{
+  box-shadow: 4px 6px #7f84aecd;
+
+  
 
 }
 
@@ -186,28 +219,62 @@ textarea {
   position: relative;
   float:left;
   width: 100%;
-  height: 5%;
-  top: 3.5%;
+  height: 40%;
+  top: 20%;
   left:2%;
   
   
 
 }
 
-.alert_box{
-  float:left;
-  width: 100%;
-  height: 20%;
-  top: 90%;
+.grammar_box{
+  position:relative;
+  float: left;
+  padding: 5px;
 }
 
-.alert {
+.sentence_box{
+  position:relative;
+  float: left;
+  padding: 5px;
+  top: 1%;
+
+}
+
+.alert_box{
   position: relative;
-  top: 50%;
+  float:left;
+  width: 100%;
+  height: 15%;
+  top: 5%;
+  border-radius: 13px;
+  border: solid 2px rgb(135, 160, 214);
+  overflow: auto;
+  background-color: #e3f2fd;
+}
+
+.alert1 {
+ 
   font-size: 1vw;
+  color:rgb(137, 197, 72);
+  list-style-type:"\2705"
+}
+
+.alert2 {
+ 
+  font-size: 1vw;
+  color:rgb(177, 172, 96);
+  list-style-type:"\26A0"
+}
+
+.alert3 {
+ 
+  color:rgb(218, 120, 120);
+  font-size: 1vw;
+  list-style-type:"\26D4"
 }
   
-.number_parses:{
+.number_parses: { 
 
   position: relative;
   float:left;
@@ -242,6 +309,13 @@ textarea {
   box-shadow: 2px 4px #83aedc;
   
 }
+
+#grammar_instructions{
+  position:relative;
+  float: left;
+  left:5%;
+}
+
 
 
 

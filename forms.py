@@ -34,9 +34,9 @@ def validate_file(self,grammar):
 
        
 class  TextInputForm(FlaskForm):
-    grammar = TextAreaField('Grammar input', render_kw={"rows": 7, "cols": 50}, validators = [DataRequired(),Length(min=2, max=2000),validate_grammar ]) # add in validators as another argument into stringfield
+    grammar = TextAreaField('Grammar input', render_kw={"rows": 11, "cols": 50}, validators = [DataRequired(),Length(min=2, max=2000),validate_grammar ]) # add in validators as another argument into stringfield
 
-    sentence = TextAreaField('String input ',render_kw={"rows": 7, "cols": 50}, validators = [ DataRequired()])
+    sentence = TextAreaField('String input ',render_kw={"rows": 6, "cols": 50}, validators = [ DataRequired()])
     n_parses  = IntegerField( validators = [DataRequired(),NumberRange(1,100)])
     show_total = BooleanField('Calulcate total probability')
     show_table = BooleanField('Show  leftmost derivation table')
