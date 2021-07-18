@@ -25,13 +25,13 @@
         <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="{{url_for('home')}}">About</a>
-                </li>
-            <li class="nav-item">
-            <a class="nav-link" href="{{url_for('string_input')}}">Free text input mode</a>
+            <a class="nav-link" href="{{url_for('home')}}">About</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" style="color: blue;">File input mode</a>
+                <a class="nav-link" href="{{url_for('string_input')}}">Free text input mode</a>
+                </li>
+            <li class="nav-item">
+                <a class="nav-link" style="color:blue;">File input  mode </a>
                 </li>
         </ul>
         </div>
@@ -43,20 +43,27 @@
         <div class = "main_form_float">
         <form method="POST" action="" class = "main_form" id= "main_form" enctype="multipart/form-data"> 
             {{form.hidden_tag()}}
-            
-                <label for="Enter your grammar here">Enter your Grammar</label>
-                <small id="grammar_instructions" class = "form-text text-muted">Read the <a href = "{{url_for('about')}}">about</a> page for syntax and usage information</small>
 
-                      <div>{{ form.grammar()}}</div>
+               <div class = grammar_box_file>
+            
+               
+                <small id="grammar_instructions" class = "form-text text-muted">Upload your grammar as JSON</small>
+
+                      <div>{{ form.grammar_file()}}</div>
+                      </div>
 
             
-           
-                <label for="Enter your grammar here" class = "box_labels">Enter your string or sentence</label>
-                <small id="grammar_instructions" class = "form-text text-muted"></small>
+                <div class = " sentence_box">
+             
+                
+
+               
+                
 
                       <div>
-                          {{ form.sentence()}}
+                          {{ form.sentence(placeholder="Enter your test string here.")}}
 
+                      </div>
                       </div>
                 
                       <div class="table_toggles">
@@ -81,13 +88,14 @@
                         </div>
                       </div>
                     
-                        </div>
+                        
                         
    
                
                
                 
                 <div class = "submit_area">
+                   
                     <div class = "number_parses">
                      {{form.n_parses(class="rounded")}}
                     </div>
@@ -95,14 +103,23 @@
                 {{ form.submitgrammar() }}
                 </div>
                 </div>
+                </div>
                 <div class = "alert_box">
                     {%with messages = get_flashed_messages(with_categories=true) %}
                       {% if messages %}
+                      <ul>
                       {% for category,message in messages %}
-                      <div class="alert alert-{{ category }}">
-                          {{ message }}
-                      </div>
+                         {% if category == '1'%}
+                         <li class = "alert1" >{{message}}</li>
+                         {% elif category == '2' %}
+                         <li class = "alert2" >{{message}}</li>
+                         {% else %}
+                         <li class = "alert3">{{message}}</li>
+                         {% endif %}
+
+                     
                       {% endfor %}
+                      </ul>
                       {% endif %}
                     {% endwith %}
                 </div>
@@ -131,11 +148,7 @@
             <span hidden id = "testarr">
                 {{ test_arr }}
             </span>
-            {% if total %}
-            <div  class = "total_probability" id = "total_probability">
-                 The total probability of generating this string is: {{total}}
-            </div>
-            {% endif %}
+
             {% endif %}
             </div>
        
@@ -150,6 +163,11 @@
             
                     <input type = "number" min="1",max="100" id="nth_parse" ,name = "input_a">
                    <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}})"> Show Parse</button>
+                   {% if total %}
+                      <div  class = "total_probability" id = "total_probability">
+                          Total probability: {{total}}
+                     </div>
+                   {% endif %}
                
                     </div>
                 <script src="{{url_for('static', filename='tree.js')}}"></script>

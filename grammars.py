@@ -280,6 +280,7 @@ class ProbabilisticGrammar:
            start = NonTerminal(data["start_symbol"])
        except Exception as e:
             print("fuck me ")
+            print(e)
             return grammarerrors.JSONFileError(f'{e}')
 
 

@@ -151,6 +151,10 @@ textarea:hover{
   box-shadow: 4px 6px #7f84aecd;
 }
 
+.grammar_box_file:hover{
+  box-shadow: 4px 6px #7f84aecd;
+}
+
 
 #tesha{
   position: relative;
@@ -288,6 +292,29 @@ textarea:hover{
   padding: 5px;
 }
 
+
+
+.grammar_box_file{
+  position: relative;
+  float: left;
+  padding: 5px;
+  width: 80%;
+  left: 3%;
+ 
+  border-radius: 10px;
+  border: 2px solid #457dd1;
+
+
+}
+
+#grammar_file{
+  position: relative;
+  float:left;
+  padding: 5px;
+  left:2%;
+
+}
+
 .sentence_box{
   position:relative;
   float: left;
@@ -385,7 +412,19 @@ textarea:hover{
   left:5%;
 }
 
+.navbar-brand{
+  position: relative;
+  top: 10%;
+  left: 7%;
+  
+}
 
+#navbarNav{
+
+  position: relative;
+  left: 7%;
+
+}
 
 
 

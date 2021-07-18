@@ -36,7 +36,7 @@ def validate_file(self,grammar):
 class  TextInputForm(FlaskForm):
     grammar = TextAreaField('Grammar input', render_kw={"rows": 15, "cols": 50}, validators = [DataRequired(),Length(min=2, max=2000),validate_grammar ]) # add in validators as another argument into stringfield
 
-    sentence = TextAreaField('String input ',render_kw={"rows": 6, "cols": 50}, validators = [ DataRequired()])
+    sentence = TextAreaField('String input ',render_kw={"rows": 6, "cols": 50}, validators = [ DataRequired(),validate_file])
     n_parses  = IntegerField( validators = [DataRequired(),NumberRange(1,100)])
     show_total = BooleanField('Calulcate total probability')
     show_table = BooleanField('Show  leftmost derivation table')
@@ -44,9 +44,9 @@ class  TextInputForm(FlaskForm):
 
 
 class  FileInputForm(FlaskForm):
-    grammar = FileField('Grammar file input' , validators = [FileAllowed(['json'], '.json files only') ]) # add in validators as another argument into stringfield
+    grammar_file = FileField('Grammar file input' , validators = [FileRequired(),FileAllowed(['json'], '.json files only') ]) # add in validators as another argument into stringfield
 
-    sentence = TextAreaField('Input your test sentence here',render_kw={"rows": 7, "cols": 50}, validators = [ FileRequired(),FileAllowed(['json'],'JSON files only')])
+    sentence = TextAreaField('Input your test sentence here',render_kw={"rows": 7, "cols": 50}, validators = [ DataRequired()])
     n_parses  = IntegerField( validators = [DataRequired(),NumberRange(1,100)])
     show_total = BooleanField('Would you like to calculae the total probability of this sentence?')
     show_table = BooleanField('Show derivation table')
