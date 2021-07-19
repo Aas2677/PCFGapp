@@ -1,7 +1,7 @@
 from itertools import combinations,product
 from os import error
-import grammars 
-import grammarerrors
+import application.main.grammars as grammars
+import application.main.grammarerrors as grammarerrors 
 import itertools 
 import timeit 
 import time 

@@ -1,6 +1,6 @@
 
-import grammarerrors 
-import aux 
+import application.main.grammarerrors as grammarerrors
+import application.main.aux as aux 
 from collections import defaultdict
 import math
 import json 
@@ -279,9 +279,9 @@ class ProbabilisticGrammar:
            terminals = data["terminals"]
            start = NonTerminal(data["start_symbol"])
        except Exception as e:
-            print("fuck me ")
-            print(e)
-            return grammarerrors.JSONFileError(f'{e}')
+           
+            
+            raise grammarerrors.JSONFileError(f'{e}')
 
 
        # create  terminal/ nonterminal  alphabet
@@ -344,7 +344,7 @@ class ProbabilisticGrammar:
 
                        
             except Exception as e :
-                print(e)
+                
                 ignored_rules = True 
                 continue
                 
@@ -449,22 +449,22 @@ class ProbabilisticGrammar:
 
         # CNF prohibits empty producitons 
         if empty:
-            print('empty',rhs)
+           
             return False 
 
         # singleton rules can't have a nonterminal lhs 
         if length == 1:
             if not types[0] == Terminal:
-                print('1',rhs)
+                
                 return False
         
         if length == 2:
             if not all([atom_type == NonTerminal for atom_type in types]):
-                print('2',rhs)
+               
                 return False 
 
         if length > 2:
-            print('2+',rhs)
+            
             return False 
         
         # checks passed 

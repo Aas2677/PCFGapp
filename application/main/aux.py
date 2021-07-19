@@ -1,6 +1,6 @@
 from math import prod
 import re
-import grammarerrors
+import application.main.grammarerrors as grammarerrors
 
 
 
