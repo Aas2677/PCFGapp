@@ -39,6 +39,7 @@ class Terminal:
 
 
     def get_token(self):
+        # token access 
         return self._token
 
 
