@@ -31,7 +31,6 @@ svg {
 
 
 
-
   
 
 
@@ -136,7 +135,7 @@ ul li {
 
 
 
-textarea {
+textarea{
   float:left;
   resize: none;
   position: relative;
@@ -145,6 +144,7 @@ textarea {
   border-radius: 7px;
   border: 2px solid rgb(135, 142, 235);
   width: 95%;
+
 }
 
 textarea:hover{

@@ -49,7 +49,8 @@
                
                 <small id="grammar_instructions" class = "form-text text-muted">Read the <a href = "{{url_for('main.home')}}">about</a> page for syntax and usage information</small>
 
-                      <div>{{ form.grammar(placeholder="Enter your grammar here. Read the home page for syntax directions." )}}</div>
+                      <div>{{ form.grammar(placeholder="Enter your grammar.\nRules should be entered with the nonterminal on the left followed by an arrow '->' followed by the expansion and the probability in square brackets. Each alternative rule can be added using the '|' symbol or seperateley.\nThe grammar must be in Chomsky normal form, as in the example below:\n\n\nS -> A B [0.5],\nA -> A A [0.2] | many [0.8],\nB -> C D [1.0],\nC -> pixels [0.5] | cars [0.5],\nD -> quickly [1.0]\n\nThe left hand side of the first rule is assumed to be the start symbol.\n
+                " )}}</div>
                       </div>
 
             
@@ -61,7 +62,7 @@
                 
 
                       <div>
-                          {{ form.sentence(placeholder="Enter your test string here.")}}
+                          {{ form.sentence(placeholder="Enter your test string here.\nSpaces are used to delimit each token to be evaluated, so if your grammar defined words rather than sentences, you must still put a space in between each token.\nIf you grmmar includes a space in its terminal alphabet, this should be replaced with a different marker character. ")}}
 
                       </div>
                       </div>
