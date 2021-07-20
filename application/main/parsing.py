@@ -261,7 +261,7 @@ class ProbabilisticCYKParser:
             try:
                 self.next_tree(self._n_best_dict[0,length-1,self._grammar.start._token][k-2],k)
             except IndexError:
-                print("There aren't that many parses")
+            
                 break 
             
         

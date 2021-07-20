@@ -27,10 +27,9 @@ def validate_file(self,grammar_file):
     # Cannot use. Reads json byte stream so it cannnot be read again by the route function. validation must be done by the route function. 
   
     try:
-        print(grammar_file.data)
-        print(sys.getsizeof(grammar_file))
+       
         formal_grammar = ProbabilisticGrammar.from_json(grammar_file.data)
-        print(formal_grammar.alphabet)
+
         if not formal_grammar.CNF:
             
            

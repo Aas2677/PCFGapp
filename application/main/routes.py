@@ -87,7 +87,7 @@ def string_input():
 
                if grammar_object.ignored_rules:
                     flash ('Warning - some rules in your grammar were ignored as duplicates or incorrect construction.','2')
-                    
+
                # set number of parses to number actually generated 
                number_of_parses = len(parses)
            except Exception as e:
@@ -123,10 +123,10 @@ def file_input():
            try:
                
                grammar = form.grammar_file.data
-               print(sys.getsizeof(grammar))
+               
                
                sentence = str(form.sentence.data).strip('\n')
-               print(sentence)
+            
                number_of_parses = int(form.n_parses.data)
                total_needed = form.show_total.data
                table_needed = form.show_table.data 
