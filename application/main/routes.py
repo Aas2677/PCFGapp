@@ -43,7 +43,7 @@ def string_input():
        number_of_parses = False   
        if form.validate_on_submit():
            grammar = re.sub('\n','', re.sub('\r','',str(form.grammar.data)))
-           sentence = str(form.sentence.data).strip('\n')
+           sentence = re.sub('\n','', re.sub('\r','',str(form.sentence.data)))
            number_of_parses = int(form.n_parses.data)
            total_needed = form.show_total.data
            table_needed = form.show_table.data 
@@ -126,7 +126,8 @@ def file_input():
                grammar = form.grammar_file.data
                
                
-               sentence = str(form.sentence.data).strip('\n')
+               
+               sentence = re.sub('\n','', re.sub('\r','',str(form.sentence.data)))
             
                number_of_parses = int(form.n_parses.data)
                total_needed = form.show_total.data
@@ -138,7 +139,10 @@ def file_input():
                grammar_object = ProbabilisticGrammar.from_json(grammar)
                parser = ProbabilisticCYKParser(grammar_object)
 
-               if grammar_object.CNF:
+               # check the number of rules in the grammar 
+               number_of_rules  = len(grammar_object.collapsed_rules)
+
+               if grammar_object.CNF and number_of_rules <= 200:
                   
 
                    try:
@@ -181,12 +185,18 @@ def file_input():
                        # set number of parses to number actually generated 
                        number_of_parses = len(parses)
                    except Exception as e :
+                       print(e)
                   
                        flash('Your input sentence is not accepted by this grammar.','3')
                        accepted = False
                     
                else:
-                   flash("Your grammar is not in chomksy normal form, refer to the guide for more informmation.",'3')
+                   if not grammar_object.CNF:
+
+                       flash("Your grammar is not in chomksy normal form, refer to the guide for more informmation.",'3')
+                   if number_of_rules > 200:
+                       flash(f'The maximum grammar size is 200, meaning you cant have more than 200 rules. Your grammar has {number_of_rules} rules.')
+
 
            except Exception as e:
                flash(f'There is a problem with your JSON file structure. Please read the structure guide:{e}','3')

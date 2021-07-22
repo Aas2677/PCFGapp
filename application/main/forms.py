@@ -18,6 +18,10 @@ def validate_grammar(self,grammar):
 
     try:
         formal_grammar = ProbabilisticGrammar.from_string(string_representation_1)
+        number_of_rules  = len(formal_grammar.collapsed_rules)
+
+        if number_of_rules > 200:
+            raise ValidationError(f'The maximum grammar size is 200, meaning you cant have more than 200 rules. Your grammar has {number_of_rules} rules.')
         
         if not formal_grammar.CNF:
             
@@ -41,11 +45,20 @@ def validate_file(self,grammar_file):
        
         raise ValidationError(f'There is an error in your JSON file structure: {e}')
 
+
+def validate_sentence(self,sentence):
+    
+    sentence_data = re.sub('\n','', re.sub('\r','',str(sentence.data))).split(' ')
+
+    if len(sentence_data) > 80:
+        raise ValidationError(f'The size limit for test strings is 80, your test string has length {len(sentence_data)}')
+
+
        
 class  TextInputForm(FlaskForm):
     grammar = TextAreaField('Grammar input', render_kw={"rows": 10, "cols": 50}, validators = [DataRequired(),Length(min=2, max=2000),validate_grammar ]) # add in validators as another argument into stringfield
 
-    sentence = TextAreaField('String input ',render_kw={"rows": 6, "cols": 50}, validators = [ DataRequired()])
+    sentence = TextAreaField('String input ',render_kw={"rows": 6, "cols": 50}, validators = [ DataRequired(),validate_sentence])
     n_parses  = IntegerField( validators = [DataRequired(),NumberRange(1,100)])
     show_total = BooleanField('Calulcate total probability')
     show_table = BooleanField('Show  leftmost derivation table')
@@ -55,7 +68,7 @@ class  TextInputForm(FlaskForm):
 class  FileInputForm(FlaskForm):
     grammar_file = FileField('Grammar file input' , validators = [FileRequired(),FileAllowed(['json'], '.json files only')]) # add in validators as another argument into stringfield
 
-    sentence = TextAreaField('Input your test sentence here',render_kw={"rows": 7, "cols": 50}, validators = [ DataRequired()])
+    sentence = TextAreaField('String input',render_kw={"rows": 7, "cols": 50}, validators = [ DataRequired(),validate_sentence])
     n_parses  = IntegerField( validators = [DataRequired(),NumberRange(1,100)])
     show_total = BooleanField('Would you like to calculae the total probability of this sentence?')
     show_table = BooleanField('Show derivation table')

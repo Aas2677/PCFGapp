@@ -308,6 +308,7 @@ textarea:hover{
   overflow: auto;
   font-size: 0.9vw;
   text-align: justify;
+  background: rgb(248, 242, 236);
 }
 
 
@@ -359,6 +360,7 @@ textarea:hover{
   border: 2px solid rgb(135, 142, 235);
   background: #ffffff;
   overflow: auto;
+  background: rgb(248, 242, 236);
   
 
 }
@@ -374,6 +376,20 @@ textarea:hover{
   border: solid 1px rgb(135, 160, 214);
   overflow: auto;
   background-color: #e3f2fd;
+}
+
+.alert_box_home{
+  position: relative;
+  float:left;
+  width: 100%;
+  height: 25%;
+  top: 5%;
+ 
+  border-radius: 13px;
+  border: solid 1px rgb(135, 160, 214);
+  background: rgb(248, 242, 236);overflow: auto;
+  overflow: auto;
+
 }
 
 .alert1 {
