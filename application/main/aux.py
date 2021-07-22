@@ -1,4 +1,4 @@
-from math import prod
+
 import re
 import application.main.grammarerrors as grammarerrors
 
@@ -13,9 +13,10 @@ def parse_string(input,separator = ","):
     start = "S"
     try:
         for rule in separated_input:
-        
+           
            # get lHS and RHS 
            left,right = rule.split('->')
+          
         
            # Remove spaces from the LHS 
            left = re.sub(r"\s+", "",left, flags=re.UNICODE) 
@@ -39,6 +40,7 @@ def parse_string(input,separator = ","):
 
                # check to make sure only one probability is given
                probabilities = probability_pattern.findall(product)
+               
                if len(probabilities) != 1:
                    pass
             
@@ -52,7 +54,7 @@ def parse_string(input,separator = ","):
                    product =  list(filter(lambda x : x != '' and x != '\r\n' and x != '\r' and x != '\n',(re.sub(probability_strip,"",product)).split(" ")))
                 #    print(product)
                    product = [re.sub('\n','', re.sub('\r','',item))for item in product]
-                #    print(product)
+                   
                   
 
 
@@ -69,6 +71,7 @@ def parse_string(input,separator = ","):
                     # If the characters inside the brackets are non-numerical, then discard the production entirely
                        pass 
     except Exception as e:
+        
         raise grammarerrors.StringInputException("Please read the information page and follow the grammar input rules")
 
     

@@ -53,6 +53,7 @@ svg {
   float : left;
   width : 27vw; 
   height : 100vh;
+  overflow: hidden;
 
   
 
@@ -99,7 +100,7 @@ ul li {
   padding: 3px;
   float : left;
   width : 70%; 
-  height : 50%;
+  height : 53%;
   background: #f3e4f3;
   border: solid 2px rgb(141, 141, 213);
   border-radius: 8px;
@@ -114,7 +115,7 @@ ul li {
   float: left;
   padding: 3px;
   width: 70%;
-  height: 53.5%;
+  height: 51.5%;
   border: solid 2px rgb(141, 141, 213);
   border-radius: 8px;
   top: 0.7%;
@@ -129,7 +130,7 @@ ul li {
   background: #e3f2fd;
   border: solid 2px rgb(141, 141, 213);
   border-radius: 8px;
-
+  overflow: auto;
 
 }
 
@@ -174,6 +175,7 @@ textarea:hover{
     border-radius: 12px;
     border: 2px solid rgb(135, 142, 235);
     background: rgb(248, 242, 236);
+    overflow:auto;
 
 }
 
@@ -292,6 +294,25 @@ textarea:hover{
   padding: 5px;
 }
 
+.grammar_box_home{
+  position:relative;
+  float: left;
+  left: 3%;
+  top: 1%;
+  padding: 5px;
+  height: 30%;
+  width: 90%;
+  border-radius: 10px;
+  border: 2px solid rgb(135, 142, 235);
+  background: #ffffff;
+  overflow: auto;
+  font-size: 0.9vw;
+  text-align: justify;
+}
+
+
+
+
 
 
 .grammar_box_file{
@@ -312,6 +333,9 @@ textarea:hover{
   float:left;
   padding: 5px;
   left:2%;
+  width: 80%;
+  font-size: 0.7vw;
+
 
 }
 
@@ -323,11 +347,27 @@ textarea:hover{
 
 }
 
+.sentence_box_home{
+  position:relative;
+  float: left;
+  left: 3%;
+  top: 1.5%;
+  padding: 5px;
+  height: 30%;
+  width: 90%;
+  border-radius: 10px;
+  border: 2px solid rgb(135, 142, 235);
+  background: #ffffff;
+  overflow: auto;
+  
+
+}
+
 .alert_box{
   position: relative;
   float:left;
   width: 100%;
-  height: 15%;
+  height: 25%;
   top: 5%;
  
   border-radius: 13px;
@@ -423,6 +463,7 @@ textarea:hover{
 
   position: relative;
   left: 3%;
+  font-family: 'Titillium Web', sans-serif;
 
 }
 

@@ -788,31 +788,17 @@ class DerivationBuilder:
 
     def build_leftmost_derivation(self):
 
-        # The first 2 entries of the parse table need to be created just from the root node, then we can recurse 
-
-
-
-        
-        # instantiate inner dict
-        self.table[0] = {}
 
         rule = self.tree["rule"]
-        self.table[0]["nonterminal"] = "Not applicable"
-        self.table[0]["rule"]  = "Not applicable"
-        self.table[0]["probability"] = 1
-        self.table[0]["rule_rank"] = "Not applicable"
-        self.current_string = f'{self.tree["name"]}'
-        self.table[0]["current_string"] = self.current_string
-        self.step += 1
 
-        self.table[1] = {}
+        self.table[0] = {}
 
 
        
-        self.table[1]["nonterminal"] = str(self.tree["name"])
-        self.table[1]["rule"]  = str(rule)
-        self.table[1]["probability"] = self.tree["rule_probability"]
-        self.table[1]["rule_rank"] = self.rules[self.tree["name"]].index(rule)+1 
+        self.table[0]["nonterminal"] = str(self.tree["name"])
+        self.table[0]["rule"]  = str(rule)
+        self.table[0]["probability"] = self.tree["rule_probability"]
+        self.table[0]["rule_rank"] = self.rules[self.tree["name"]].index(rule)+1 
         if len(rule) == 1:
             self.current_string = f'{rule._right[0]}'
         else:
@@ -820,7 +806,7 @@ class DerivationBuilder:
         
 
       
-        self.table[1]["current_string"] = self.current_string
+        self.table[0]["current_string"] = self.current_string
         self.step += 1
 
         

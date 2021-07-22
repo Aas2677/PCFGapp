@@ -6,6 +6,9 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
         <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Titillium+Web&display=swap" rel="stylesheet">
 
      
        
@@ -16,7 +19,7 @@
     <body>
 
         <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #b7d5eb;">
-        <a class="navbar-brand" href="#">PCFG Explorer</a>
+        <a class="navbar-brand" style="font-family: 'Titillium Web', sans-serif; font-size: 1.2vw;" href="#">Grammar Explorer</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
@@ -38,36 +41,148 @@
         <div class =  "float_container_main">
            
 
-        <div class = "main_form_float">
-        <form action="" class = "main_form" id= "main_form"> 
-           
-            
-        
-        </form>
-       
-        </div>
-        
-
-       
-
-        <div class = top_parse_bar>
-           
-            </div>
-       
-
-
-            
-            <div class = "tree_box">
-
+            <div class = "main_form_float">
+            <form method="POST" action="" class = "main_form" id= "main_form"> 
                
+    
+                   <div class = grammar_box_home>
 
+                    <h5 style="color: rgb(10, 10, 192);">Constructing your grammar</h5>
+                    <p>This is the area for inputting your context-free grammar.
+                    This can be done either as a <a href="{{url_for('main.string_input')}}">free text input</a>, or as a <a href="{{url_for('main.file_input')}}">JSON file input</a>.</p> 
+
+                    
+                    <p> This tool expects grammars to be input in Chomsky normal form, meaning all rules should be of the form:
+                        A → BC ( an expsnion rule),   or
+                        A → a, (a terminal rule)
+
+                        Where A,B,C are non terminals and a is a terminal.Empty production rules are not permitted. 
+                    </p>
+                    <p>
+                        <h6 style="color: rgb(10, 10, 192);">Free text input mode</h6>
+                        The <a href="{{url_for('main.string_input')}}">free text input mode</a> is designed to be the most flexible option.
+                        Your grammar is interpreted simply from the rules you enter, details of the syntax can be found in the intruction box on the text input mode page.
+                        There is an example file <a href="static/example.json" download>here</a>
+                    </p>
+                    <p>
+                        <h6 style="color: rgb(10, 10, 192);">File input mode</h6>
+                        The <a href="{{url_for('main.file_input')}}">File input mode</a> accepts grammars as a structured file input, where all elements of the grammar are explicitly specified.
+                        There is an example grammar file  <a href="static/example.txt" download>here</a> for you to observe the structure of the file inputs expected and to try exploring the features of the tool.
+                        Simply paste the contents of the text file into the grammar box.
+                    </p>
+                   
+
+                
+                   
+                     
+                          </div>
+    
+                
+                    <div class = "sentence_box_home">
+                        <p>
+                            <h5 style="color: rgb(10, 10, 192);">Test strings and sentences</h5>
+                            To test an input sentence or string, simply type it in this box. The parser needs to know
+                            how terminal sybols are delimited, so it assumes that spaces between inputs delimit them. If 
+                            you are using a grammar that defines words rather then sentences, then you will need to seperate 
+                            letters in your test word with a space. If you are using a grammar where a space is a terminal character,
+                            then you will need to replace this with some other special character. At a precaution at this time, the maximum length of string the parser
+                            will accept is 80.
+                           
+                            
+                        </p>
+    
+                 
+                    
+    
+                   
+                    
+    
+                         
+                          </div>
+                    
+                          <div class="table_toggles">
+                            <p>
+                                <h5 style="color: rgb(10, 10, 192);">Parser options and submit</h5>
+                                <h6 style="color: rgb(10, 10, 192);">Number of parses</h6>
+                                <p>
+                                This tool is designed to parse the n-best parses of a test string. The number input box here asks 
+                                how many parses you would like to find  for your test string. As an example if you ask for 5 parses,
+                                the parser will find the 5 most likely parses for that string and return them in order of likelihood.
+                                In the case that there are less possible parses than you ask for, then the parser will simply find all
+                                the possible parses in order of probability. The maximum number of parses you can request for a string is 100. 
+                                </p>
+                                <p>
+                                 <h6 style="color: rgb(10, 10, 192);">Total probability</h6>
+
+                                 Regardless of how many parses you ask to visualise, you can ask to find the total probability 
+                                 that your grammar generates the string. This is a summation of all the possible parses of that string.
+                                 This feature is especially useful for highly ambiguous grammars where a sentence could have 100s of possible parses.
+
+                                </p>
+                                <p>
+                                    <h6 style="color: rgb(10, 10, 192);">Leftmost Derivations</h6>
+   
+                                    By default, the parser will generate the parse trees for your parses. As an option you can also
+                                    generate the corresponding leftmost derivation tables for those parses.
+                                   
+   
+                                   </p>
+   
+
+                                
+                            </p>
+        
+    
+                            
+    
+                         
+                         </div>
+                    <div class = "alert_box">
+                        <p>
+                            <h6 style="color: rgb(10, 10, 192);">Errors and warnings</h6>
+
+                            <p>
+
+                            The parser is designed to easy to use. If there are errors in your grammar text or file input,
+                            then the parser will attempt to ignore certain rules where errors occur and then warn the user. 
+                            If this is not possible due to multipule errors in the input format, then the user will be warned that 
+                            their input cannot be parsed.
+                            </p>
+                            <p>
+
+                            </p>
+                           
+
+                           </p>
+
+                        
+                    </div>
+            </form>
+           
             </div>
-
-                <div class = "table_box", id="table_box">
-
+            
+    
+           
+    
+            <div class = top_parse_bar>
+              
                 </div>
-
-            </div>
+           
+    
+    
+                
+                <div class = "tree_box">
+    
+                    
+                    
+    
+                </div>
+    
+                    <div class = "table_box", id="table_box">
+    
+                    </div>
+    
+                </div>
            
           
         

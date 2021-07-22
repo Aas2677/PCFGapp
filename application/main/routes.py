@@ -7,6 +7,7 @@ from flask import url_for,render_template,flash,redirect,g,abort,request,current
 from flask import Blueprint 
 import json
 import sys 
+import re 
 
 main = Blueprint('main',__name__)
 
@@ -41,7 +42,7 @@ def string_input():
        tables = 0
        number_of_parses = False   
        if form.validate_on_submit():
-           grammar = str(form.grammar.data).strip('\n')
+           grammar = re.sub('\n','', re.sub('\r','',str(form.grammar.data)))
            sentence = str(form.sentence.data).strip('\n')
            number_of_parses = int(form.n_parses.data)
            total_needed = form.show_total.data

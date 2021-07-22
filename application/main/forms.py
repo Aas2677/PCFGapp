@@ -5,16 +5,19 @@ from wtforms.validators import DataRequired,ValidationError,Length,NumberRange
 from application.main.grammars import ProbabilisticGrammar
 import application.main.grammarerrors as grammarerrors
 import sys 
+import re
 
 def validate_grammar(self,grammar):
     
     # Makes a preliminary validation check on the grammar input fle to make sure that passing it to the parsing structures is safe --- Does not generate noncritical warnings -- 
 
+    string_representation_1 =  product = re.sub('\n','', re.sub('\r','',grammar.data))
     string_representation = str(grammar.data).strip('\n')
+   
 
 
     try:
-        formal_grammar = ProbabilisticGrammar.from_string(string_representation)
+        formal_grammar = ProbabilisticGrammar.from_string(string_representation_1)
         
         if not formal_grammar.CNF:
             

@@ -1,0 +1,12 @@
+{
+    "start_symbol": "S",
+    "non_terminals": ["S","NP","VP","N","V","P","PP","Det"],
+    "terminals": ["time","flies","like","an","arrow"],
+    "rules": [{"nonterminal":"S","expansion":["NP","VP"],"probability":0.5}, {"nonterminal":"S","expansion":["S","PP"],"probability":0.25},{"nonterminal":"S","expansion":["V","NP"],"probability":0.05},{"nonterminal":"S","expansion":["V","PP"],"probability":0.1},
+              {"nonterminal":"S","expansion":["flies"],"probability":0.04},{"nonterminal":"S","expansion":["like"],"probability":0.04},{"nonterminal":"S","expansion":["arrow"],"probability":0.02},{"nonterminal":"VP","expansion":["V","NP"],"probability":0.2},
+              {"nonterminal":"VP","expansion":["V","PP"],"probability":0.4},{"nonterminal":"VP","expansion":["flies"],"probability":0.16},{"nonterminal":"VP","expansion":["like"],"probability":0.16},{"nonterminal":"VP","expansion":["time"],"probability":0.08},
+              {"nonterminal":"NP","expansion":["Det","N"],"probability":0.4},  {"nonterminal":"NP","expansion":["N","N"],"probability":0.1},  {"nonterminal":"NP","expansion":["NP","PP"],"probability":0.1},  {"nonterminal":"NP","expansion":["arrow"],"probability":0.16},
+                {"nonterminal":"NP","expansion":["flies"],"probability":0.08},{"nonterminal":"NP","expansion":["time"],"probability":0.16},{"nonterminal":"PP","expansion":["P","NP"],"probability":1.0},{"nonterminal":"N","expansion":["arrow"],"probability":0.4},
+                {"nonterminal":"N","expansion":["flies"],"probability":0.2},{"nonterminal":"N","expansion":["time"],"probability":0.4},{"nonterminal":"V","expansion":["flies"],"probability":0.4},{"nonterminal":"V","expansion":["like"],"probability":0.4},
+                {"nonterminal":"V","expansion":["time"],"probability":0.2},{"nonterminal":"P","expansion":["like"],"probability":1.0},{"nonterminal":"Det","expansion":["an"],"probability":0.4}]
+              }

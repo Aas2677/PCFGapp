@@ -1,0 +1,8 @@
+ S -> NP VP [0.5]| S PP [0.25]|V NP [0.05] | V PP [0.1] | flies [0.04] | like [0.04] | time [0.02],
+ VP -> V NP [0.2] | V PP [0.4] | flies [0.16]| like [0.16] | time [0.08],
+ NP -> Det N [0.4]| N N [0.1]| NP PP [0.1]| arrow [0.16] | flies [0.08] | time [0.16],
+ PP -> P NP [1.0],
+ N -> arrow [0.4]| flies [0.2]| time [0.4],
+ V -> flies [0.4] | like [0.4] | time [0.2],
+ P -> like [1.0],
+ Det -> an [1.0]
