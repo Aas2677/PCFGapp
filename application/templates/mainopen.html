@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="icon" href="{{ url_for('static', filename='makeicon.png') }}">
         <!-- bootstrap,custom and tabulator stylesheets -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
@@ -36,6 +37,7 @@
                 </li>
         </ul>
         </div>
+        
         </nav>
             
         <div class =  "float_container_main">
@@ -74,6 +76,15 @@
                         <h6 style="color: rgb(10, 10, 192);">Grammar size</h6>
                         Currently the maximum grammar size you can input is 200. This means the grammar cannot have more than 200 rules.
                     </p>
+                    <p>
+                        <h6 style="color: rgb(10, 10, 192);">Non-probabilistic grammars</h6>
+                        The tool allows you to toggle between probabilisitc and non-probabilistic grammars. If you choose to use non-probabilistic grammars then the syntax for the free text input is 
+                        identical to the probabilisitc mode, you without entering the probabilities. For file inputs, there is no difference at all in file structure, the parser simply won't read the 
+                        rule probability field in the JSON file. In non-probabilistic mode, the tool operates as a standard parser and will simply return the number of parses you ask for, in a random order. All probability 
+                        information is removed. The non-probabilistic mode is useful for exploring grammar ambiguity without wanting to consider how probable different parses of the same sentence are. If you'd like to try using the tool in 
+                        non-probabilistic mode, the example grammar JSON file will work unedited.
+                    </p>
+                   
                    
 
                 
@@ -215,7 +226,7 @@
                         <h5 style="color: rgb(10, 10, 192);">Parse trees</h5>
 
                         Once your grammar and test sentence have been submitted, you can view the parse trees here. If your grammar is probabilisitc then the parse number in the top left 
-                        refers to the probability ranking of the parse. You can zoom or scroll on the tree and can collapse or expand nodes by clicking on them. Hovering on a node shows information 
+                        refers to the probability ranking of the parse, otherwise it is simply a random ordering of parses. You can zoom or scroll on the tree and can collapse or expand nodes by clicking on them. Hovering on a node shows information 
                         about that node, including the rule used and the probability of that sub-tree. The cumulative probability of root node therefore shows the overall probability of that parse tree.
                         If you asked for the total probability, then the total probability over all parses wil be displayed in the top left corner. If your grammar is non-probabiistic then the information
                         regarding probabilities will not appear.The derivation step number for each node associates that node with 
@@ -242,7 +253,7 @@
                             If you have asked for leftmost derivation tables, they will appear in this area. The derivation table always corresponds to the parse tree, so to see the derivation 
                             of different parses, you use the button in the parse tree area to reload a different parse. The purpose of the leftmost derivation table is to link each step in the 
                             derivation to the parse tree and to show the working string changing in each step. If you grammar is probabilistic the table will show the probability of the rules used 
-                            as well as the ranking of that rule among all rules with the same nonterminal.
+                            as well as the ranking of that rule among all rules with the same nonterminal. In non-probabilisitc mode, all fields relating to probability are stripped out.
     
                            
     
