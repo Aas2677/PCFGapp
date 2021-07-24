@@ -84,9 +84,9 @@ class NonTerminal:
 
 class ProductionRule:
 
-    def __init__(self,left,right,probability):
+    def __init__(self,left,right,probability,probabilistic=True):
 
-        __slots__ = '_left','_right','_probability'
+        __slots__ = '_left','_right','_probability','_probabilistic'
 
         if not isinstance(left, NonTerminal):
             # Make sure left hand side is a non-terminal symbol 
@@ -96,6 +96,7 @@ class ProductionRule:
         self._left = left 
         self._right = right 
         self._probability = probability 
+        self._probabilistic = probabilistic
       
 
     
@@ -117,12 +118,21 @@ class ProductionRule:
         return not self == other 
 
     def __str__(self) -> str:
-
-        # f'{self._left} -> {self._right} -- [{self._probability}]'
-        if len(self._right) ==1:
-            return f'{self._left} → {self._right[0]} ({round(math.exp( -1* self._probability),3)})'
+        
+        if self._probabilistic:
+             if len(self._right) ==1:
+                return f'{self._left} → {self._right[0]} ({round(math.exp( -1* self._probability),3)})'
+             else:
+                return  f'{self._left} → {self._right[0],self._right[1]} ({round(math.exp( -1* self._probability),3)})'
         else:
-            return  f'{self._left} → {self._right[0],self._right[1]} ({round(math.exp( -1* self._probability),3)})'
+            if len(self._right) ==1:
+                return f'{self._left} → {self._right[0]}'
+            else:
+                return  f'{self._left} → {self._right[0],self._right[1]}'
+
+
+       
+       
 
 
         
@@ -166,7 +176,7 @@ class ProbabilisticGrammar:
 
     """ class to represent a probabilistic context-free grammar"""
 
-    def __init__(self,processed_rules,collapsed_rules,processed_rules_log,collapsed_rules_log,nonterminals,alphabet,bad_rules = False,start = NonTerminal('S'), tolerance = 0.02):
+    def __init__(self,processed_rules,collapsed_rules,processed_rules_log,collapsed_rules_log,nonterminals,alphabet,bad_rules = False,start = NonTerminal('S'), tolerance = 0.02,probabilistic=True):
         # initially set CNF check to true 
         self.CNF = True 
         self.consistent = True 
@@ -177,8 +187,7 @@ class ProbabilisticGrammar:
         self.token_nonterminals = [atom._token for atom in self.nonterminals]
         self.alphabet = alphabet
         self.tolerance = tolerance
-        self.check_CNF()
-        self.check_consistency()
+        self.ignored_rules = bad_rules 
         self.collapsed_rules = collapsed_rules
         self.collapsed_rules_log = collapsed_rules_log 
         self.expansion_rules  = [rule for rule in self.collapsed_rules if len(rule.get_right()) == 2]
@@ -194,6 +203,11 @@ class ProbabilisticGrammar:
         self.expansion_lhs_lookup = self.make_lookup(2)
         self.expansion_lhs_lookup_logs = self.make_lookup(2,logs=True)
         self.ignored_rules = bad_rules 
+        
+
+        # If the grammar is probabilistic then check the consistency
+        if probabilistic:
+           self.check_consistency()
        
       
 
@@ -203,9 +217,13 @@ class ProbabilisticGrammar:
     
 
     @classmethod 
-    def from_string(cls,input):
+    def from_string(cls,input,probabilistic=True):
        # function to generate a grammar from a string input 
-       rules, non_terminals,start = aux.parse_string(input)
+       if probabilistic:
+          rules, non_terminals,start = aux.parse_string(input)
+       else:
+           rules, non_terminals,start = aux.parse_string_non(input)
+
 
        # initialise empty terminal alphabet
        alphabet = [] 
@@ -249,26 +267,22 @@ class ProbabilisticGrammar:
            checker_tuple = (lhs,*atoms)
 
            if checker_tuple not in duplicate_checker:
-              processed_rules[NonTerminal(lhs)].append(ProductionRule(NonTerminal(lhs), processed_atoms, probability))
-              processed_rules_log[NonTerminal(lhs)].append(ProductionRule(NonTerminal(lhs), processed_atoms, -1* math.log(probability)))
-              collapsed_rules.append(ProductionRule(NonTerminal(lhs), processed_atoms, probability))
-              collapsed_rules_log.append(ProductionRule(NonTerminal(lhs), processed_atoms, -1* math.log(probability)))
+           
+              processed_rules[NonTerminal(lhs)].append(ProductionRule(NonTerminal(lhs), processed_atoms, probability,probabilistic=probabilistic))
+              processed_rules_log[NonTerminal(lhs)].append(ProductionRule(NonTerminal(lhs), processed_atoms, -1* math.log(probability),probabilistic=probabilistic))
+              collapsed_rules.append(ProductionRule(NonTerminal(lhs), processed_atoms, probability,probabilistic=probabilistic))
+              collapsed_rules_log.append(ProductionRule(NonTerminal(lhs), processed_atoms, -1* math.log(probability),probabilistic=probabilistic))
            else:
                ignored_rules = True 
-      
-
-
-           
-
-            
     
+ 
 
-       return cls(processed_rules,collapsed_rules,processed_rules_log,collapsed_rules_log,processed_non_terminals,alphabet,start = processed_start, bad_rules = ignored_rules)
+       return cls(processed_rules,collapsed_rules,processed_rules_log,collapsed_rules_log,processed_non_terminals,alphabet,start = processed_start, bad_rules = ignored_rules,probabilistic=probabilistic)
 
     
 
     @classmethod 
-    def from_json(cls,input_file):
+    def from_json(cls,input_file,probabilistic=True):
 
        # function to generate a grammar from a json input 
        
@@ -326,9 +340,14 @@ class ProbabilisticGrammar:
                    
                    # since the terminals and nonterminals are asked for in the json, we should not see any new characters in the rules. If not, we'll ignore the rule. 
                    if all(atom in terminals or atom in non_terminals  for atom in rule["expansion"]):
+                       
+
+                       prob = 1 if not probabilistic else float(rule["probability"])
+
+
                        rhs = [NonTerminal(atom) if atom in non_terminals else Terminal(atom) for atom in rule["expansion"]]
-                       new_rule = ProductionRule(NonTerminal(rule["nonterminal"]),rhs,float(rule["probability"]))
-                       new_rule_log = ProductionRule(NonTerminal(rule["nonterminal"]),rhs,-1* math.log(float(rule["probability"])))
+                       new_rule = ProductionRule(NonTerminal(rule["nonterminal"]),rhs,prob,probabilistic=probabilistic)
+                       new_rule_log = ProductionRule(NonTerminal(rule["nonterminal"]),rhs,-1* math.log(prob),probabilistic=probabilistic)
                        
                        checker_tuple = (rule["nonterminal"],*rule["expansion"])
                        
@@ -351,7 +370,7 @@ class ProbabilisticGrammar:
                 
             
     
-       return cls(processed_rules,collapsed_rules,processed_rules_log,collapsed_rules_log,processed_non_terminals,alphabet,start=start,bad_rules = ignored_rules)
+       return cls(processed_rules,collapsed_rules,processed_rules_log,collapsed_rules_log,processed_non_terminals,alphabet,start=start,bad_rules = ignored_rules,probabilistic=probabilistic)
 
 
 
@@ -504,6 +523,47 @@ class ProbabilisticGrammar:
         
             if total_probability <= 1 - self.tolerance or total_probability >= 1 + self.tolerance:
                 self.consistent = False 
+
+
+
+
+            
+
+
+           
+            
+
+            
+
+              
+   
+
+
+
+
+
+
+
+    
+
+    
+
+
+    
+
+
+    
+
+
+
+    
+         
+
+    
+
+
+
+
 
 
 

@@ -4,6 +4,8 @@ import application.main.grammarerrors as grammarerrors
 
 
 
+
+
 def parse_string(input,separator = ","):
     # function to pull out the start symbol and rules of a grammar from a string input. Always assumes LHS of first rule is the start symbol  
 
@@ -11,6 +13,11 @@ def parse_string(input,separator = ","):
     rules = []
     variables = []
     start = "S"
+    # Find probabilities passed
+    probability_pattern = re.compile(r"( \[ [\d\.]+ \] ) \s*", re.VERBOSE)
+    probability_strip = re.compile(r"( \[ [\d\.]+ \] ) .*", re.VERBOSE)
+    just_numbers = re.compile(r"([\d\.]+)\s*", re.VERBOSE)
+ 
     try:
         for rule in separated_input:
            
@@ -32,12 +39,10 @@ def parse_string(input,separator = ","):
            #get a list of right hand side productions, sepatated by | 
            products = right.split("|")
 
-           for product in products:
-               # Find probabilities passed
-               probability_pattern = re.compile(r"( \[ [\d\.]+ \] ) \s*", re.VERBOSE)
-               probability_strip = re.compile(r"( \[ [\d\.]+ \] ) .*", re.VERBOSE)
-               just_numbers = re.compile(r"([\d\.]+)\s*", re.VERBOSE)
 
+          
+           for product in products:
+          
                # check to make sure only one probability is given
                probabilities = probability_pattern.findall(product)
                
@@ -86,7 +91,87 @@ def parse_string(input,separator = ","):
 
 
 
+def parse_string_non(input,separator = ","):
+    # function to pull out the start symbol and rules of a grammar from a string input. Always assumes LHS of first rule is the start symbol  
 
-# print(parse_string("A -> B [0.6] | C [0.4], B -> alex [0.5] | kraken  aaron[0.5], C -> cat[0.2]| doggo"))
+    separated_input = input.split(separator) 
+    rules = []
+    variables = []
+    start = "S"
+    probability_pattern = re.compile(r"( \[ [\d\.]+ \] ) \s*", re.VERBOSE)
+    try:
+        for rule in separated_input:
+           
+           # get lHS and RHS 
+           left,right = rule.split('->')
+          
+        
+           # Remove spaces from the LHS 
+           left = re.sub(r"\s+", "",left, flags=re.UNICODE) 
+
+
+           # add the variable to list of variables if it is not already there 
+           if left not in variables:
+               variables.append(left)
+        
+ 
+        
+
+           #get a list of right hand side productions, sepatated by | 
+           products = right.split("|")
+
+           for product in products:
+               # check if there's any probabilties. Throw an error if there are any to point the user to the probabilistic mode
+               probabilities = probability_pattern.findall(product)
+
+               if probabilities:
+
+                   raise grammarerrors.StringInputException("It looks like you are trying to enter probabilities. Change modes.")
+
+              
+               
+
+
+               # strip out the RHS variables and terminals. assume that spaces indicate seperate atoms. Get rid of escapes.
+               product =  list(filter(lambda x : x != '' and x != '\r\n' and x != '\r' and x != '\n',product.split(" ")))
+              
+               product = [re.sub('\n','', re.sub('\r','',item))for item in product]
+               
+                  
+
+
+               if len(product) == 0:
+                   raise grammarerrors.StringInputException("Empty productions are not permitted")
+
+               # assign a probability of 1 to each rule.
+               rules.append((left,product,1))
+              
+    except Exception as e:
+        
+        raise grammarerrors.StringInputException("Please read the information page and follow the grammar input rules")
+
+    
+
+    # By default, the first LHS variable is the start variable
+    start = variables[0]
+
+    
+
+    return rules,variables,start
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+     
+
 
 

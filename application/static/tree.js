@@ -1,4 +1,6 @@
-function render(num,parses,tables){
+function render(num,parses,tables,probs){
+
+  console.log(probs)
 
  
  
@@ -36,25 +38,65 @@ function render(num,parses,tables){
 
     console.log(list_data)
 
+
+    if (!probs){
+      var table = new Tabulator("#table_box", {
+
+        data:list_data,
+        width:"100%",
+       
+        layout:"fitDataFill",
+        // virtualDomHoz:true,
+        columns:[
+          {title:"step",field:"step"},
+          {title:"Nonterminal expanded",field:"nonterminal"},
+          {title: "Rule used",field:"rule"},
+          {title:"Cumulative string", field:"current_string",formatter:"textarea"}
+        ]
+    
+        })
+
+    }
+    else{
+      var table = new Tabulator("#table_box", {
+
+        data:list_data,
+        width:"100%",
+       
+        layout:"fitDataFill",
+        // virtualDomHoz:true,
+        columns:[
+          {title:"step",field:"step"},
+          {title:"Nonterminal expanded",field:"nonterminal"},
+          {title: "Rule used",field:"rule"},
+          {title:"Rule probability",field:"probability"},
+          {title:"Rule ranking",field:"rule_rank"},
+          {title:"Cumulative string", field:"current_string",formatter:"textarea"}
+        ]
+    
+        })
+
+    }
+
     
 
-  var table = new Tabulator("#table_box", {
+  // var table = new Tabulator("#table_box", {
 
-    data:list_data,
-    width:"100%",
+  //   data:list_data,
+  //   width:"100%",
    
-    layout:"fitDataFill",
-    // virtualDomHoz:true,
-    columns:[
-      {title:"step",field:"step"},
-      {title:"Nonterminal expanded",field:"nonterminal"},
-      {title: "Rule used",field:"rule"},
-      {title:"Rule probability",field:"probability"},
-      {title:"Rule ranking",field:"rule_rank"},
-      {title:"Cumulative string", field:"current_string",formatter:"textarea"}
-    ]
+  //   layout:"fitDataFill",
+  //   // virtualDomHoz:true,
+  //   columns:[
+  //     {title:"step",field:"step"},
+  //     {title:"Nonterminal expanded",field:"nonterminal"},
+  //     {title: "Rule used",field:"rule"},
+  //     {title:"Rule probability",field:"probability"},
+  //     {title:"Rule ranking",field:"rule_rank"},
+  //     {title:"Cumulative string", field:"current_string",formatter:"textarea"}
+  //   ]
 
-    });
+  //   });
 
 
 
@@ -110,8 +152,6 @@ var zoom = d3.zoom();
 
 var vis = d3.select(".tree_box")
         .append("svg:svg")
-        // .attr("width", width + margin.right + margin.left)
-        // .attr("height", height + margin.top + margin.bottom)
         .call(zoom.on("zoom", function() {
           vis.attr("transform",d3.event.transform)
         }))
@@ -182,6 +222,7 @@ function draw(source) {
 
 
   // Let's append all enter nodes
+  if (probs){
   var nodeEnter = node
       .enter()
       .append('g')
@@ -194,6 +235,21 @@ function draw(source) {
       .on("mouseover", mouseover)
       .on("mousemove", function(d){mousemove(d);})
       .on("mouseout", mouseout);
+  }
+  else{
+    var nodeEnter = node
+    .enter()
+    .append('g')
+    .attr('class', 'node')
+    .attr("transform", function(d) {
+      return "translate(" + source.x0 + "," + source.y0 + ")";
+    })
+    .on('click',click)
+    .on("mouseover",mouseover)
+    .on("mouseover", mouseover)
+    .on("mousemove", function(d){mousemove_non(d);})
+    .on("mouseout", mouseout);
+  }
 
   // Add circle for each enter node, but keep the radius 0
 
@@ -327,15 +383,7 @@ function click(d)
       d.children = d._children;
       d._children = null;
     }
-  // If d has a parent, collapse other children of that parent
-  // if (d.parent) {
-  //   d.parent.children.forEach(function(element) {
-  //     if (d !== element) {
-  //       collapse(element);
-  //     }
-  //   });
-  // }
-
+  
   draw(d);
 }
 
@@ -353,6 +401,21 @@ function mousemove(d) {
       "<tr><td>NonTerminal: </td><td>"+d.data.name+"</td></tr>"+
       "<tr><td>Rule: </td><td>"+d.data.rule+"</td></tr>"+
       "<tr><td>Cumulative Probability: </td><td>"+d.data.cumulative_prob+"</td></tr>"+
+      "<tr><td>Derivation Step: </td><td>"+d.data.step+"</td></tr>"+
+      
+      "</table>"
+  );
+}
+
+
+function mousemove_non(d) {
+  div
+  .style("left", (d3.event.pageX+10) + "px")
+  .style("top", (d3.event.pageY) + "px")
+  .html(
+      "<table style='font-size: 10px; font-family: sans-serif;' >"+
+      "<tr><td>NonTerminal: </td><td>"+d.data.name+"</td></tr>"+
+      "<tr><td>Rule: </td><td>"+d.data.rule+"</td></tr>"+
       "<tr><td>Derivation Step: </td><td>"+d.data.step+"</td></tr>"+
       
       "</table>"

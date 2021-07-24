@@ -92,6 +92,38 @@ ul li {
   
 }
 
+.probability_toggle{
+  position: relative;
+  float: left;
+  top: 1%;
+  left: 18%; 
+  /* border: solid 1px rgb(141, 141, 213);
+  border-radius: 3px; */
+  height: 5%;
+  width:95%;
+  overflow: auto;
+  font-size: 0.9vw;
+}
+
+.probabilistic{
+  position: relative;
+  float: left;
+ 
+
+}
+
+.probabilistic a:hover{
+  font-weight: 600;
+}
+
+.non_probabilisitc{
+  position: relative;
+  float: right;
+}
+
+
+
+
 
 
 .tree_box{
@@ -413,14 +445,14 @@ textarea:hover{
   list-style-type:"\26D4"
 }
   
-.number_parses: { 
+/* .number_parses { 
 
   position: relative;
   float:left;
   top: 5%;
   height:75%;
 
-}
+} */
 
 .final_submit{
   position: relative;

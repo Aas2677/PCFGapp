@@ -45,8 +45,16 @@
            
 
         <div class = "main_form_float">
+           
         <form method="POST" action="" class = "main_form" id= "main_form"> 
             {{form.hidden_tag()}}
+
+            <div class = "probability_toggle">
+                <div class ="probabilistic">
+                    <a  href="#" style="color: blue;text-decoration: none;">Probabilistic</a>  &nbsp;&nbsp;  <a  style="color:black;text-decoration: none;" href="{{url_for('main.non_prob_string_input')}}">Non-probabilistic</a>  
+                </div>
+                
+            </div>
 
                <div class = grammar_box>
             
@@ -167,7 +175,7 @@
                
             
                     <input type = "number" min="1",max="100" id="nth_parse" ,name = "input_a">
-                   <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}})"> Show Parse</button>
+                   <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=true)"> Show Parse</button>
                    {% if total %}
                       <div  class = "total_probability" id = "total_probability">
                           Total probability: {{total}}

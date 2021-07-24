@@ -32,7 +32,7 @@
             <a class="nav-link" href="{{url_for('main.home')}}">About</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{url_for('main.string_input')}}">Free text input mode</a>
+                <a class="nav-link" href="{{url_for('main.non_prob_string_input')}}">Free text input mode</a>
                 </li>
             <li class="nav-item">
                 <a class="nav-link" style="color:blue;">File input  mode </a>
@@ -50,8 +50,7 @@
 
             <div class = "probability_toggle">
                 <div class ="probabilistic">
-                    <a  href="#" style="color: blue;text-decoration: none;">Probabilistic</a>  &nbsp;&nbsp;  <a  style="color:black;text-decoration: none;" href="{{url_for('main.non_prob_file_input')}}">Non-probabilistic</a>  
-                </div>
+                    <a style="color:black;text-decoration: none;" href="{{url_for('main.file_input')}}">Probabilistic</a>  &nbsp;&nbsp;  <a  style= "color: blue;text-decoration: none;" href="#">Non-probabilistic</a>                </div>
                 
             </div>
 
@@ -79,16 +78,7 @@
                 
                       <div class="table_toggles">
 
-                        <div class="total_prob">
-                            <div class="pretty p-switch">
-                                {{form.show_total}}
-                                <div class="state">
-                                    <label>Show total probability</label>
-                                </div>
-                            </div>
-                            
-                        </div>
-
+                    
                       <div class = "leftmost_toggle">
                        
                         <div class="pretty p-switch">
@@ -100,10 +90,7 @@
                       </div>
                     
                         
-                        
-   
-               
-               
+            
                 
                 <div class = "submit_area">
                    
@@ -173,7 +160,7 @@
                
             
                     <input type = "number" min="1",max="100" id="nth_parse" ,name = "input_a">
-                   <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=true)"> Show Parse</button>
+                   <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=false)"> Show Parse</button>
                    {% if total %}
                       <div  class = "total_probability" id = "total_probability">
                           Total probability: {{total}}
