@@ -221,6 +221,7 @@ class ProbabilisticGrammar:
        # function to generate a grammar from a string input 
        if probabilistic:
           rules, non_terminals,start = aux.parse_string(input)
+       
        else:
            rules, non_terminals,start = aux.parse_string_non(input)
 

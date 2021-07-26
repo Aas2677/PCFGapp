@@ -43,6 +43,7 @@ def string_input():
        number_of_parses = False   
        if form.validate_on_submit():
            grammar = re.sub('\n','', re.sub('\r','',str(form.grammar.data)))
+        #    grammar = form.grammar.data.strip('\n')
            sentence = re.sub('\n','', re.sub('\r','',str(form.sentence.data)))
            number_of_parses = int(form.n_parses.data)
            total_needed = form.show_total.data
@@ -93,7 +94,9 @@ def string_input():
                number_of_parses = len(parses)
            except Exception as e:
                
-               
+           
+
+              
                flash('Your input sentence is not accepted by this grammar.','3')
                accepted = False
 
@@ -254,7 +257,7 @@ def file_input():
                        # set number of parses to number actually generated 
                        number_of_parses = len(parses)
                    except Exception as e :
-                       print(e)
+                       
                   
                        flash('Your input sentence is not accepted by this grammar.','3')
                        accepted = False
@@ -356,7 +359,7 @@ def non_prob_file_input():
                        # set number of parses to number actually generated 
                        number_of_parses = len(parses)
                    except Exception as e :
-                       print(e)
+                       
                   
                        flash('Your input sentence is not accepted by this grammar.','3')
                        accepted = False
