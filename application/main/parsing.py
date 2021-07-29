@@ -184,7 +184,7 @@ class ProbabilisticCYKParser:
     
     def best_parse_all(self,input_string, is_sentence = True):
 
-        # Finds the best parse of the 
+        # Finds the most likely parse of the input sentence
 
         parse_table = defaultdict(int)
         to_parse, tokens = self._preprocess_string(input_string, sentence = is_sentence)
@@ -301,41 +301,6 @@ class ProbabilisticCYKParser:
                 candidates = sorted(self._n_best_consider[start_root,stop_root,node.rule._left._token], key = lambda x : x.cumulative_prob)
                 candidates.pop(0)
                 self._n_best_consider[start_root,stop_root,node.rule._left._token] = candidates
-
-
-
-
-        
-        # if n == 2:
-        #     print(node.span)
-        #     for nonterminal in self._grammar.token_nonterminals:
-        #         if self._grammar.expansion_lhs_lookup[nonterminal]:    
-        #             for rule in self._grammar.expansion_lhs_lookup_logs[nonterminal]:
-        #                 left,right = rule._right[0]._token,rule._right[1]._token
-        #                 # print(left,right)
-
-        #                 for (left_start,left_stop),(right_start,right_stop) in self.partitions_2(start_root,stop_root):
-                            
-                            
-        #                     if self._n_best_table[left_start,left_stop,left] and self._n_best_table[right_start,right_stop,right]:
-        #                         this_weight = math.fsum([rule._probability,self._n_best_table[left_start,left_stop,left].cumulative_prob, self._n_best_table[right_start,right_stop,right].cumulative_prob])
-        #                         if node.rule._left._token == nonterminal:
-        #                             self._n_best_consider[start_root,stop_root,node.rule._left._token].append(ProbabilisticNode(rule, self._n_best_table[left_start,left_stop,left],self._n_best_table[right_start,right_stop,right],this_weight,node.span,rank=2))
-
-                                    
-
-        #                         # self._n_best_consider[start_root,stop_root,node.rule._left._token].append(ProbabilisticNode(rule, self._n_best_table[left_start,left_stop,left],self._n_best_table[right_start,right_stop,right],this_weight,node.span,rank=2))
-        #                        # print(rule, self._n_best_table[left_start,left_stop,left],self._n_best_table[right_start,right_stop,right],this_weight,node.span)
-        #     candidates = sorted(self._n_best_consider[start_root,stop_root,node.rule._left._token], key = lambda x : x.cumulative_prob)
-        #     for c in candidates:
-        #         print(c)
-            
-        #     candidates.pop(0)
-        #     self._n_best_consider[start_root,stop_root,node.rule._left._token] = candidates
-        #     print("after")
-        #     for c in self._n_best_consider[start_root,stop_root,node.rule._left._token]:
-        #         print(c)
-        #     print("\n")
                                 
 
         
@@ -343,39 +308,30 @@ class ProbabilisticCYKParser:
             self.next_tree(node.left_child, node.left_child.rank + 1)
         
         if node.right_child.rank == 1 and len(self._n_best_dict[start_left,stop_left,node.left_child.rule._left._token]) >= node.left_child.rank + 1:
-            # print("exists 1")
-            # print(node.left_child.rank)
+           
 
             new_left_tree = self._n_best_dict[start_left,stop_left,node.left_child.rule._left._token][node.left_child.rank]
             probability = math.fsum([node.rule._probability,new_left_tree.cumulative_prob,node.right_child.cumulative_prob])
             self._n_best_consider[start_root,stop_root,node.rule._left._token].append((ProbabilisticNode(node.rule,new_left_tree,node.right_child,probability,node.span,rank=n)))
-            # if start_root == 0 and stop_root == 4 and node.rule._left._token == 'S':
-                # print(new_left_tree)
+           
         
         if stop_root > (start_right + 1) and len(self._n_best_dict[start_right,stop_right,node.right_child.rule._left._token]) < node.right_child.rank + 1:
             
             self.next_tree(node.right_child, node.right_child.rank + 1)
         
         if len(self._n_best_dict[start_right,stop_right,node.right_child.rule._left._token]) >= node.right_child.rank + 1:
-            # print(node.right_child.rank)
-            # print("exists 2")
-            
+           
 
             new_right_tree = self._n_best_dict[start_right,stop_right,node.right_child.rule._left._token][node.right_child.rank]
             probability = math.fsum([node.rule._probability,node.left_child.cumulative_prob,new_right_tree.cumulative_prob])
             self._n_best_consider[start_root,stop_root,node.rule._left._token].append((ProbabilisticNode(node.rule,node.left_child,new_right_tree,probability,node.span,rank=n)))
-            # if start_root == 1 and stop_root == 4 and node.rule._left._token == 'V':
-            #     for p in  self._n_best_dict[start_right,stop_right,node.right_child.rule._left._token]:
-            #         print(p)
-            #     print(self._n_best_dict[start_right,stop_right,node.right_child.rule._left._token])
-            #     print(new_right_tree)
         
 
         candidates = sorted(self._n_best_consider[start_root,stop_root,node.rule._left._token], key = lambda x : x.cumulative_prob)
         
         
         if candidates:
-            # print(next_best_tree)
+           
             next_best_tree = candidates[0]
             
             next_best_tree.rank = n
@@ -384,7 +340,6 @@ class ProbabilisticCYKParser:
             self._n_best_consider[start_root,stop_root,node.rule._left._token] = candidates
         else:
             # next best tree doesn't exist 
-            # print(f'{n}th best parse at {node.span} does not exist')
             pass 
             
 
@@ -447,18 +402,6 @@ class ProbabilisticCYKParser:
                                             all_table[j,k,nonterminal] = []
                                             all_table[j,k,nonterminal].append(ProbabilisticNode(rule,L,R,this_probability,(j,k)))
                                             possible = True 
-
-
-                                #    this_probability = rule._probability * parse_table[j,p,left].cumulative_prob * parse_table[p+1,k,right].cumulative_prob
-                                #    if possible:
-                                #        total_node.cumulative_prob += this_probability
-                                #        all_table[j,k,nonterminal].append(ProbabilisticNode(rule,parse_table[j,p,left],parse_table[p+1,k,right],this_probability))
-                                #    else:
-                                #        total_node = ProbabilisticNode(rule, left, right, this_probability)
-                                #        all_table[j,k,nonterminal] = []
-                                #        all_table[j,k,nonterminal].append(ProbabilisticNode(rule,parse_table[j,p,left],parse_table[p+1,k,right],this_probability))
-                                #        possible = True 
-                                       
 
 
                     if possible:

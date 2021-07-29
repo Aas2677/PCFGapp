@@ -48,6 +48,51 @@
         
 
         <div class = "main_form_float">
+                 <button id="syntaxbutton" >Grammar syntax guide</button>
+              
+                     
+            <div id="infopopup" class="modal">
+            
+              
+                <div class="modal-content">
+                  <span class="close">&times;</span>
+                  <p>
+                      <h5 style="color:blue"> Syntax for non-probabilistic grammars</h5>
+
+                      The rules for you grammar should be written as a list of production rules in chomsky normal form of the form:<br>
+                      A -> B C  or  <br>
+                      A -> b  <br>
+
+                      where A,B,C are non terminals and b is a terminal. Empty productons can't be used.
+
+                      Each rule should start with the lefthand side nonterminal followed by an -> symbol. 
+                      In expansion rules, a space should be used to delimit seperate nonterminals on the lefthand side.
+                      The parser will assume that the lefhand side nonterminal of your first rule is the start symbol.
+                      
+                      Alternate left hand side expansion can be chained using the | symbol, or entered seperateley.
+                      After the end of each chain of expansions for a rule, a comma delimits the next rule. New rules do not need to be placed onto a new line. As an example, the following grammar shows the syntax structure: <br>
+
+                      <br>
+                      <br>
+
+                      S -> NP VP | S PP |V NP | V PP | flies| like | time ,<br>
+                      VP -> V NP | V PP | flies | like | time ,<br>
+                      NP -> Det N | N N | NP PP | arrow | flies | time ,<br>
+                      PP -> P NP,<br>
+                      N -> arrow | flies| time,<br>
+                      V -> flies| like | time ,<br>
+                      P -> like,<br>
+                      Det -> an<br>
+
+                      
+
+
+                      
+                  </p>
+                </div>
+              
+              </div>
+            
            
         <form method="POST" action="" class = "main_form" id= "main_form"> 
             {{form.hidden_tag()}}
@@ -61,9 +106,8 @@
                <div class = grammar_box>
             
                
-                <small id="grammar_instructions" class = "form-text text-muted">Read the <a href = "{{url_for('main.home')}}">about</a> page for syntax and usage information</small>
 
-                      <div>{{ form.grammar(placeholder="Enter your grammar.\nRules should be entered with the nonterminal on the left followed by an arrow '->' followed by the expansion, each non-terminal in the expansion should be separated by a space. Each alternative rule can be added using the '|' symbol or seperateley.\nThe grammar must be in Chomsky normal form, as in the example below:\n\n\nS -> A B,\nA -> A A | many,\nB -> C D,\nC -> pixels| cars,\nD -> quickly\n\nThe left hand side of the first rule is assumed to be the start symbol.\nAlternate left hand side expansions for each nonterminal can be chained using the | symbol, or can be added as seperate rules.Seperate rules are denoted using a commna and do not necessarily need to be put on seperate lines.
+                      <div>{{ form.grammar(placeholder="Enter your non-probabilistic grammar here. See the gramar syntax guide for for guidance,
                 " )}}</div>
                       </div>
 
@@ -188,6 +232,8 @@
 
             </div>
             <script src="{{url_for('static', filename='monitoring.js')}}"></script>
+            <script src="{{url_for('static', filename='modalscript.js')}}"></script>
+           
            
           
         

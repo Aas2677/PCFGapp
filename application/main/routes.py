@@ -43,7 +43,7 @@ def string_input():
        number_of_parses = False   
        if form.validate_on_submit():
            grammar = re.sub('\n','', re.sub('\r','',str(form.grammar.data)))
-        #    grammar = form.grammar.data.strip('\n')
+      
            sentence = re.sub('\n','', re.sub('\r','',str(form.sentence.data)))
            number_of_parses = int(form.n_parses.data)
            total_needed = form.show_total.data
@@ -82,7 +82,12 @@ def string_input():
                flash("Your sentence is accepted by this grammar.",'1')
 
                if len(parses) < int(number_of_parses):
-                           flash(f'There are only {len(parses)} ways to parse this sentence, so {number_of_parses} cannot be given.','2')
+                   if len(parses) == 1:
+                       flash(f'This sentence is unambiguous, meaning that there is only one way to parse the sentence and only 1 unique leftmost derivation','2')
+                   else:
+                        flash(f'There are only {len(parses)} ways to parse this sentence, so {number_of_parses} cannot be given.','2')
+
+                          
 
                if not grammar_object.consistent:
                    flash(' Warning - your grammar is inconsistent. Parsing can see be carried out, but there will not be a proper probability distribution over parses.','2')
@@ -156,7 +161,12 @@ def non_prob_string_input():
                flash("Your sentence is accepted by this grammar.",'1')
 
                if len(parses) < int(number_of_parses):
-                           flash(f'There are only {len(parses)} ways to parse this sentence, so {number_of_parses} cannot be given.','2')
+
+                    if len(parses) == 1:
+                       flash(f'This sentence is unambiguous, meaning that there is only one way to parse the sentence and only 1 unique leftmost derivation','2')
+                    else:
+                        flash(f'There are only {len(parses)} ways to parse this sentence, so {number_of_parses} cannot be given.','2')
+                           
 
           
                if grammar_object.ignored_rules:
@@ -233,8 +243,7 @@ def file_input():
         
                        # only generate the leftmost derivation tables if the user wants them 
                        if table_needed:
-                           # lots of duplicate work done in the derivation builders, should come back to refactor 
-                           # tables = [get_derivation_table(parse,grammar_object.processed_rules) for parse in parses_d]
+                         
                            tables = json.dumps({i+1: get_derivation_table(parse,grammar_object.processed_rules) for i,parse in enumerate(parses_d)})
                            pass 
         
@@ -247,7 +256,11 @@ def file_input():
                       
 
                        if len(parses) < int(number_of_parses):
-                           flash(f'There are only {len(parses)} ways to parse this sentence, so {number_of_parses} cannot be given.','2')
+                            if len(parses) == 1:
+                                flash(f'This sentence is unambiguous, meaning that there is only one way to parse the sentence and only 1 unique leftmost derivation','2')
+                            else:
+                                 flash(f'There are only {len(parses)} ways to parse this sentence, so {number_of_parses} cannot be given.','2')
+
                        if not grammar_object.consistent:
                            flash(' Warning - your grammar is inconsistent. Parsing can see be carried out, but there will not be a proper probability distribution over parses.','2')
         
@@ -350,7 +363,11 @@ def non_prob_file_input():
                       
 
                        if len(parses) < int(number_of_parses):
-                           flash(f'There are only {len(parses)} ways to parse this sentence, so {number_of_parses} cannot be given.','2')
+                           
+                           if len(parses) == 1:
+                                flash(f'This sentence is unambiguous, meaning that there is only one way to parse the sentence and only 1 unique leftmost derivation','2')
+                           else:
+                                 flash(f'There are only {len(parses)} ways to parse this sentence, so {number_of_parses} cannot be given.','2')
          
         
                        if grammar_object.ignored_rules:

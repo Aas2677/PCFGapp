@@ -80,25 +80,6 @@ function render(num,parses,tables,probs){
 
     
 
-  // var table = new Tabulator("#table_box", {
-
-  //   data:list_data,
-  //   width:"100%",
-   
-  //   layout:"fitDataFill",
-  //   // virtualDomHoz:true,
-  //   columns:[
-  //     {title:"step",field:"step"},
-  //     {title:"Nonterminal expanded",field:"nonterminal"},
-  //     {title: "Rule used",field:"rule"},
-  //     {title:"Rule probability",field:"probability"},
-  //     {title:"Rule ranking",field:"rule_rank"},
-  //     {title:"Cumulative string", field:"current_string",formatter:"textarea"}
-  //   ]
-
-  //   });
-
-
 
 
   }
@@ -115,9 +96,10 @@ function render(num,parses,tables,probs){
 
 
 
+
   var tooltip = d3.select("body")
         .append("div")
-        .attr("class", "my-tooltip")//add the tooltip class
+        .attr("class", "my-tooltip")
         .style("position", "absolute")
         .style("z-index", "10")
         .style("visibility", "hidden");
@@ -129,19 +111,12 @@ var treedata =  document.getElementById("parses").innerHTML
 var data = JSON.parse(treedata)
 
 
-
-
-
-// update the tree button 
-
-
-// console.log(data["1"])
-
+// select the correct data
 var treeData = parses[num]
 
 
 
-// Setup SVG Element - Start
+// Setup SVG 
 
 var margin = {top: 20, right: 30, bottom: 20, left: 30},
     width = 960 - margin.left - margin.right,
@@ -184,44 +159,36 @@ var treemap = d3.tree()
     .size([width, height]);
 
 // Get the root
-
-
-
 treedata = data[num]
 root = d3.hierarchy(treedata, function(d) { return d.children; });
 
 root.x0 = 0;
 root.y0 = width / 3;
 
-   // Collapse all children, except root's
 
+// Collapse children
 root.children.forEach(collapse);
-   // root.children = null;
-
-   // Let's draw the tree
+ 
 draw(root);
 
 
-// console.log(root);
 
 function draw(source) {
 
-  // Get the treemap, so that we can get nodes and links
+ 
   var treeData = treemap(root);
 
   // Get nodes and links
   var nodes = treeData.descendants(),
       links = treeData.descendants().slice(1);
 
-  // Adjust the position of y of each node. Comment out just this line and see how it's different  
+
   nodes.forEach(function(d){ d.y = d.depth * 100});
 
-  // Add unique id for each node, else it won't work
+ 
   var node = vis.selectAll('g.node')
       .data(nodes, function(d) {return d.id || (d.id = ++i);   });
 
-
-  // Let's append all enter nodes
   if (probs){
   var nodeEnter = node
       .enter()
@@ -272,7 +239,6 @@ function draw(source) {
     })
     .text(function(d) { return d.data.name; });
 
-  // https://github.com/d3/d3-selection/issues/86 to check what merge does
   var nodeUpdate = nodeEnter.merge(node);
 
   // Do transition of node to appropriate position

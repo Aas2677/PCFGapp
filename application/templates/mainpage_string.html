@@ -39,31 +39,95 @@
             <li class="nav-item">
             <a class="nav-link" href="{{url_for('main.file_input')}}">File input mode</a>
             </li>
+            <li class = "nav-item" style="position: relative; left:50%;">
+               
+          
+        
+            </li>
+           
         </ul>
         </div>
+            
         </nav>
             
         <div class =  "float_container_main">
+         
+
            
 
         <div class = "main_form_float">
+             <button id="syntaxbutton" >Grammar syntax guide</button>
+              
+                     
+            <div id="infopopup" class="modal">
+            
+              
+                <div class="modal-content">
+                  <span class="close">&times;</span>
+                  <p>
+                      <h5 style="color:blue"> Syntax for probabilistic grammars</h5>
+
+                      The rules for you grammar should be written as a list of production rules in chomsky normal form of the form:<br>
+                      A -> B C [probability]   or  <br>
+                      A -> b [probability] <br>
+
+                      where A,B,C are non terminals and b is a terminal. Empty productons can't be used.
+
+                      Each rule should start with the lefthand side nonterminal followed by an -> symbol. 
+                      In expansion rules, a space should be used to delimit seperate nonterminals on the lefthand side.
+                      The parser will assume that the lefhand side nonterminal of your first rule is the start symbol.
+                      
+                      Alternate left hand side expansion can be chained using the | symbol, or entered seperateley.
+                      In each case, the probability for each expansion should be placed in square brackets immediateley following the expansion. After the end of 
+                      each chain of expansions for a rule, a comma delimits the next rule. New rules do not need to be placed onto a new line. As an example, the following grammar shows the syntax structure: <br>
+
+                      <br>
+                      <br>
+
+                      S -> NP VP [0.5]| S PP [0.25]|V NP [0.05] | V PP [0.1] | flies [0.04] | like [0.04] | time [0.02],<br>
+                      VP -> V NP [0.2] | V PP [0.4] | flies [0.16]| like [0.16] | time [0.08],<br>
+                      NP -> Det N [0.4]| N N [0.1]| NP PP [0.1]| arrow [0.16] | flies [0.08] | time [0.16],<br>
+                      PP -> P NP [1.0],<br>
+                      N -> arrow [0.4]| flies [0.2]| time [0.4],<br>
+                      V -> flies [0.4] | like [0.4] | time [0.2],<br>
+                      P -> like [1.0],<br>
+                      Det -> an [1.0]<br>
+
+                      <br>
+                      <br>
+
+                      If a probability is not given for an expansion, then the parser will assume the probability is 1. The parser will allow any probabilities to be entered,
+                      but if you expect a proper probability distribution over parses, then the sum of probabilities for expansions of each nonterminal should equal 1. 
+                    
+
+
+                      
+                  </p>
+                </div>
+              
+              </div>
+
+     
            
         <form method="POST" action="" class = "main_form" id= "main_form"> 
             {{form.hidden_tag()}}
+        
+           
+                
 
             <div class = "probability_toggle">
                 <div class ="probabilistic">
                     <a  href="#" style="color: blue;text-decoration: none;">Probabilistic</a>  &nbsp;&nbsp;  <a  style="color:black;text-decoration: none;" href="{{url_for('main.non_prob_string_input')}}">Non-probabilistic</a>  
                 </div>
+             
                 
             </div>
 
                <div class = grammar_box>
             
                
-                <small id="grammar_instructions" class = "form-text text-muted">Read the <a href = "{{url_for('main.home')}}">about</a> page for syntax and usage information</small>
-
-                      <div>{{ form.grammar(placeholder="Enter your grammar.\nRules should be entered with the nonterminal on the left followed by an arrow '->' followed by the expansion and the probability in square brackets. Each alternative rule can be added using the '|' symbol or seperateley.\nThe grammar must be in Chomsky normal form, as in the example below:\n\n\nS -> A B [0.5],\nA -> A A [0.2] | many [0.8],\nB -> C D [1.0],\nC -> pixels [0.5] | cars [0.5],\nD -> quickly [1.0]\n\nThe left hand side of the first rule is assumed to be the start symbol.\nAlternate left hand side expansions for each nonterminal can be chained using the | symbol, or can be added as seperate rules.Seperate rules are denoted using a commna and do not necessarily need to be put on seperate lines. Each seperate left hand side must be accompanied by a proabability in square brackets.
+             
+                      <div>{{ form.grammar(placeholder="Enter your probabilistic grammar here.\nCheck the syntax instructions for guidance.
                 " )}}</div>
                       </div>
 
@@ -197,6 +261,7 @@
 
             </div>
             <script src="{{url_for('static', filename='monitoring.js')}}"></script>
+            <script src="{{url_for('static', filename='modalscript.js')}}"></script>
            
           
         
