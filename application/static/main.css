@@ -68,6 +68,7 @@ svg{
   float: auto;
 }
 
+
   body{
     background-color: #eef5e7 ;
   }
@@ -80,6 +81,16 @@ svg{
     background: #ffff99;
     border: solid 1px #aaa;
     border-radius: 8px;
+}
+
+div.tooltip_2 {
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 2px;
+  background: #ffff99;
+  border: solid 1px #aaa;
+  border-radius: 8px;
 }
 
 
@@ -130,6 +141,21 @@ ul li {
 
 
 .tree_box{
+
+  position: relative;
+  padding: 3px;
+  float : left;
+  width : 70%; 
+  height : 53%;
+  background: #f3e4f3;
+  border: solid 2px rgb(141, 141, 213);
+  border-radius: 8px;
+ 
+ 
+
+}
+
+.tree_box_2{
 
   position: relative;
   padding: 3px;
@@ -199,7 +225,7 @@ textarea:hover{
 
     position: relative;
     width: 95%;
-    height: 18%;
+    height: 24%;
     top:3%;
     padding:3px;
     float: left;
@@ -243,12 +269,14 @@ textarea:hover{
 
 #total_probability{
   position: relative;
-  float: left;
+  float: right;
   font-size: 1.1vw;
-  left: 40%;
+  top: 25%;
+  left: 5%;
+  width: 40%;
   /* border-radius: 3px;
   border: 2px solid rgb(135, 142, 235); */
-  top: 10%;
+  bottom: 80%;
   color: #457dd1;
   
 }
@@ -264,11 +292,24 @@ textarea:hover{
   height: 7.5%;
 
 }
+.show_parses_2{
+  position: relative;
+  float: left;
+  top: 0.5%;
+  font-size: 1.1vw;
+  border-radius: 5px;
+  background: #f3e4f3;
+  width: 100%;
+  height: 7.5%;
+
+} 
+
+
 #show_parses{
   position: relative;
-  height: 99%;
+  /* height: 99%; */
   float: left;
-  padding: 3px;
+  padding: 4px;
   border-radius: 5px;
   background: rgb(147, 149, 209);
   font-size: 0.7vw;
@@ -281,6 +322,24 @@ textarea:hover{
   color: #455ad1;
 }
 
+#show_parses_2{
+  position: relative;
+  /* height: 99%; */
+  float: left;
+  padding: 4px;
+  border-radius: 5px;
+  background: rgb(147, 149, 209);
+  font-size: 0.7vw;
+ 
+  color:#ffffff
+
+}
+
+#show_parses_2:hover{
+  color: #455ad1;
+}
+
+
 #nth_parse{
   position: relative;
   float: left;
@@ -288,6 +347,14 @@ textarea:hover{
   height:99%;
 
 }
+
+#nth_parse_2{
+  position: relative;
+  float: left;
+  font-size: 1.1vw;
+  height:99%;
+}
+
 
 
 
@@ -299,7 +366,7 @@ textarea:hover{
   border-radius: 25px;
   border: 2px solid #457dd1;
   background: #eee;
-  top: 12%;
+  top: 5%;
   left:10%;
   width: 80%;
   font-size: 0.9vw;
@@ -309,12 +376,30 @@ textarea:hover{
   box-shadow: 2px 4px #83aedc;
 }
 
+
+.comparison_toggle{
+  position: relative;
+  padding: 6px;
+  float:left; 
+  border-radius: 25px;
+  border: 2px solid #457dd1;
+  background: #eee;
+  top: 15px;
+  left:10%;
+  width: 80%;
+  font-size: 0.9vw;
+  overflow: hidden;
+}
+.comparison_toggle:hover{
+  box-shadow: 2px 4px #83aedc;
+}
+
 .submit_area{
   position: relative;
   float:left;
   width: 50%;
   height: 30%;
-  top: 20%;
+  top: 14%;
   left:11%;
   
   
@@ -520,6 +605,54 @@ textarea:hover{
 
 
 
+.master_buttons{
+  position: relative;
+  width: 30%;
+  float: left;
+  top: 5%;
+}
+
+.master_buttons_2{
+  position: relative;
+  width: 30%;
+  float: left;
+  top: 5%;
+}
+
+
+.all_button{
+  
+  position: relative;
+  /* height: 99%; */
+  float: left;
+  padding: 4px;
+  border-radius: 4px;
+  background: rgb(147, 149, 209);
+  font-size: 0.7vw;
+ 
+  color:#ffffff
+
+}
+.all_button:hover{
+  color: #455ad1;
+}
+
+.all_button_2{
+  
+  position: relative;
+  /* height: 99%; */
+  float: left;
+  padding: 4px;
+  border-radius: 4px;
+  background: rgb(147, 149, 209);
+  font-size: 0.7vw;
+ 
+  color:#ffffff
+
+}
+.all_button_2:hover{
+  color: #455ad1;
+}
 
 
 

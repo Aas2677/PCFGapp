@@ -492,27 +492,6 @@ class ProbabilisticGrammar:
         return True 
 
 
-        # if length > 2:
-
-        #     return False 
-        # else:
-        #     if empty:
-        #         if not start:
-        #             print(rhs)
-        #             print("empty")
-        #             return False 
-        #     else:
-        #         if self.start in rhs:             
-        #             pass
-        #         elif length == 2 and all([type(atom) == NonTerminal for atom in rhs]):
-        #             return True 
-        #         elif length == 1 and types[0] == Terminal:
-                  
-        #             return True 
-        #         else:
-        #             print(rhs)
-        #             print("other")                  
-        #             return False 
 
     def check_consistency(self):
     

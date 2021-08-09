@@ -40,14 +40,24 @@ def string_input():
        data = {}
        total = False
        tables = 0
-       number_of_parses = False   
+       number_of_parses = False
+       comparison_mode = False 
+
        if form.validate_on_submit():
            grammar = re.sub('\n','', re.sub('\r','',str(form.grammar.data)))
       
            sentence = re.sub('\n','', re.sub('\r','',str(form.sentence.data)))
            number_of_parses = int(form.n_parses.data)
-           total_needed = form.show_total.data
-           table_needed = form.show_table.data 
+           total_needed = not form.show_total.data
+           table_needed = not form.show_table.data 
+           comparison = form.comparison_mode.data 
+          
+           # if comparison mode is on, then we can ignore the tables 
+           if comparison:
+              
+               comparison_mode = True 
+               table_needed = False
+
            
         
            # setup the parser:
@@ -111,7 +121,7 @@ def string_input():
            grammar = 0 
            sentence = 0  
 
-       return render_template('mainpage_string.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,total = total, num_parses = number_of_parses,tables=tables)
+       return render_template('mainpage_string.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,total = total, num_parses = number_of_parses,tables=tables,comparison_mode=comparison_mode)
        
 
 @main.route("/non_prob_string_input",methods=['GET','POST'])
@@ -127,11 +137,20 @@ def non_prob_string_input():
        total=False
        tables = 0
        number_of_parses = False   
+       comparison_mode = False 
        if form.validate_on_submit():
            grammar = re.sub('\n','', re.sub('\r','',str(form.grammar.data)))
            sentence = re.sub('\n','', re.sub('\r','',str(form.sentence.data)))
            number_of_parses = int(form.n_parses.data)
-           table_needed = form.show_table.data 
+           table_needed =  not form.show_table.data
+           comparison = form.comparison_mode.data 
+          
+           # if comparison mode is on, then we can ignore the tables 
+           if comparison:
+              
+               comparison_mode = True 
+               table_needed = False
+
            
         
            # setup the parser:
@@ -186,7 +205,7 @@ def non_prob_string_input():
            grammar = 0 
            sentence = 0  
 
-       return render_template('non_prob_string.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,total = total, num_parses = number_of_parses,tables=tables)
+       return render_template('non_prob_string.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,total = total, num_parses = number_of_parses,tables=tables,comparison_mode=comparison_mode)
 
 @main.route("/file_input",methods=['GET','POST'])
 def file_input():
@@ -202,6 +221,7 @@ def file_input():
        tables = 0
        number_of_parses = False  
        consistent = True  
+       comparison_mode = False 
        if form.validate_on_submit():
            try:
                
@@ -212,8 +232,16 @@ def file_input():
                sentence = re.sub('\n','', re.sub('\r','',str(form.sentence.data)))
             
                number_of_parses = int(form.n_parses.data)
-               total_needed = form.show_total.data
-               table_needed = form.show_table.data 
+               total_needed = not form.show_total.data
+               table_needed = not form.show_table.data 
+               comparison = form.comparison_mode.data 
+          
+               # if comparison mode is on, then we can ignore the tables 
+               if comparison:
+              
+                   comparison_mode = True 
+                   table_needed = False
+
                
     
             
@@ -294,7 +322,7 @@ def file_input():
            sentence = 0  
         
 
-       return render_template('mainpage_file.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,total = total, num_parses = number_of_parses,tables=tables)
+       return render_template('mainpage_file.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,total = total, num_parses = number_of_parses,tables=tables,comparison_mode=comparison_mode)
 
 
 
@@ -312,6 +340,7 @@ def non_prob_file_input():
        tables = 0
        number_of_parses = False  
        consistent = True  
+       comparison_mode = False 
        if form.validate_on_submit():
            try:
                
@@ -322,7 +351,15 @@ def non_prob_file_input():
                sentence = re.sub('\n','', re.sub('\r','',str(form.sentence.data)))
             
                number_of_parses = int(form.n_parses.data)
-               table_needed = form.show_table.data 
+               table_needed =  not form.show_table.data 
+               comparison = form.comparison_mode.data 
+          
+               # if comparison mode is on, then we can ignore the tables 
+               if comparison:
+                  
+                   comparison_mode = True 
+                   table_needed = False
+
                
     
             
@@ -400,6 +437,6 @@ def non_prob_file_input():
            sentence = 0  
         
 
-       return render_template('non_prob_file.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,total = total, num_parses = number_of_parses,tables=tables)
+       return render_template('non_prob_file.html',title = 'PCFG exporer',form = form,m=grammar,sentence=sentence,parses=json.dumps(data),accepted=accepted,total = total, num_parses = number_of_parses,tables=tables,comparison_mode=comparison_mode)
 
 

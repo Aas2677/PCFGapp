@@ -71,6 +71,7 @@ def validate_sentence(self,sentence):
        
 class  TextInputForm(FlaskForm):
     #Input form for free text probabilistic grammars
+    comparison_mode = BooleanField('Comparison mode')
     grammar = TextAreaField('Grammar input', render_kw={"rows": 10, "cols": 50}, validators = [DataRequired(),Length(min=2, max=10000),validate_grammar ]) # add in validators as another argument into stringfield
 
     sentence = TextAreaField('String input ',render_kw={"rows": 6, "cols": 50}, validators = [ DataRequired(),validate_sentence])
@@ -83,6 +84,7 @@ class  TextInputForm(FlaskForm):
 
 class  TextInputFormNon(FlaskForm):
     #Input form for non-probabilistic free-text grammars
+    comparison_mode = BooleanField('Comparison mode')
     grammar = TextAreaField('Grammar input', render_kw={"rows": 10, "cols": 50}, validators = [DataRequired(),Length(min=2, max=10000),validate_grammar_non_prob ]) # add in validators as another argument into stringfield
 
     sentence = TextAreaField('String input ',render_kw={"rows": 6, "cols": 50}, validators = [ DataRequired(),validate_sentence])
@@ -93,6 +95,7 @@ class  TextInputFormNon(FlaskForm):
 
 class  FileInputForm(FlaskForm):
     #Input form for probabilistic file input grammars
+    comparison_mode = BooleanField('Comparison mode')
     grammar_file = FileField('Grammar file input' , validators = [FileRequired(),FileAllowed(['json'], '.json files only')]) # add in validators as another argument into stringfield
 
     sentence = TextAreaField('String input',render_kw={"rows": 7, "cols": 50}, validators = [ DataRequired(),validate_sentence])
@@ -104,6 +107,7 @@ class  FileInputForm(FlaskForm):
 
 class  FileInputFormNon(FlaskForm):
     #Input form for non-probabilistic file input grammars
+    comparison_mode = BooleanField('Comparison mode')
     grammar_file = FileField('Grammar file input' , validators = [FileRequired(),FileAllowed(['json'], '.json files only')]) # add in validators as another argument into stringfield
 
     sentence = TextAreaField('String input',render_kw={"rows": 7, "cols": 50}, validators = [ DataRequired(),validate_sentence])

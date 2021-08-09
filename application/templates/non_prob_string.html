@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -59,17 +60,17 @@
                   <p>
                       <h5 style="color:blue"> Syntax for non-probabilistic grammars</h5>
 
-                      The rules for you grammar should be written as a list of production rules in chomsky normal form of the form:<br>
+                      The rules for your grammar should be written as a list of production rules in Chomsky normal form:<br>
                       A -> B C  or  <br>
                       A -> b  <br>
 
-                      where A,B,C are non terminals and b is a terminal. Empty productons can't be used.
+                      where A,B,C are non-terminals and b is a terminal. Empty productions can't be used.
 
-                      Each rule should start with the lefthand side nonterminal followed by an -> symbol. 
-                      In expansion rules, a space should be used to delimit seperate nonterminals on the lefthand side.
+                      Each rule should start with the left-hand side nonterminal followed by an -> symbol. 
+                      In expansion rules, a space should be used to delimit separate nonterminals on the left-hand side.
                       The parser will assume that the lefhand side nonterminal of your first rule is the start symbol.
                       
-                      Alternate left hand side expansion can be chained using the | symbol, or entered seperateley.
+                      Alternate left-hand side expansion can be chained using the | symbol, or entered separately.
                       After the end of each chain of expansions for a rule, a comma delimits the next rule. New rules do not need to be placed onto a new line. As an example, the following grammar shows the syntax structure: <br>
 
                       <br>
@@ -107,7 +108,7 @@
             
                
 
-                      <div>{{ form.grammar(placeholder="Enter your non-probabilistic grammar here. See the gramar syntax guide for for guidance,
+                      <div>{{ form.grammar(placeholder="Enter your non-probabilistic grammar here. Check the syntax guide for instructions.
                 " )}}</div>
                       </div>
 
@@ -120,7 +121,7 @@
                 
 
                       <div>
-                          {{ form.sentence(placeholder="Enter your test string here.\nSpaces are used to delimit each token to be evaluated, so if your grammar defined words rather than sentences, you must still put a space in between each token.\nIf you grammar includes a space in its terminal alphabet, this should be replaced with a different marker character. ")}}
+                          {{ form.sentence(placeholder="Enter your test string here.\nSpaces are used to delimit each token to be evaluated, so if your grammar defined words rather than sentences, you must still put a space in between each token.\nIf your grammar includes a space in its terminal alphabet, this should be replaced with a different marker character. ")}}
 
                       </div>
                       </div>
@@ -133,10 +134,19 @@
                         <div class="pretty p-switch">
                             {{form.show_table}}
                             <div class="state">
-                                <label>Show Leftmost derivation table</label>
+                                <label>Suppress leftmost derivation table</label>
                             </div>
                         </div>
                       </div>
+                      <div class = "comparison_toggle">
+                        <div class="pretty p-switch">
+                            {{form.comparison_mode}}
+                            <div class="state">
+                                <label>Parse comparison mode</label>
+                            </div>
+                        </div>
+                      </div>
+                     
                     
                         
                         
@@ -212,12 +222,21 @@
                
             
                     <input type = "number" min="1",max="100" id="nth_parse" ,name = "input_a">
-                   <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=false)"> Show Parse</button>
+               
+                   <div class = "master_buttons" id="master_buttons">
+                    <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=true)"> Show Parse</button>
+                   
+                   <button class="all_button" onclick="render.expandAll()">Expand All</button>
+                   <button class = "all_button" onclick="render.collapseAll()">Collapse All</button>
+                   
+                   </div>
+                   
                    {% if total %}
                       <div  class = "total_probability" id = "total_probability">
                           Total probability: {{total}}
                      </div>
                    {% endif %}
+                   
                
                     </div>
                 <script src="{{url_for('static', filename='tree.js')}}"></script>
@@ -225,10 +244,41 @@
                 
 
             </div>
+            {% if comparison_mode %}
+            <div class = "tree_box_2">
+
+                {% if accepted %}
+                <div class = show_parses>
+               
+            
+                    <input type = "number" min="1",max="100" id="nth_parse_2" ,name = "input_a_2                                                                              ">
+               
+                   <div class = "master_buttons_2" id="master_buttons_2">
+                    <button id = "show_parses_2" onclick = "render_second(document.getElementById('nth_parse_2').value,parses = {{parses}},tables = {{tables}},probs=true)"> Show Parse</button>
+                   
+                   <button class="all_button_2" onclick="render_second.expandAll()">Expand All</button>
+                   <button class = "all_button_2" onclick="render_second.collapseAll()">Collapse All</button>
+                   
+                   </div>
+                   
+                 
+                   
+               
+                    </div>
+                
+                {% endif %}
+                
+
+            </div>
+            
+      
+
+            {% else %}
 
                 <div class = "table_box", id="table_box">
 
                 </div>
+           {% endif %}
 
             </div>
             <script src="{{url_for('static', filename='monitoring.js')}}"></script>

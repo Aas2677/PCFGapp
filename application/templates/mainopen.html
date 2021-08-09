@@ -59,7 +59,7 @@
                         A → BC ( an expsnion rule),   or
                         A → a, (a terminal rule)
 
-                        Where A,B,C are non terminals and a is a terminal.Empty production rules are not permitted. 
+                        Where A,B,C are non-terminals and a is a terminal.Empty production rules are not permitted. 
                     </p>
                     <p>
                         <h6 style="color: rgb(10, 10, 192);">Free text input mode</h6>
@@ -79,8 +79,8 @@
                     </p>
                     <p>
                         <h6 style="color: rgb(10, 10, 192);">Non-probabilistic grammars</h6>
-                        The tool allows you to toggle between probabilisitc and non-probabilistic grammars. If you choose to use non-probabilistic grammars then the syntax for the free text input is 
-                        identical to the probabilisitc mode, you without entering the probabilities. For file inputs, there is no difference at all in file structure, the parser simply won't read the 
+                        The tool allows you to toggle between probabilistic and non-probabilistic grammars. If you choose to use non-probabilistic grammars then the syntax for the free text input is 
+                        identical to the probabilistic mode, you without entering the probabilities. For file inputs, there is no difference at all in file structure, the parser simply won't read the 
                         rule probability field in the JSON file. In non-probabilistic mode, the tool operates as a standard parser and will simply return the number of parses you ask for, in a random order. All probability 
                         information is removed. The non-probabilistic mode is useful for exploring grammar ambiguity without wanting to consider how probable different parses of the same sentence are. If you'd like to try using the tool in 
                         non-probabilistic mode, the example grammar JSON file will work unedited.
@@ -98,10 +98,10 @@
                         <p>
                             <h5 style="color: rgb(10, 10, 192);">Test strings and sentences</h5>
                             To test an input sentence or string, simply type it in this box. The parser needs to know
-                            how terminal sybols are delimited, so it assumes that spaces between inputs delimit them. If 
-                            you are using a grammar that defines words rather then sentences, then you will need to seperate 
+                            how terminal symbols are delimited, so it assumes that spaces between inputs delimit them. If 
+                            you are using a grammar that defines words rather than sentences, then you will need to separate 
                             letters in your test word with a space. If you are using a grammar where a space is a terminal character,
-                            then you will need to replace this with some other special character. Currently,the maximum length of string the parser
+                            then you will need to replace this with some other special character. Currently the maximum length of string the parser
                             will accept is 80.
                            
                             
@@ -122,7 +122,7 @@
                                 <h6 style="color: rgb(10, 10, 192);">Number of parses</h6>
                                 <p>
                                 This tool is designed to parse the n-best parses of a test string. The number input box here asks 
-                                how many parses you would like to find  for your test string. As an example if you ask for 5 parses,
+                                how many parses you would like to find  for your test string. As an example, if you ask for 5 parses,
                                 the parser will find the 5 most likely parses for that string and return them in order of likelihood.
                                 In the case that there are less possible parses than you ask for, then the parser will simply find all
                                 the possible parses in order of probability. The maximum number of parses you can request for a string is 100. 
@@ -195,7 +195,7 @@
                                         for example entering a rule wthout giving a probablity.
                                     </li>
                                     <li>
-                                        An inconsistent grammar - If the sum of probabilities for rules for each nonterminal does not equal 1, the grammar is 
+                                        An inconsistent grammar - If the sum of probabilities for rules for each non-terminal does not equal 1, the grammar is 
                                         inconsistent and therefore there will not be a proper probability distribution over parses, but the ordering of likelihood will be preserved.
                                     </li>
                                 </ul>
@@ -226,10 +226,10 @@
                     <p>
                         <h5 style="color: rgb(10, 10, 192);">Parse trees</h5>
 
-                        Once your grammar and test sentence have been submitted, you can view the parse trees here. If your grammar is probabilisitc then the parse number in the top left 
+                        Once your grammar and test sentence have been submitted, you can view the parse trees here. If your grammar is probabilistic then the parse number in the top left 
                         refers to the probability ranking of the parse, otherwise it is simply a random ordering of parses. You can zoom or scroll on the tree and can collapse or expand nodes by clicking on them. Hovering on a node shows information 
                         about that node, including the rule used and the probability of that sub-tree. The cumulative probability of root node therefore shows the overall probability of that parse tree.
-                        If you asked for the total probability, then the total probability over all parses wil be displayed in the top left corner. If your grammar is non-probabiistic then the information
+                        If you asked for the total probability, then the total probability over all parses will be displayed in the top left corner. If your grammar is non-probabiistic then the information
                         regarding probabilities will not appear.The derivation step number for each node associates that node with 
                         the corresponding step in the leftmost derivation. 
 
@@ -253,8 +253,8 @@
     
                             If you have asked for leftmost derivation tables, they will appear in this area. The derivation table always corresponds to the parse tree, so to see the derivation 
                             of different parses, you use the button in the parse tree area to reload a different parse. The purpose of the leftmost derivation table is to link each step in the 
-                            derivation to the parse tree and to show the working string changing in each step. If you grammar is probabilistic the table will show the probability of the rules used 
-                            as well as the ranking of that rule among all rules with the same nonterminal. In non-probabilisitc mode, all fields relating to probability are stripped out.
+                            derivation to the parse tree and to show the working string changing in each step. If your grammar is probabilistic the table will show the probability of the rules used 
+                            as well as the ranking of that rule among all rules with the same non-terminal. In non-probabilistic mode, all fields relating to probability are stripped out.
     
                            
     

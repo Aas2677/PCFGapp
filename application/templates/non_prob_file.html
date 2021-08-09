@@ -58,25 +58,25 @@
                   <p>
                     <h5 style="color:blue"> File structure for non-probabilistic grammars</h5>
 
-                    The file structure for non-probabilisitc grammars is identical to probabilistic grammars, but the probability field in each rule object is not read.
+                    The file structure for non-probabilistic grammars is identical to probabilistic grammars, but the probability field in each rule object is not read.
                     <br>
 
-                    The rules for you grammar should be written as a list of production rules in chomsky normal form of the form:<br>
+                    The rules for you grammar should be written as a list of production rules in Chomsky normal form:<br>
                     A -> B C  or  <br>
                     A -> b  <br>
 
-                    where A,B,C are non terminals and b is a terminal. Empty productons can't be used.
+                    where A,B,C are non-terminals and b is a terminal. Empty productions can't be used.
 
                     The JSON file upload should consist of the following fields: <br>
                     <ul>
                       <li> The start symbol of your grammar. This should be entered like this: "start_symbol":"S"</li>
-                      <li>The nonterminal symbols. This should be entered as a list like this: "non_terminals": ["S","NP","VP","N","V","P","PP","Det"] </li>
+                      <li>The non-terminal symbols. This should be entered as a list like this: "non_terminals": ["S","NP","VP","N","V","P","PP","Det"] </li>
                       <li> The terminal symbols. Ths should be entered as a list like this: "terminals": ["time","flies","like","an","arrow"] </li>
-                      <li>The rules of the grammar. This should be a list of nested JSONs for each for. As an example the rules should be entered like this: <br>
+                      <li>The rules of the grammar. This should be a list of nested JSONs for each for. Alternate rules cannot be chained in the same rule and must appear as a separate rule object. As an example, the rules should be entered like this: <br>
                           <br>
                           "rules": [{"nonterminal":"S","expansion":["NP","VP"],"probability":0.5}, {"nonterminal":"S","expansion":["S","PP"],"probability":0.25}]<br>
                           <br>
-                          Each rule object should have a "non_terminal" field, an "expansion" field which is a list of the lefthand side elements, even if the rule is terinal].
+                          Each rule object should have a "non_terminal" field, an "expansion" field which is a list of the left-hand side elements, even if the rule is terminal].
                           There is ane example grammar file <a href="static/example.json" download>here</a>.Note this file includes probabilities, but this field is ignored in non-probabilistic mode.
                       </li>
                     </ul>
@@ -127,10 +127,19 @@
                         <div class="pretty p-switch">
                             {{form.show_table}}
                             <div class="state">
-                                <label>Show Leftmost derivation table</label>
+                                <label>Suppress leftmost derivation table</label>
                             </div>
                         </div>
                       </div>
+                      <div class = "comparison_toggle">
+                        <div class="pretty p-switch">
+                            {{form.comparison_mode}}
+                            <div class="state">
+                                <label>Parse comparison mode</label>
+                            </div>
+                        </div>
+                      </div>
+                      
                     
                         
             
@@ -203,12 +212,21 @@
                
             
                     <input type = "number" min="1",max="100" id="nth_parse" ,name = "input_a">
-                   <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=false)"> Show Parse</button>
+               
+                   <div class = "master_buttons" id="master_buttons">
+                    <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=true)"> Show Parse</button>
+                   
+                   <button class="all_button" onclick="render.expandAll()">Expand All</button>
+                   <button class = "all_button" onclick="render.collapseAll()">Collapse All</button>
+                   
+                   </div>
+                   
                    {% if total %}
                       <div  class = "total_probability" id = "total_probability">
                           Total probability: {{total}}
                      </div>
                    {% endif %}
+                   
                
                     </div>
                 <script src="{{url_for('static', filename='tree.js')}}"></script>
@@ -216,10 +234,41 @@
                 
 
             </div>
+            {% if comparison_mode %}
+            <div class = "tree_box_2">
+
+                {% if accepted %}
+                <div class = show_parses>
+               
+            
+                    <input type = "number" min="1",max="100" id="nth_parse_2" ,name = "input_a_2                                                                              ">
+               
+                   <div class = "master_buttons_2" id="master_buttons_2">
+                    <button id = "show_parses_2" onclick = "render_second(document.getElementById('nth_parse_2').value,parses = {{parses}},tables = {{tables}},probs=true)"> Show Parse</button>
+                   
+                   <button class="all_button_2" onclick="render_second.expandAll()">Expand All</button>
+                   <button class = "all_button_2" onclick="render_second.collapseAll()">Collapse All</button>
+                   
+                   </div>
+                   
+                 
+                   
+               
+                    </div>
+                
+                {% endif %}
+                
+
+            </div>
+            
+      
+
+            {% else %}
 
                 <div class = "table_box", id="table_box">
 
                 </div>
+           {% endif %}
 
             </div>
             <script src="{{url_for('static', filename='monitoring.js')}}"></script>

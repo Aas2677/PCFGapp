@@ -724,7 +724,7 @@ class DerivationBuilder:
         # Take the rules dictionary and rank all of the rules in descensing order for each nonterminal
 
         for nonterminal in ruleset.keys():
-            ruleset[nonterminal] = sorted(ruleset[nonterminal],key = lambda x: x._probability)
+            ruleset[nonterminal] = sorted(ruleset[nonterminal],key = lambda x: x._probability,reverse=True)
         
         return ruleset
 
