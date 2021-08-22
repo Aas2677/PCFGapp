@@ -112,7 +112,7 @@
                 
 
                       <div>
-                          {{ form.sentence(placeholder="Enter your test string here.\nSpaces are used to delimit each token to be evaluated, so if your grammar defined words rather than sentences, you must still put a space in between each token.\nIf you grmmar includes a space in its terminal alphabet, this should be replaced with a different marker character.")}}
+                          {{ form.sentence(placeholder="Enter your test string here.\nSpaces are used to delimit each token to be evaluated.\nFor example, if you were testing the word aabb, you must enter a a b b.")}}
 
                       </div>
                       </div>
@@ -226,7 +226,7 @@
                     <input type = "number" min="1",max="100" id="nth_parse" ,name = "input_a">
                
                    <div class = "master_buttons" id="master_buttons">
-                    <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=true)"> Show Parse</button>
+                    <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=true,svg_number = '1')"> Show Parse</button>
                    
                    <button class="all_button" onclick="render.expandAll()">Expand All</button>
                    <button class = "all_button" onclick="render.collapseAll()">Collapse All</button>
@@ -256,7 +256,7 @@
                     <input type = "number" min="1",max="100" id="nth_parse_2" ,name = "input_a_2                                                                              ">
                
                    <div class = "master_buttons_2" id="master_buttons_2">
-                    <button id = "show_parses_2" onclick = "render_second(document.getElementById('nth_parse_2').value,parses = {{parses}},tables = {{tables}},probs=true)"> Show Parse</button>
+                    <button id = "show_parses_2" onclick = "render(document.getElementById('nth_parse_2').value,parses = {{parses}},tables = false,probs=true,svg_number = '2')"> Show Parse</button>
                    
                    <button class="all_button_2" onclick="render_second.expandAll()">Expand All</button>
                    <button class = "all_button_2" onclick="render_second.collapseAll()">Collapse All</button>

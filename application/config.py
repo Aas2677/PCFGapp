@@ -8,7 +8,7 @@
 #     SECRET_KEY = config.get('SECRET_KEY')
 
 
-
+ 
 import os 
 
 class Config:

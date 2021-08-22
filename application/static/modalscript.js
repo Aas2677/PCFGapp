@@ -1,3 +1,5 @@
+//Script to enable the popup instructions modal.
+
 // Get the modal
 var modal = document.getElementById("infopopup");
 

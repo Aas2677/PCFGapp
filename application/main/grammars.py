@@ -6,8 +6,7 @@ import math
 import json 
 
 
-def GetNonTerminals(items):
-    pass 
+
 
 class Terminal:
     """ class to represent non-terminal symbols in a grammar.

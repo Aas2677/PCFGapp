@@ -12,7 +12,10 @@ const n_best_input = document.getElementById("nth_parse")
 const n_best_input_2 = document.getElementById("nth_parse_2")
 
 n_best_input.addEventListener('change',restrict_parse_button);
-n_best_input_2.addEventListener('change',restrict_parse_button_2);
+
+if (n_best_input_2){
+    n_best_input_2.addEventListener('change',restrict_parse_button_2);
+}
 
 //keep track of the maximum number of parses we have gerated 
 const max_parses = document.getElementById("max_number_parses").innerHTML
@@ -23,6 +26,8 @@ const max_parses = document.getElementById("max_number_parses").innerHTML
 
 //hide the show parses button if user tries to request a parse number that doesn't exist, also remove the master buttons 
 function restrict_parse_button(){
+ 
+
 
     document.querySelectorAll('.all_button').forEach(e => e.remove());
 

@@ -3,26 +3,33 @@ body, html { height:100%; padding:0; margin:0;}
 
 svg {
   pointer-events: all;
+  cursor: grab;
 }
 
 .node {
     cursor: pointer;
   }
+
+  .node text {
+    font: 12px Georgia;
+  }
+  
   
   .node circle {
     fill: #fff;
-    stroke: steelblue;
+    stroke: rgb(109, 136, 204);
     stroke-width: 1.5px;
   }
   
   .node text {
-    font: 10px sans-serif;
+    font: 12px Georgia;
   }
   
   .link {
-    fill: none;
-    stroke: #ccc;
     stroke-width: 1.5px;
+    fill: none;
+    stroke: rgb(187, 173, 173);
+    
   }
 
 
@@ -77,11 +84,12 @@ svg{
     position: absolute;
     width: auto;
     height: auto;
-    padding: 2px;
-    background: #ffff99;
     border: solid 1px #aaa;
     border-radius: 8px;
-}
+    padding: 3px;
+    background: #f8f891;
+  }
+  
 
 div.tooltip_2 {
   position: absolute;
@@ -179,7 +187,7 @@ ul li {
   height: 51.5%;
   border: solid 2px rgb(141, 141, 213);
   border-radius: 8px;
-  top: 0.7%;
+  
   background: rgb(235, 237, 239);
 }
 

@@ -22,12 +22,13 @@ def flash_errors(form):
 
 
 
-@main.route("/",methods=['GET','POST'])
+
 @main.route("/home",methods=['GET','POST'])
 def home():
     return render_template('mainopen.html')
 
 
+@main.route("/",methods=['GET','POST'])
 @main.route("/string_input",methods=['GET','POST'])
 def string_input():
     
@@ -73,9 +74,15 @@ def string_input():
             
             
                # only update the total if the user has checked the box to indicate they want this information 
+               # if the user requested total probability, then the count of parses can be taken from the total_probability, otherwise we need to calculate it sep
                if total_needed:
                    total_probability_node = parser.total_probability(sentence)
                    total = total_probability_node.cumulative_prob
+                   count = total_probability_node.counter 
+               else:
+                   counter_node = parser.count_parses(sentence)
+                   count = counter_node.counter 
+                  
 
                # only generate the leftmost derivation tables if the user wants them 
                if table_needed:
@@ -96,6 +103,8 @@ def string_input():
                        flash(f'This sentence is unambiguous, meaning that there is only one way to parse the sentence and only 1 unique leftmost derivation','2')
                    else:
                         flash(f'There are only {len(parses)} ways to parse this sentence, so {number_of_parses} cannot be given.','2')
+               else:
+                  flash(f'There are {count} ways to parse this sentence.','1')
 
                           
 
@@ -162,6 +171,8 @@ def non_prob_string_input():
                raw_parses = parser.n_best_parses(number_of_parses,sentence)
                parses = [parse.get_full_tree() for parse in raw_parses]
                parses_d = [parse.get_full_tree(table=True) for parse in raw_parses]
+               counter_node = parser.count_parses(sentence)
+               count = counter_node.counter
             
             
         
@@ -185,6 +196,9 @@ def non_prob_string_input():
                        flash(f'This sentence is unambiguous, meaning that there is only one way to parse the sentence and only 1 unique leftmost derivation','2')
                     else:
                         flash(f'There are only {len(parses)} ways to parse this sentence, so {number_of_parses} cannot be given.','2')
+               else:
+                   flash(f'There are {count} ways to parse this sentence.','1')
+
                            
 
           
@@ -268,6 +282,10 @@ def file_input():
                        if total_needed:
                            total_probability_node = parser.total_probability(sentence)
                            total = total_probability_node.cumulative_prob
+                           count = total_probability_node.counter 
+                       else:
+                           counter_node = parser.count_parses(sentence)
+                           count = counter_node.counter
         
                        # only generate the leftmost derivation tables if the user wants them 
                        if table_needed:
@@ -288,6 +306,8 @@ def file_input():
                                 flash(f'This sentence is unambiguous, meaning that there is only one way to parse the sentence and only 1 unique leftmost derivation','2')
                             else:
                                  flash(f'There are only {len(parses)} ways to parse this sentence, so {number_of_parses} cannot be given.','2')
+                       else:
+                             flash(f'There are {count} ways to parse this sentence.','1')
 
                        if not grammar_object.consistent:
                            flash(' Warning - your grammar is inconsistent. Parsing can see be carried out, but there will not be a proper probability distribution over parses.','2')
@@ -379,6 +399,8 @@ def non_prob_file_input():
                        raw_parses = parser.n_best_parses(number_of_parses,sentence)
                        parses = [parse.get_full_tree() for parse in raw_parses]
                        parses_d = [parse.get_full_tree(table=True) for parse in raw_parses]
+                       counter_node = parser.count_parses(sentence)
+                       count = counter_node.counter
                     
                     
                     
@@ -405,6 +427,9 @@ def non_prob_file_input():
                                 flash(f'This sentence is unambiguous, meaning that there is only one way to parse the sentence and only 1 unique leftmost derivation','2')
                            else:
                                  flash(f'There are only {len(parses)} ways to parse this sentence, so {number_of_parses} cannot be given.','2')
+                       else:
+                           flash(f'There are {count} ways to parse this sentence.','1')
+               
          
         
                        if grammar_object.ignored_rules:
