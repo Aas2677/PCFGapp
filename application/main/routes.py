@@ -31,6 +31,7 @@ def home():
 @main.route("/",methods=['GET','POST'])
 @main.route("/string_input",methods=['GET','POST'])
 def string_input():
+       print("hello")
     
        form = TextInputForm() 
    
@@ -68,20 +69,18 @@ def string_input():
                data = {}
             
                raw_parses = parser.n_best_parses(number_of_parses,sentence)
+               best_parse = raw_parses[0]
+               count = best_parse.counter 
+               # if total is needed, pull it out of the best best
+               if total_needed:
+                   total = best_parse.tracker_probability
+              
+               
                parses = [parse.get_full_tree() for parse in raw_parses]
                parses_d = [parse.get_full_tree(table=True) for parse in raw_parses]
             
             
-            
-               # only update the total if the user has checked the box to indicate they want this information 
-               # if the user requested total probability, then the count of parses can be taken from the total_probability, otherwise we need to calculate it sep
-               if total_needed:
-                   total_probability_node = parser.total_probability(sentence)
-                   total = total_probability_node.cumulative_prob
-                   count = total_probability_node.counter 
-               else:
-                   counter_node = parser.count_parses(sentence)
-                   count = counter_node.counter 
+    
                   
 
                # only generate the leftmost derivation tables if the user wants them 
@@ -117,6 +116,7 @@ def string_input():
                # set number of parses to number actually generated 
                number_of_parses = len(parses)
            except Exception as e:
+               print(e)
                
            
 
@@ -169,10 +169,10 @@ def non_prob_string_input():
                data = {}
             
                raw_parses = parser.n_best_parses(number_of_parses,sentence)
+               best_parse = raw_parses[0]
                parses = [parse.get_full_tree() for parse in raw_parses]
                parses_d = [parse.get_full_tree(table=True) for parse in raw_parses]
-               counter_node = parser.count_parses(sentence)
-               count = counter_node.counter
+               count = best_parse.counter
             
             
         
@@ -273,20 +273,18 @@ def file_input():
                        data = {}
                     
                        raw_parses = parser.n_best_parses(number_of_parses,sentence)
+                       best_parse = raw_parses[0]
+                       count = best_parse.counter 
+                       # if total is needed, pull it out of the best best parse
+                       if total_needed:
+                           total = best_parse.tracker_probability
+                      
                        parses = [parse.get_full_tree() for parse in raw_parses]
                        parses_d = [parse.get_full_tree(table=True) for parse in raw_parses]
+                            
                     
                     
-                    
-                       # only update the total if the user has checked the box to indicate they want this information 
-                       if total_needed:
-                           total_probability_node = parser.total_probability(sentence)
-                           total = total_probability_node.cumulative_prob
-                           count = total_probability_node.counter 
-                       else:
-                           counter_node = parser.count_parses(sentence)
-                           count = counter_node.counter
-        
+                       
                        # only generate the leftmost derivation tables if the user wants them 
                        if table_needed:
                          
@@ -397,10 +395,10 @@ def non_prob_file_input():
                        data = {}
                     
                        raw_parses = parser.n_best_parses(number_of_parses,sentence)
+                       best_parse = raw_parses[0]
                        parses = [parse.get_full_tree() for parse in raw_parses]
                        parses_d = [parse.get_full_tree(table=True) for parse in raw_parses]
-                       counter_node = parser.count_parses(sentence)
-                       count = counter_node.counter
+                       count = best_parse.counter
                     
                     
                     

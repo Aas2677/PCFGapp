@@ -7,7 +7,6 @@ import json
 
 
 
-
 class Terminal:
     """ class to represent non-terminal symbols in a grammar.
     overrides for convenience"""
@@ -83,9 +82,9 @@ class NonTerminal:
 
 class ProductionRule:
 
-    def __init__(self,left,right,probability,probabilistic=True):
+    def __init__(self,left,right,probability,alt_probability=0,probabilistic=True):
 
-        __slots__ = '_left','_right','_probability','_probabilistic'
+        __slots__ = '_left','_right','_probability','_probabilistic','alt_probability'
 
         if not isinstance(left, NonTerminal):
             # Make sure left hand side is a non-terminal symbol 
@@ -94,8 +93,9 @@ class ProductionRule:
         
         self._left = left 
         self._right = right 
-        self._probability = probability 
+        self._probability = probability
         self._probabilistic = probabilistic
+        self._alt_probability = alt_probability
       
 
     
@@ -268,10 +268,10 @@ class ProbabilisticGrammar:
 
            if checker_tuple not in duplicate_checker:
            
-              processed_rules[NonTerminal(lhs)].append(ProductionRule(NonTerminal(lhs), processed_atoms, probability,probabilistic=probabilistic))
-              processed_rules_log[NonTerminal(lhs)].append(ProductionRule(NonTerminal(lhs), processed_atoms, -1* math.log(probability),probabilistic=probabilistic))
+              processed_rules[NonTerminal(lhs)].append(ProductionRule(NonTerminal(lhs), processed_atoms, probability,alt_probability=probability,probabilistic=probabilistic))
+              processed_rules_log[NonTerminal(lhs)].append(ProductionRule(NonTerminal(lhs), processed_atoms, -1* math.log(probability),alt_probability=probability,probabilistic=probabilistic))
               collapsed_rules.append(ProductionRule(NonTerminal(lhs), processed_atoms, probability,probabilistic=probabilistic))
-              collapsed_rules_log.append(ProductionRule(NonTerminal(lhs), processed_atoms, -1* math.log(probability),probabilistic=probabilistic))
+              collapsed_rules_log.append(ProductionRule(NonTerminal(lhs), processed_atoms, -1* math.log(probability),probability,probabilistic=probabilistic))
            else:
                ignored_rules = True 
     
@@ -346,8 +346,8 @@ class ProbabilisticGrammar:
 
 
                        rhs = [NonTerminal(atom) if atom in non_terminals else Terminal(atom) for atom in rule["expansion"]]
-                       new_rule = ProductionRule(NonTerminal(rule["nonterminal"]),rhs,prob,probabilistic=probabilistic)
-                       new_rule_log = ProductionRule(NonTerminal(rule["nonterminal"]),rhs,-1* math.log(prob),probabilistic=probabilistic)
+                       new_rule = ProductionRule(NonTerminal(rule["nonterminal"]),rhs,prob,alt_probability=prob,probabilistic=probabilistic)
+                       new_rule_log = ProductionRule(NonTerminal(rule["nonterminal"]),rhs,-1* math.log(prob),alt_probability = prob, probabilistic=probabilistic)
                        
                        checker_tuple = (rule["nonterminal"],*rule["expansion"])
                        
@@ -502,87 +502,6 @@ class ProbabilisticGrammar:
         
             if total_probability <= 1 - self.tolerance or total_probability >= 1 + self.tolerance:
                 self.consistent = False 
-
-
-
-
-            
-
-
-           
-            
-
-            
-
-              
-   
-
-
-
-
-
-
-
-    
-
-    
-
-
-    
-
-
-    
-
-
-
-    
-         
-
-    
-
-
-
-
-
-
-
-
-            
-
-
-           
-            
-
-            
-
-              
-   
-
-
-
-
-
-
-
-    
-
-    
-
-
-    
-
-
-    
-
-
-
-    
-         
-
-    
-
-
-
 
 
 
