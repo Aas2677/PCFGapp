@@ -1,5 +1,8 @@
+from decimal import *
+
 from application.main.parsing import *
 from application.main.grammars import ProbabilisticGrammar
+from application.main.aux  import pretty_display_number as pretty
 import application.main.grammarerrors as grammarerrors
 
 from application.main.forms import TextInputForm,FileInputForm, TextInputFormNon, FileInputFormNon
@@ -8,6 +11,13 @@ from flask import Blueprint
 import json
 import sys 
 import re 
+
+# set the decimal context 
+
+context = Context(prec=8,  Emin=-999999, Emax=999999,
+        capitals=1, clamp=0, flags=[], traps=[Overflow, DivisionByZero,
+        InvalidOperation])
+
 
 main = Blueprint('main',__name__)
 
@@ -31,8 +41,7 @@ def home():
 @main.route("/",methods=['GET','POST'])
 @main.route("/string_input",methods=['GET','POST'])
 def string_input():
-       print("hello")
-    
+      
        form = TextInputForm() 
    
        grammar = 0 
@@ -73,8 +82,8 @@ def string_input():
                count = best_parse.counter 
                # if total is needed, pull it out of the best best
                if total_needed:
-                   total = best_parse.tracker_probability
-              
+                   total = Decimal(best_parse.tracker_probability).normalize(context=context)
+                
                
                parses = [parse.get_full_tree() for parse in raw_parses]
                parses_d = [parse.get_full_tree(table=True) for parse in raw_parses]
@@ -277,7 +286,8 @@ def file_input():
                        count = best_parse.counter 
                        # if total is needed, pull it out of the best best parse
                        if total_needed:
-                           total = best_parse.tracker_probability
+                           total = Decimal(best_parse.tracker_probability).normalize(context=context)
+                          
                       
                        parses = [parse.get_full_tree() for parse in raw_parses]
                        parses_d = [parse.get_full_tree(table=True) for parse in raw_parses]

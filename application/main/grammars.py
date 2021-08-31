@@ -4,7 +4,7 @@ import application.main.aux as aux
 from collections import defaultdict
 import math
 import json 
-
+from decimal import * 
 
 
 class Terminal:

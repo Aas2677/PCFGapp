@@ -1,7 +1,10 @@
+from decimal import *
+
 from itertools import combinations,product
 from os import error
 import application.main.grammars as grammars
 import application.main.grammarerrors as grammarerrors 
+from application.main.aux import pretty_display_number as pretty
 import itertools 
 import timeit 
 import time 
@@ -9,6 +12,14 @@ from collections import defaultdict
 import math 
 import copy 
 import json  
+
+
+
+# set the decimal context 
+
+context = Context(prec=8,  Emin=-999999, Emax=999999,
+        capitals=1, clamp=0, flags=[], traps=[Overflow, DivisionByZero,
+        InvalidOperation])
 
 
 class ProbabilisticCYKParser:
@@ -660,7 +671,7 @@ class ProbabilisticNode:
         if table:
             local_dict["name"] = self.rule._left
             local_dict["rule"] = self.rule
-            local_dict["rule_probability"] = round(math.exp( -1* self.rule._probability),3)
+            local_dict["rule_probability"] = round(math.exp( -1* self.rule._probability),5)
             local_dict["children"] = [] 
 
             if self.leaf:
@@ -687,7 +698,7 @@ class ProbabilisticNode:
             # setup the name,rule and cumulative probabilities of the node.
             local_dict["name"] = f'{self.rule._left}'
             local_dict["rule"] = str(self.rule)
-            local_dict["cumulative_prob"] = math.exp(-1 * self.cumulative_prob)
+            local_dict["cumulative_prob"] = str(Decimal(math.exp(-1 * self.cumulative_prob)).normalize(context=context))
             local_dict["children"] = [] 
         
         
