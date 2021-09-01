@@ -48,6 +48,19 @@ THIS SOFTWARE.
 
 function render(num,parses,tables,probs,svg_number){
 
+  console.log(num_nodes)
+  console.log("hello")
+
+  if (num_nodes > 50){
+    console.log(num_nodes)
+    console.log("greater than 50")
+
+  }
+  else{
+    console.log(num_nodes)
+    console.log("not greater than 50")
+  }
+
   // setup html elements depending on wether we are rendering in svg# or svg#2
  
   if (svg_number == '1'){
@@ -186,7 +199,7 @@ var treeData = parses[num]
 
 var margin = {top: 20, right: 30, bottom: 20, left: 30},
     width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    height = 1000 - margin.top - margin.bottom;
 
 // set up the zoom object
 var zoom = d3.zoom();
@@ -231,8 +244,9 @@ var treestruct = d3.tree()
 treedata = data[num]
 root = d3.hierarchy(treedata, function(d) { return d.children; });
 
-root.x0 = 0;
-root.y0 = width / 3;
+root.x0 =  0;
+root.y0 = 0 ;
+// root.y0 = width / 2;
 
 
 // collapse the tree, and then draw the root, including its immediate children
@@ -251,7 +265,7 @@ function update(source) {
       links = treeData.descendants().slice(1);
 
 
-  nodes.forEach(function(d){ d.y = d.depth * 100});
+   nodes.forEach(function(d){ d.y = d.depth * 200});
 
  
   var node = vis.selectAll('g.node')
@@ -263,7 +277,7 @@ function update(source) {
       .append('g')
       .attr('class', 'node')
       .attr("transform", function(d) {
-        return "translate(" + source.x0 + "," + source.y0 + ")";
+        return "translate(" + source.y0 + "," + source.x0 + ")";
       })
       .on('click',click)
       .on("mouseover",mouseover)
@@ -277,7 +291,7 @@ function update(source) {
     .append('g')
     .attr('class', 'node')
     .attr("transform", function(d) {
-      return "translate(" + source.x0 + "," + source.y0 + ")";
+      return "translate(" + source.y0 + "," + source.x0 + ")";
     })
     .on('click',click)
     .on("mouseover",mouseover)
@@ -322,7 +336,7 @@ function update(source) {
   nodeUpdate.transition()
     .duration(duration)
     .attr("transform", function(d) { 
-        return "translate(" + d.x + "," + d.y + ")";
+        return "translate(" + d.y + "," + d.x + ")";
      });
 
   
@@ -330,7 +344,7 @@ function update(source) {
   var nodeExit = node.exit().transition()
       .duration(duration)
       .attr("transform", function(d) {
-          return "translate(" + source.x + "," + source.y + ")";
+          return "translate(" + source.y + "," + source.x + ")";
       })
       .remove();
 
@@ -372,7 +386,7 @@ function update(source) {
       })
       .remove();
 
-  // Store the old positions for transition.
+  // Store the old positions of the nodes.
   nodes.forEach(function(d){
     d.x0 = d.x;
     d.y0 = d.y;
@@ -384,13 +398,23 @@ function update(source) {
 
 
 
+// function diagonal(s, d) {
+
+//   return `M ${s.x} ${s.y}
+//   C ${(s.x + d.x) / 2} ${s.y},
+//     ${(s.x + d.x) / 2} ${d.y},
+//     ${d.x} ${d.y}`
+
+// }
+
 function diagonal(s, d) {
 
-  return `M ${s.x} ${s.y}
-  C ${(s.x + d.x) / 2} ${s.y},
-    ${(s.x + d.x) / 2} ${d.y},
-    ${d.x} ${d.y}`
+  path = `M ${s.y} ${s.x}
+          C ${(s.y + d.y) / 2} ${s.x},
+            ${(s.y + d.y) / 2} ${d.x},
+            ${d.y} ${d.x}`
 
+  return path
 }
 
 

@@ -69,9 +69,10 @@ def parse_string(input,separator = ","):
                     try:
                          # If the probability is numerical, add the rule 
                          probability = float(probability)
-                         rules.append((left,product,probability))
-                         
-     
+                         if probability != 0:
+                             rules.append((left,product,probability))
+
+                     
      
                     except ValueError:
                          # If the characters inside the brackets are non-numerical, then discard the production entirely
@@ -159,17 +160,8 @@ def parse_string_non(input,separator = ","):
 
 def pretty_display_number(number:float): 
 
-    # Deals with appropriateley rounding numbers for display on the interface so that they fit in 
-
-
-    # if 'e' in str(number):
-    #     print(number)
- 
-    #     return number
     
-    # else: 
-    #     print(number)
-    #     return round(number,3)
+  
     return ('%.15f' % number).rstrip('0').rstrip('.')
 
 

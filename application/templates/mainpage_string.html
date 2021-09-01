@@ -251,13 +251,14 @@
             <div class = "tree_box">
 
                 {% if accepted %}
+             
                 <div class = show_parses>
                
             
                     <input type = "number" min="1",max="100" id="nth_parse" ,name = "input_a">
                
                    <div class = "master_buttons" id="master_buttons">
-                    <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=true, svg_number = '1')"> Show Parse</button>
+                    <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=true, svg_number = '1',num_nodes = {{num_nodes}})"> Show Parse</button>
                    
                    <button class="all_button" onclick="render.expandAll()">Expand All</button>
                    <button class = "all_button" onclick="render.collapseAll()">Collapse All</button>
@@ -287,7 +288,7 @@
                     <input type = "number" min="1",max="100" id="nth_parse_2" ,name = "input_a_2">
                
                    <div class = "master_buttons_2" id="master_buttons_2">
-                    <button id = "show_parses_2" onclick = "render(document.getElementById('nth_parse_2').value,parses = {{parses}},tables = false,probs=true,svg_number = '2')"> Show Parse</button>
+                    <button id = "show_parses_2" onclick = "render(document.getElementById('nth_parse_2').value,parses = {{parses}},tables = false,probs=true,svg_number = '2',num_nodes = {{num_nodes}})"> Show Parse</button>
                    
                    <button class="all_button_2" onclick="render_second.expandAll()">Expand All</button>
                    <button class = "all_button_2" onclick="render_second.collapseAll()">Collapse All</button>

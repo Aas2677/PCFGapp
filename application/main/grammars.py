@@ -48,7 +48,7 @@ class NonTerminal:
 
 
     def __init__(self,token):
-        self._token = token 
+         self._token = ' ' + token  + ' ' 
         
 
     def __eq__(self,other):
@@ -179,12 +179,16 @@ class ProbabilisticGrammar:
         # initially set CNF check to true 
         self.CNF = True 
         self.consistent = True 
+        self.correct_terminal_size = True 
+        self.correct_nonterminal_size = True
+        self.overlapping_alphabets = False 
         self.start = start 
         self.processed_rules = processed_rules
         self.processed_rules_log = processed_rules_log
         self.nonterminals = nonterminals 
         self.token_nonterminals = [atom._token for atom in self.nonterminals]
         self.alphabet = alphabet
+        self.token_alphabet = [atom._token for atom in self.alphabet]
         self.tolerance = tolerance
         self.ignored_rules = bad_rules 
         self.collapsed_rules = collapsed_rules
@@ -202,8 +206,13 @@ class ProbabilisticGrammar:
         self.expansion_lhs_lookup = self.make_lookup(2)
         self.expansion_lhs_lookup_logs = self.make_lookup(2,logs=True)
         self.ignored_rules = bad_rules 
+
         
 
+        # Validation checks 
+        self.check_character_legnths() 
+        self.check_CNF() 
+        self.check_overlaps()
         # If the grammar is probabilistic then check the consistency
         if probabilistic:
            self.check_consistency()
@@ -461,7 +470,7 @@ class ProbabilisticGrammar:
 
             
 
-    def check_rule(self,start,rhs,types,length,empty):
+    def check_rule(self,start,rhs,types,length,empty) -> bool:
 
         # return true if rule in CNF, false otherwise 
 
@@ -492,7 +501,9 @@ class ProbabilisticGrammar:
 
 
 
-    def check_consistency(self):
+    def check_consistency(self) -> None:
+
+        # Checks to see if the grammar is consistent 
     
 
         for variable,rules in self.processed_rules.items():
@@ -502,6 +513,35 @@ class ProbabilisticGrammar:
         
             if total_probability <= 1 - self.tolerance or total_probability >= 1 + self.tolerance:
                 self.consistent = False 
+
+
+    def check_overlaps(self) -> None:
+
+        # Checks if terminal and non-terminal alphabets overlap, which is unacceptable 
+
+        for atom in self.token_nonterminals:
+            if atom in self.token_alphabet:
+              
+                # set the overlap flag to true 
+                self.overlapping_alphabets = True 
+
+    def check_character_legnths(self) -> None:
+
+        # Checks whether the number of characters in each terminal and non-terminal is within the limits 
+        for terminal in self.token_alphabet: 
+            if len(terminal) > 18:
+              
+                self.correct_terminal_size = False 
+                break 
+
+        
+        for non_terminal in self.token_nonterminals:
+            if len(non_terminal) > 6:
+            
+                
+                self.correct_nonterminal_size = False 
+                break 
+
 
 
 

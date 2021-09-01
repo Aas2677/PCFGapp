@@ -64,8 +64,8 @@ def validate_sentence(self,sentence):
     
     sentence_data = re.sub('\n','', re.sub('\r','',str(sentence.data))).split(' ')
 
-    if len(sentence_data) > 80:
-        raise ValidationError(f'The size limit for test strings is 80, your test string has length {len(sentence_data)}')
+    if len(sentence_data) > 50:
+        raise ValidationError(f'The size limit for test strings is 50, your test string has length {len(sentence_data)}')
 
 
        
