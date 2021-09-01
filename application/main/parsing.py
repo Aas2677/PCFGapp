@@ -14,9 +14,17 @@ import copy
 import json  
 
 
+"""
+This is the main file for parsing with probabilistic grammars. All parsers as setup using a ProbabilisticCYkParser object and use ProbabilisticNode to represent trees.
+
+"""
+
+
+
+
+
 
 # set the decimal context 
-
 context = Context(prec=8,  Emin=-999999, Emax=999999,
         capitals=1, clamp=0, flags=[], traps=[Overflow, DivisionByZero,
         InvalidOperation])

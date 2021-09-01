@@ -1,3 +1,8 @@
+
+
+
+#### Secret key config for running on cloud serve. Un-comment this to run application on remote server ######
+
 # import os 
 # import json 
 
@@ -8,6 +13,14 @@
 #     SECRET_KEY = config.get('SECRET_KEY')
 
 
+
+
+
+
+
+
+
+### Secret key config for running on local machine. Leave this uncommented to run locally ####
  
 import os 
 

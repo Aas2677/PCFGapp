@@ -7,6 +7,11 @@ import application.main.grammarerrors as grammarerrors
 import sys 
 import re
 
+
+"""
+All user forms are created using flask templates. Create a new cusotm form object to create a new form.
+"""
+
 def validate_grammar(self,grammar):
     
     # Makes a preliminary validation check on the grammar input fle to make sure that passing it to the parsing structures is safe --- Does not generate noncritical warnings -- 
@@ -21,7 +26,7 @@ def validate_grammar(self,grammar):
         number_of_rules  = len(formal_grammar.collapsed_rules)
 
         if number_of_rules > 200:
-            raise ValidationError(f'The maximum grammar size is 200, meaning you cant have more than 200 rules. Your grammar has {number_of_rules} rules.')
+            raise ValidationError(f'The maximum grammar size is 200, meaning you cant have more than 200 rules. Your grammar has {number_of_rules} rules')
         
         if not formal_grammar.CNF:
             
@@ -47,7 +52,7 @@ def validate_grammar_non_prob(self,grammar):
         number_of_rules  = len(formal_grammar.collapsed_rules)
 
         if number_of_rules > 200:
-            raise ValidationError(f'The maximum grammar size is 200, meaning you cant have more than 200 rules. Your grammar has {number_of_rules} rules.')
+            raise ValidationError(f'The maximum grammar size is 200, meaning you cant have more than 200 rules. Your grammar has {number_of_rules} rules')
         
         if not formal_grammar.CNF:
             
@@ -62,10 +67,14 @@ def validate_grammar_non_prob(self,grammar):
 
 def validate_sentence(self,sentence):
     
-    sentence_data = re.sub('\n','', re.sub('\r','',str(sentence.data))).split(' ')
+    sentence_data = [ word for word in re.sub('\n','', re.sub('\r','',str(sentence.data))).split(' ') if word != '']
+
 
     if len(sentence_data) > 50:
         raise ValidationError(f'The size limit for test strings is 50, your test string has length {len(sentence_data)}')
+    
+    if len(sentence_data) < 2:
+        raise ValidationError(f'The minimum size for a test string is 2. A parse tree with one node would not be very interesting')
 
 
        

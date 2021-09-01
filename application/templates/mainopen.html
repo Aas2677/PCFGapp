@@ -59,13 +59,15 @@
                         A → BC ( an expsnion rule),   or
                         A → a, (a terminal rule)
 
-                        Where A,B,C are non-terminals and a is a terminal.Empty production rules are not permitted. 
+                        Where A,B,C are non-terminals and a is a terminal. The start symbol of your grammar is allowed to appear on the left hand side of rules, unlike in strict Chomsky normal form. 
+                        However, there is no facility to add the empty symbol to your grammar. If you attempt to add the empty symbol, it will not be treated as a special character and simply be interpreted 
+                        as just another terminal or non-terminal symbol.
                     </p>
                     <p>
                         <h6 style="color: rgb(10, 10, 192);">Free text input mode</h6>
                         The <a href="{{url_for('main.string_input')}}">free text input mode</a> is designed to be the most flexible option.
                         Your grammar is interpreted simply from the rules you enter, details of the syntax can be found in the intruction box on the text input mode page.
-                        There is an example file <a href="static/example.txt" download>here</a>
+                        There is an example file <a href="static/example.txt" download>here</a>, which you can use to test out the tool.
                     </p>
                     <p>
                         <h6 style="color: rgb(10, 10, 192);">File input mode</h6>
@@ -80,10 +82,10 @@
                     <p>
                         <h6 style="color: rgb(10, 10, 192);">Non-probabilistic grammars</h6>
                         The tool allows you to toggle between probabilistic and non-probabilistic grammars. If you choose to use non-probabilistic grammars then the syntax for the free text input is 
-                        identical to the probabilistic mode, you without entering the probabilities. For file inputs, there is no difference at all in file structure, the parser simply won't read the 
+                        identical to the probabilistic mode just without entering the probabilities. For file inputs, there is no difference at all in file structure, the parser simply won't read the 
                         rule probability field in the JSON file. In non-probabilistic mode, the tool operates as a standard parser and will simply return the number of parses you ask for, in a random order. All probability 
                         information is removed. The non-probabilistic mode is useful for exploring grammar ambiguity without wanting to consider how probable different parses of the same sentence are. If you'd like to try using the tool in 
-                        non-probabilistic mode, the example grammar JSON file will work unedited.
+                        non-probabilistic mode, the example grammar JSON file will work unedited. There is also a non-probabilistic grammar in string format in the syntax popup on the corresponding page.
                     </p>
                    
                    
@@ -102,7 +104,9 @@
                             you are using a grammar that defines words rather than sentences, then you will need to separate 
                             letters in your test word with a space. If you are using a grammar where a space is a terminal character,
                             then you will need to replace this with some other special character. Currently the maximum length of string the parser
-                            will accept is 80.
+                            will accept is 50. Note that this means 50 terminals , whether they are letters or words. If your test string exceeds 21 terminals,
+                            then the parser will render your parse trees horizontally rather than vertically. This is to prevent node labels from overlapping, but the 
+                            horizontal trees are entireley equivalent to a vertical tree.
                            
                             
                         </p>
@@ -121,11 +125,11 @@
                                 <h5 style="color: rgb(10, 10, 192);">Parser options and submit</h5>
                                 <h6 style="color: rgb(10, 10, 192);">Number of parses</h6>
                                 <p>
-                                This tool is designed to parse the n-best parses of a test string. The number input box here asks 
+                                This tool is designed to parse the n-best parses of a test string, or find n arbitrary parses if your grammar is non-probabilistic. The number input box here asks 
                                 how many parses you would like to find  for your test string. As an example, if you ask for 5 parses,
                                 the parser will find the 5 most likely parses for that string and return them in order of likelihood.
                                 In the case that there are less possible parses than you ask for, then the parser will simply find all
-                                the possible parses in order of probability. The maximum number of parses you can request for a string is 100. 
+                                the possible parses in order of probability. The maximum number of parses you can request for a string is 99. 
                                 </p>
                                 <p>
                                  <h6 style="color: rgb(10, 10, 192);">Total probability</h6>
@@ -135,6 +139,12 @@
                                  This feature is especially useful for highly ambiguous grammars where a sentence could have 100s of possible parses.
 
                                 </p>
+                                <h6 style="color: rgb(10, 10, 192);">Number of unique parses</h6>
+
+                                Regardless of how many parses you ask to visualise, the parser will find exactly how many exist. In some cases, the number of possible parses is 
+                                extremely high, which is why there is a limit on how many you can request to produce.
+
+                               </p>
                                 <p>
                                     <h6 style="color: rgb(10, 10, 192);">Leftmost Derivations</h6>
    
@@ -229,12 +239,14 @@
                         Once your grammar and test sentence have been submitted, you can view the parse trees here. If your grammar is probabilistic then the parse number in the top left 
                         refers to the probability ranking of the parse, otherwise it is simply a random ordering of parses. You can zoom or scroll on the tree and can collapse or expand nodes by clicking on them. Hovering on a node shows information 
                         about that node, including the rule used and the probability of that sub-tree. The cumulative probability of root node therefore shows the overall probability of that parse tree.
-                        If you asked for the total probability, then the total probability over all parses will be displayed in the top left corner. If your grammar is non-probabiistic then the information
+                        If you asked for the total probability, then the total probability over all parses will be displayed in the top left corner. Please remember that if your grammar is inconsistent, meaning you havent defined a proper probability distribution over the rules for each non-terminal,
+                        then the probabilies are no longer true probabilities, so you should interpret the probabilities as relative weights. If your grammar is non-probabiistic then the information
                         regarding probabilities will not appear.The derivation step number for each node associates that node with 
-                        the corresponding step in the leftmost derivation. 
+                        the corresponding step in the leftmost derivation. The leftmost derivation steps correspond to the nodes in a depth first then left to right fashion. If your tree exceeds 40 nodes, then it will be rendered horizontally instead. In this case the derivation step order 
+                        is still depth first, but the left-right orientation becomes top-bottom. 
 
                         <p>
-                            If there is an issue with the parse tree, you can click the 'Show Parse' button to re-render the tree.
+                            If there is an issue with the parse tree rendering, you can click the 'Show Parse' button to re-render the tree.
                         </p>
 
 
@@ -255,6 +267,8 @@
                             of different parses, you use the button in the parse tree area to reload a different parse. The purpose of the leftmost derivation table is to link each step in the 
                             derivation to the parse tree and to show the working string changing in each step. If your grammar is probabilistic the table will show the probability of the rules used 
                             as well as the ranking of that rule among all rules with the same non-terminal. In non-probabilistic mode, all fields relating to probability are stripped out.
+                            A leftmost derivation means that the non-terminal expanded at any point in the derivation is the leftmost non-terminal in the current string, meaning that it corresponds to the parse tree 
+                            in a depth first fashion. 
     
                            
     

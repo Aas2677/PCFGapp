@@ -44,24 +44,21 @@ TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 
 
+
+Part of this program is adapted from the following example from Mike Bostock: https://bl.ocks.org/mbostock/4339083. Released under the GNU Public Licnse, version 3: https://opensource.org/licenses/GPL-3.0
+
+
 */
+
+
+
+
+
 
 function render(num,parses,tables,probs,svg_number){
 
-  console.log(num_nodes)
-  console.log("hello")
 
-  if (num_nodes > 50){
-    console.log(num_nodes)
-    console.log("greater than 50")
-
-  }
-  else{
-    console.log(num_nodes)
-    console.log("not greater than 50")
-  }
-
-  // setup html elements depending on wether we are rendering in svg# or svg#2
+    // setup html elements depending on wether we are rendering in svg# or svg#2
  
   if (svg_number == '1'){
     var lookup = {my_tooltip : ".my-tooltip", my_tooltip_name : "my-tooltip",tooltip : ".tooltip", tooltip_name : "tooltip", tree_box : ".tree_box", svg_id : "#svg_1",svg : "svg_1", master_buttons :"master_buttons", button: "all_button" }
@@ -71,8 +68,6 @@ function render(num,parses,tables,probs,svg_number){
     var lookup = {my_tooltip : ".my-tooltip_2",tooltip : ".tooltip_2", my_tooltip_name : "my-tooltip_2", tooltip_name : "tooltip_2", tree_box :".tree_box_2", svg_id : "#svg_2",svg : "svg_2", master_buttons :"master_buttons_2", button: "all_button_2" }
 
   }
-
- console.log(lookup)
 
 
   // remove old tooltips and svg 
@@ -107,7 +102,7 @@ function render(num,parses,tables,probs,svg_number){
     var rawtabledata =  document.getElementById("derivation_tables").innerHTML
     var tabledata = JSON.parse(rawtabledata)
     var thistable = tabledata[num]
-    // console.log(thistable)
+   
 
     var list_data = [] 
 
@@ -127,8 +122,7 @@ function render(num,parses,tables,probs,svg_number){
       var table = new Tabulator("#table_box", {
 
         data:list_data,
-        width:"100%",
-       
+    
         layout:"fitDataFill",
         // virtualDomHoz:true,
         columns:[
@@ -145,7 +139,6 @@ function render(num,parses,tables,probs,svg_number){
       var table = new Tabulator("#table_box", {
 
         data:list_data,
-        width:"100%",
        
         layout:"fitDataFill",
         // virtualDomHoz:true,
@@ -198,8 +191,8 @@ var treeData = parses[num]
 // Setup SVG 
 
 var margin = {top: 20, right: 30, bottom: 20, left: 30},
-    width = 960 - margin.left - margin.right,
-    height = 1000 - margin.top - margin.bottom;
+    width = 940 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
 // set up the zoom object
 var zoom = d3.zoom();
@@ -221,8 +214,9 @@ var vis = d3.select(lookup.tree_box)
         
 
 var i = 0,
-    duration = 750,
-    root;
+    root,
+    duration = 705;
+  
 
 
 
@@ -244,9 +238,16 @@ var treestruct = d3.tree()
 treedata = data[num]
 root = d3.hierarchy(treedata, function(d) { return d.children; });
 
-root.x0 =  0;
+
+
+if (num_nodes < 40){
+root.x0 =  height/2;
 root.y0 = 0 ;
-// root.y0 = width / 2;
+}
+else{
+  root.x0 = 0; 
+  root.y0 = width / 3;
+}
 
 
 // collapse the tree, and then draw the root, including its immediate children
@@ -265,19 +266,25 @@ function update(source) {
       links = treeData.descendants().slice(1);
 
 
-   nodes.forEach(function(d){ d.y = d.depth * 200});
+   nodes.forEach(function(d){ d.y = d.depth * 100});
 
  
   var node = vis.selectAll('g.node')
       .data(nodes, function(d) {return d.id || (d.id = ++i);   });
 
+
+
+
+  // Setup the node entries. Slightly messy due to needing to check if we are in probablistic-mode or not and check how many nodes we have in total.
   if (probs){
+
+    if(num_nodes < 40){
   var nodeEnter = node
       .enter()
       .append('g')
       .attr('class', 'node')
       .attr("transform", function(d) {
-        return "translate(" + source.y0 + "," + source.x0 + ")";
+        return "translate(" + source.x0 + "," + source.y0 + ")";
       })
       .on('click',click)
       .on("mouseover",mouseover)
@@ -296,9 +303,45 @@ function update(source) {
     .on('click',click)
     .on("mouseover",mouseover)
     .on("mouseover", mouseover)
+    .on("mousemove", function(d){mousemove(d);})
+    .on("mouseout", mouseout);
+}
+
+  }
+  else{
+    if(num_nodes < 40){
+      var nodeEnter = node
+      .enter()
+      .append('g')
+      .attr('class', 'node')
+      .attr("transform", function(d) {
+        return "translate(" + source.x0 + "," + source.y0 + ")";
+      })
+      .on('click',click)
+      .on("mouseover",mouseover)
+      .on("mouseover", mouseover)
+      .on("mousemove", function(d){mousemove_non(d);})
+      .on("mouseout", mouseout);
+
+    }
+    else{
+    var nodeEnter = node
+    .enter()
+    .append('g')
+    .attr('class', 'node')
+    .attr("transform", function(d) {
+      return "translate(" + source.y0 + "," + source.x0 + ")";
+    })
+    .on('click',click)
+    .on("mouseover",mouseover)
+    .on("mouseover", mouseover)
     .on("mousemove", function(d){mousemove_non(d);})
     .on("mouseout", mouseout);
   }
+}
+
+
+
 
   // Add circle for each enter node
 
@@ -309,24 +352,48 @@ function update(source) {
           return d._children ? "#95c4e6" : "#fff";
       });
 
-  // Add text
+  // Add text to the nodes
 
   nodeEnter.append('text')
-    .attr("dy", ".35em")
+    .attr("dy", ".32em")
     .attr("x", function(d) {
-        return d.children || d._children ? -12 : 15;
+        return d.children || d._children ? 12 : 12;
     })
     .attr("text-anchor", function(d) {
-        return d.children || d._children ? "end" : "start";
+        return d.children || d._children ? "start" : "start";
     })
     .text(function(d) { return d.data.name; });
 
   var nodeUpdate = nodeEnter.merge(node);
 
 
+  
+  if (num_nodes < 40){
+    nodeUpdate.select('circle.node')
+    .attr('r', 10)
+    .style("fill", function(d) {
+        return d._children ? "#95c4e6" : "#fff";
+    })
 
+  // Transition nodes -- must check number of nodes here too!
+  nodeUpdate.transition()
+    .duration(duration)
+    .attr("transform", function(d) { 
+        return "translate(" + d.x + "," + d.y + ")";
+     });
 
-  nodeUpdate.select('circle.node')
+  
+  
+  var nodeExit = node.exit().transition()
+      .duration(duration)
+      .attr("transform", function(d) {
+          return "translate(" + source.x + "," + source.y + ")";
+      })
+      .remove();
+  }
+
+  else{
+    nodeUpdate.select('circle.node')
     .attr('r', 10)
     .style("fill", function(d) {
         return d._children ? "#95c4e6" : "#fff";
@@ -347,6 +414,9 @@ function update(source) {
           return "translate(" + source.y + "," + source.x + ")";
       })
       .remove();
+  }
+
+  
 
   // On node exit, make the size of the circle and text 0.
   nodeExit.select('circle')
@@ -398,23 +468,26 @@ function update(source) {
 
 
 
-// function diagonal(s, d) {
-
-//   return `M ${s.x} ${s.y}
-//   C ${(s.x + d.x) / 2} ${s.y},
-//     ${(s.x + d.x) / 2} ${d.y},
-//     ${d.x} ${d.y}`
-
-// }
-
 function diagonal(s, d) {
 
-  path = `M ${s.y} ${s.x}
-          C ${(s.y + d.y) / 2} ${s.x},
-            ${(s.y + d.y) / 2} ${d.x},
-            ${d.y} ${d.x}`
+  // Function to create linked bwttn nodes, needs to be different depending on if tree is vertical of horizontal (number of nodes)
 
-  return path
+  if (num_nodes < 40){
+    link_path = 
+    `M ${s.x} ${s.y}
+     C ${(s.x + d.x) / 2} ${s.y},
+    ${(s.x + d.x) / 2} ${d.y},
+    ${d.x} ${d.y}`
+  }
+  else{
+
+    link_path = `M ${s.y} ${s.x}
+    C ${(s.y + d.y) / 2} ${s.x},
+      ${(s.y + d.y) / 2} ${d.x},
+      ${d.y} ${d.x}`
+  }
+
+  return link_path
 }
 
 
@@ -440,22 +513,57 @@ function mouseover() {
   .style("opacity", 1);
 }
 function mousemove(d) {
-  div
+  
+
+  // Make sure to check if the node is a leaf or not, because leaf nodes need a different tooltip! 
+  if(d.data.rule == 'Leaf - not applicable'){
+   
+    div
   .style("left", (d3.event.pageX+10) + "px")
   .style("top", (d3.event.pageY) + "px")
   .html(
       "<table style='font-size: 10px; font-family: sans-serif;' >"+
-      "<tr><td>NonTerminal: </td><td>"+d.data.name+"</td></tr>"+
-      "<tr><td>Rule: </td><td>"+d.data.rule+"</td></tr>"+
-      "<tr><td>Cumulative Probability: </td><td>"+d.data.cumulative_prob+"</td></tr>"+
-      "<tr><td>Derivation Step: </td><td>"+d.data.step+"</td></tr>"+
       
+      "<tr><td>Leaf terminal: </td><td>"+d.data.name+"</td></tr>"+
+     
       "</table>"
   );
-}
+  }
+  else{
+    div
+    .style("left", (d3.event.pageX+10) + "px")
+    .style("top", (d3.event.pageY) + "px")
+    .html(
+        "<table style='font-size: 10px; font-family: sans-serif;' >"+
+        "<tr><td>Non-terminal: </td><td>"+d.data.name+"</td></tr>"+
+        "<tr><td>Rule: </td><td>"+d.data.rule+"</td></tr>"+
+        "<tr><td>Cumulative Probability: </td><td>"+d.data.cumulative_prob+"</td></tr>"+
+        "<tr><td>Derivation Step: </td><td>"+d.data.step+"</td></tr>"+
+        
+        "</table>"
+    );   
+
+  }
+
+    }
+ 
+
 
 
 function mousemove_non(d) {
+  if(d.data.rule == 'Leaf - not applicable'){
+  div
+  .style("left", (d3.event.pageX+10) + "px")
+  .style("top", (d3.event.pageY) + "px")
+  .html(
+      "<table style='font-size: 10px; font-family: sans-serif;' >"+
+      "<tr><td>Leaf terminal: </td><td>"+d.data.name+"</td></tr>"+
+   
+      
+      "</table>"
+  );
+  }
+else{
   div
   .style("left", (d3.event.pageX+10) + "px")
   .style("top", (d3.event.pageY) + "px")
@@ -468,6 +576,9 @@ function mousemove_non(d) {
       "</table>"
   );
 }
+}
+
+
 function mouseout() {
   div.transition()
   .duration(0)
@@ -523,55 +634,9 @@ function createButton(div, func,text) {
   var master_buttons = document.getElementById(lookup.master_buttons);
   master_buttons.appendChild(button);
 }
-
 }
 
 
-/*
-This code uses the Tabulator library, available at https://github.com/olifolkerd/tabulator. Licenced under the MIT License:
-
-The MIT License (MIT)
-
-Copyright (c) 2015-2020 Oli Folkerd
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
-This code also uses the D3.js library, available at https://github.com/d3/d3. Licensed under the ISC license:
-
-
-Copyright 2010-2021 Mike Bostock
-
-Permission to use, copy, modify, and/or distribute this software for any purpose
-with or without fee is hereby granted, provided that the above copyright notice
-and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
-OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
-THIS SOFTWARE.
-
-Part of this program is adapted from the following example from Mike Bostock: https://bl.ocks.org/mbostock/4339083. Released under the GNU Public Licnse, version 3: https://opensource.org/licenses/GPL-3.0
-*/
 
 
 

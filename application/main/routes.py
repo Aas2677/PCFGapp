@@ -1,5 +1,4 @@
 from decimal import *
-
 from flask_wtf.form import FlaskForm
 from application.main.grammarerrors import *
 from application.main.parsing import *
@@ -13,6 +12,14 @@ from flask import Blueprint
 import json
 import sys 
 import re 
+
+
+
+
+"""
+Contains all the routing information for the web application. Note that all interactions with the grammars and parsing logc is handled via the responde_handler object.
+
+"""
 
 # set the decimal context for rendering probabilites 
 context = Context(prec=8,  Emin=-999999, Emax=999999,
@@ -81,8 +88,7 @@ def string_input():
 
 
         except Exception as e: 
-            print(e)
-         
+      
             flash('Your grammar input could not be intepreted. Please check the syntax guide and check for issues.','3')
     else:
         # if theres an error in the input form, caught be preliminary checks, flash these errors 
@@ -281,7 +287,7 @@ def non_prob_file_input():
 
 class response_builder:
      """ Helps to deal with collecting calling the back-end so that the route functions don't have to do this explicitly and repeat a lot of code
-        Builds the logic needed for hte routes to return the correct response. Also helps collect error messages in an ordered fashion"""
+        Builds the logic needed for the routes to return the correct response. Also helps collect error messages in an ordered fashion"""
 
 
      def __init__(self,form:FlaskForm,route:str,probabilistic:bool,file:bool) -> None:
@@ -487,6 +493,14 @@ class response_builder:
                          self.non_critial_errors.append(f'There are only {len(parses)} ways to parse this sentence, so {number_of_parses} cannot be given.')
                  else:
                      self.confirmation_messages.append(f'There are {count} ways to parse this setnence.')
+
+                
+                 if nodes > 40:
+                    self.non_critial_errors.append("Your parse trees have 40 or more  non-terminal nodes. To aid with rendering your parse trees, they will be presented horizontally. The parses are equivalent to vertical trees.The derivation step order is still depth first, but is now top to bottom instead of left to right.")
+                
+                 else:
+                     self.confirmation_messages.append("Your parse trees are small enough to be rendered vertically. To correspond with the leftmost derivation table, the derivation step order in the tree is depth first from left to right.") 
+                
                 
 
 
@@ -505,7 +519,7 @@ class response_builder:
 
             # Either the string is not accepted, or there may be some other uncaught error in the program. 
              except Exception as e:
-                    print(e)
+                  
            
                     self.major_flags = True 
                     self.critial_errors.append("Your input string is not accepted by this grammar.")

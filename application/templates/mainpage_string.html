@@ -18,6 +18,9 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
 
+        <!-- We prefer to load d3 from the CDN due to load time, however if this breaks for whatever reason, we have the minified code for it in our own static.  -->
+        <!-- <script src="{{url_for('static', filename='d3.min.js')}}"></script> -->
+
        
 
     </head>
@@ -74,12 +77,13 @@
                       where A,B,C are non-terminals and b is a terminal. Empty productions can't be used.
 
                       Each rule should start with the left-hand side nonterminal followed by an -> symbol. 
-                      In expansion rules, a space should be used to delimit separate nonterminals on the left-hand side.
-                      The parser will assume that the lefhand side nonterminal of your first rule is the start symbol.
+                      In expansion rules, a space should be used to delimit separate nonterminals on the right-hand side.
+                      The parser will assume that the left-hand side nonterminal of your first rule is the start symbol.
                       
-                      Alternate left-hand side expansion can be chained using the | symbol, or entered separately.
+                      Alternate right-hand side expansions can be chained using the | symbol, or entered separately.
                       In each case, the probability for each expansion should be placed in square brackets immediately following the expansion. After the end of 
-                      each chain of expansions for a rule, a comma delimits the next rule. New rules do not need to be placed onto a new line. As an example, the following grammar shows the syntax structure: <br>
+                      each chain of expansions for a rule, a comma delimits the next rule.
+                      rather than chaining. As an example, the following grammar shows the syntax structure: <br>
 
                       <br>
                       <br>
@@ -98,6 +102,26 @@
 
                       If a probability is not given for an expansion, then the parser will assume the probability is 1. The parser will allow any probabilities to be entered,
                       but if you expect a proper probability distribution over parses, then the sum of probabilities for expansions of each nonterminal should equal 1. 
+
+                      <br>
+                      <br>
+                      <br>
+                      <h5 style="color:blue"> Warnings and restrictions</h5>
+                      <ul>
+                          <li>
+                              Please do not overlap your terminal and non-terminal alphabets.
+                          </li>
+                          <li>
+                              The character limit for non-terminal symbols is 4.
+                          </li>
+                          <li>
+                              The character limit for terminal symbols is 18.
+                          </li>
+                          <li>
+                              The precision limit on your rule probabilites is 10 decimal places.
+                          </li>
+                      </ul>
+
                     
 
 
@@ -238,10 +262,7 @@
                 {{ tables }}
             </span>
             {% endif %}
-            <span hidden id = "testarr">
-                {{ test_arr }}
-            </span>
-
+          
             {% endif %}
             </div>
        

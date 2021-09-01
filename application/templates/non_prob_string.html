@@ -19,6 +19,10 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
 
+         <!-- We prefer to load d3 from the CDN due to load time, however if this breaks for whatever reason, we have the minified code for it in our own static.  -->
+        <!-- <script src="{{url_for('static', filename='d3.min.js')}}"></script> -->
+
+
        
 
     </head>
@@ -84,6 +88,24 @@
                       V -> flies| like | time ,<br>
                       P -> like,<br>
                       Det -> an<br>
+                      <br>
+                      <br>
+                      <br>
+                      <h5 style="color:blue"> Warnings and restrictions</h5>
+                      <ul>
+                          <li>
+                              Please do not overlap your terminal and non-terminal alphabets.
+                          </li>
+                          <li>
+                              The character limit for non-terminal symbols is 4.
+                          </li>
+                          <li>
+                              The character limit for terminal symbols is 18.
+                          </li>
+                    
+                      </ul>
+
+                    
 
                       
 
@@ -205,9 +227,7 @@
                 {{ tables }}
             </span>
             {% endif %}
-            <span hidden id = "testarr">
-                {{ test_arr }}
-            </span>
+           
 
             {% endif %}
             </div>
@@ -224,7 +244,7 @@
                     <input type = "number" min="1",max="100" id="nth_parse" ,name = "input_a">
                
                    <div class = "master_buttons" id="master_buttons">
-                    <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=false,svg_number = '1')"> Show Parse</button>
+                    <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=false,svg_number = '1',num_nodes = {{num_nodes}})"> Show Parse</button>
                    
                    <button class="all_button" onclick="render.expandAll()">Expand All</button>
                    <button class = "all_button" onclick="render.collapseAll()">Collapse All</button>
@@ -254,7 +274,7 @@
                     <input type = "number" min="1",max="100" id="nth_parse_2" ,name = "input_a_2                                                                              ">
                
                    <div class = "master_buttons_2" id="master_buttons_2">
-                    <button id = "show_parses_2" onclick = "render(document.getElementById('nth_parse_2').value,parses = {{parses}},tables = false,probs=true,svg_number = '2')"> Show Parse</button>
+                    <button id = "show_parses_2" onclick = "render(document.getElementById('nth_parse_2').value,parses = {{parses}},tables = false,probs=true,svg_number = '2',num_nodes = {{num_nodes}})"> Show Parse</button>
                    
                    <button class="all_button_2" onclick="render_second.expandAll()">Expand All</button>
                    <button class = "all_button_2" onclick="render_second.collapseAll()">Collapse All</button>

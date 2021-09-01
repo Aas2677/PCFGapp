@@ -1,4 +1,9 @@
 
+"""
+Custom grammar errors.
+
+"""
+
 class GrammarException(Exception):
 
     def __init__(self, message = "Generic grammar exception"):

@@ -7,6 +7,12 @@ import json
 from decimal import * 
 
 
+"""
+File containing all neccessary abstractions to represent grammars and their constituents. Note that ProbabilisticGrammar can represent both probabilistic and non-probabilistic grammars.
+
+"""
+
+
 class Terminal:
     """ class to represent non-terminal symbols in a grammar.
     overrides for convenience"""
@@ -351,7 +357,7 @@ class ProbabilisticGrammar:
                    if all(atom in terminals or atom in non_terminals  for atom in rule["expansion"]):
                        
 
-                       prob = 1 if not probabilistic else float(rule["probability"])
+                       prob = 1 if not probabilistic else round(float(rule["probability"]),10)
 
 
                        rhs = [NonTerminal(atom) if atom in non_terminals else Terminal(atom) for atom in rule["expansion"]]

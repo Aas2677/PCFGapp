@@ -2,7 +2,9 @@
 import re
 import application.main.grammarerrors as grammarerrors
 
-
+"""
+Auxillary methods to help create grammar objects from user input.
+"""
 
 
 
@@ -53,12 +55,12 @@ def parse_string(input,separator = ","):
                      # raise grammarerrors.StringInputException("There's something wrong with the way you've entered the proabilities")
                     else: 
                      # Get the raw number out of the brackets
-                        probability = float(just_numbers.findall(probabilities[0])[0])
+                        probability = round(float(just_numbers.findall(probabilities[0])[0]),10)
      
      
                      # strip out the RHS variables and terminals. assume that spaces indicate seperate atoms. Get rid of escapes.
                     product =  list(filter(lambda x : x != '' and x != '\r\n' and x != '\r' and x != '\n',(re.sub(probability_strip,"",product)).split(" ")))
-                     #    print(product)
+               
                     product = [re.sub('\n','', re.sub('\r','',item))for item in product]
                         
                        
