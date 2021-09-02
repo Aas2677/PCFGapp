@@ -1,5 +1,11 @@
 from application import create_app
 
+
+"""
+
+Creates our web pp and registers routes/blueprints.
+
+"""
 app = create_app()
 
 if __name__ == '__main__':

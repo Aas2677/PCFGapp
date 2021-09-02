@@ -398,6 +398,26 @@ class response_builder:
          if  grammar_object.overlapping_alphabets:
              self.major_flags = True 
              self.critial_errors.append("There is overlap between your terminal and non-terminal alphabets, parsing cannot proceeed.")
+        
+         if  len(grammar_object.processed_rules) > 200:
+             self.major_flags = True 
+             self.critial_errors.append("The maximum number of rules your grammar can have is 200.")
+
+
+         if  len(grammar_object.processed_rules) < 3:
+             self.major_flags = True 
+             self.critial_errors.append("The minimum number of rules your grammar can have is 3.")
+
+        
+        # Make sure there are no negative probabilities 
+
+         for rule in grammar_object.collapsed_rules:
+             if rule._probability < 0:
+                 self.major_flags = True 
+                 self.critial_errors.append("One or more of your rules has a negative probability, which cannot be used.")
+
+
+     
 
          
          # Set non-critical warnings 
@@ -407,6 +427,7 @@ class response_builder:
          
          if grammar_object.ignored_rules:
              self.non_critial_errors.append("Warning! One or more rules has been ignored due to syntax error or repeated rules. Please make sure rules are unique, excluding the probabilities.")
+
 
         
         

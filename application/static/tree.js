@@ -530,18 +530,35 @@ function mousemove(d) {
   );
   }
   else{
-    div
-    .style("left", (d3.event.pageX+10) + "px")
-    .style("top", (d3.event.pageY) + "px")
-    .html(
-        "<table style='font-size: 10px; font-family: sans-serif;' >"+
-        "<tr><td>Non-terminal: </td><td>"+d.data.name+"</td></tr>"+
-        "<tr><td>Rule: </td><td>"+d.data.rule+"</td></tr>"+
-        "<tr><td>Cumulative Probability: </td><td>"+d.data.cumulative_prob+"</td></tr>"+
-        "<tr><td>Derivation Step: </td><td>"+d.data.step+"</td></tr>"+
-        
-        "</table>"
-    );   
+    if(d.data.step == 0){
+      div
+      .style("left", (d3.event.pageX+10) + "px")
+      .style("top", (d3.event.pageY) + "px")
+      .html(
+          "<table style='font-size: 10px; font-family: sans-serif;' >"+
+          "<tr><td>Probability of this parse: </td><td>"+d.data.cumulative_prob+"</td></tr>"+
+          "<tr><td>Non-terminal: </td><td>"+d.data.name+"</td></tr>"+
+          "<tr><td>Rule: </td><td>"+d.data.rule+"</td></tr>"+   
+          "<tr><td>Derivation Step: </td><td>"+d.data.step+"</td></tr>"+
+          "</table>"
+      );   
+      
+    }
+    else{
+      div
+      .style("left", (d3.event.pageX+10) + "px")
+      .style("top", (d3.event.pageY) + "px")
+      .html(
+          "<table style='font-size: 10px; font-family: sans-serif;' >"+
+          "<tr><td>Non-terminal: </td><td>"+d.data.name+"</td></tr>"+
+          "<tr><td>Rule: </td><td>"+d.data.rule+"</td></tr>"+
+          "<tr><td>Cumulative Probability: </td><td>"+d.data.cumulative_prob+"</td></tr>"+
+          "<tr><td>Derivation Step: </td><td>"+d.data.step+"</td></tr>"+
+          
+          "</table>"
+      );   
+
+    }
 
   }
 
@@ -564,6 +581,7 @@ function mousemove_non(d) {
   );
   }
 else{
+  
   div
   .style("left", (d3.event.pageX+10) + "px")
   .style("top", (d3.event.pageY) + "px")
@@ -622,7 +640,7 @@ function collapseAll(){
   update(root);
 }
 
-// creating some buttons 
+// creating some master contorl buttons 
 
 function createButton(div, func,text) {
   var button = document.createElement("button");
