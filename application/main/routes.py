@@ -65,7 +65,7 @@ def string_input():
     number_of_parses = False  
     comparison_mode = False 
     nodes = 0 
-
+    
     if form.validate_on_submit():
 
         response_handler = response_builder(form,"probabilistic_string_input",True,False)
@@ -305,16 +305,12 @@ class response_builder:
 
 
 
-     def get_parse_data_probabilistic(self,grammar,teststring):
 
-          pass 
-
-     def get_parse_data_non_probabilistic(self,grammar,teststring):
-
-          pass 
 
 
      def build_repsonse(self):
+
+         # Builds response from server based on information provided
 
          # set initial flags 
          grammar = 0 

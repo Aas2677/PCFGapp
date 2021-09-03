@@ -88,6 +88,11 @@ class NonTerminal:
 
 class ProductionRule:
 
+    """"
+    class to represent production rules in a context-free grammar.
+    Currently set up to represent chomsky normal form rules
+    """
+
     def __init__(self,left,right,probability,alt_probability=0,probabilistic=True):
 
         __slots__ = '_left','_right','_probability','_probabilistic','alt_probability'
@@ -134,15 +139,6 @@ class ProductionRule:
                 return f'{self._left} → {self._right[0]}'
             else:
                 return  f'{self._left} → {self._right[0],self._right[1]}'
-
-
-       
-       
-
-
-        
-       
-
     
     def get_left(self):
 
@@ -179,7 +175,8 @@ class ProbabilisticGrammar:
 
 
 
-    """ class to represent a probabilistic context-free grammar"""
+    """ class to represent a probabilistic context-free grammar
+        includes all the needed methods to induce and validate grammars"""
 
     def __init__(self,processed_rules,collapsed_rules,processed_rules_log,collapsed_rules_log,nonterminals,alphabet,bad_rules = False,start = NonTerminal('S'), tolerance = 0.02,probabilistic=True):
         # initially set CNF check to true 
@@ -398,6 +395,8 @@ class ProbabilisticGrammar:
 
     def make_lookup(self,length,logs = False):
 
+        # Makes a lookup dictionary for rules
+
         if logs:
             reference = self.processed_rules_log
            
@@ -414,6 +413,7 @@ class ProbabilisticGrammar:
         return output_dict
 
     def generate_total_dict(self,rules) -> dict:
+
         # generates a defaultdict to allow for easy lookups to rules based on their left hand side 
 
         return_dict = defaultdict(int)
@@ -433,6 +433,7 @@ class ProbabilisticGrammar:
     def generate_dict(self,rules) -> dict:
 
         # generates a defualtdict to allow for easy lookups to rules based on their productions 
+
         return_dict = defaultdict(int)
 
         for rule in rules:
@@ -457,7 +458,6 @@ class ProbabilisticGrammar:
 
     def check_CNF(self):
         
-
         # Test the rules to check if the grammar is in CNF 
 
         for rules in self.processed_rules.values():
@@ -534,6 +534,7 @@ class ProbabilisticGrammar:
     def check_character_legnths(self) -> None:
 
         # Checks whether the number of characters in each terminal and non-terminal is within the limits 
+        
         for terminal in self.token_alphabet: 
             if len(terminal) > 18:
               
