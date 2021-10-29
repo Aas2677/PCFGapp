@@ -1,6 +1,4 @@
-Welcome to PCFG Explorer, a webb application for parsing using Probabilistic context-free grammars
-
-To access this tool, please visit https://www.grammarexplorer.org/. Check the syntax instructions, read the instructions page and use a test grammar to get started.
-
-If you would like to to the app locally, please install the requirements detailed in requirements.txt and activate the virtual environment in this folder. 
-You can then run the application by running 'python app.py' in the root directory, which will serve this app on your local host.
+A Web tool for exploring PCFGs (https://en.wikipedia.org/wiki/Probabilistic_context-free_grammar).
+You can explore the topic and use the tool to find the N-best parses,total probability and total number of parses for an input string in a user defined grammar.
+You can run the app locally using Python and Flask, or it is available at https://www.grammarexplorer.org.
+The code is not strucutred or intended as a public library, but you could clone the grammar and parsing modules for your own purposes.
