@@ -69,7 +69,7 @@ function render(num,parses,tables,probs,svg_number){
   */
 
 
-    // setup html elements depending on wether we are rendering in svg# or svg#2
+    // setup html elements depending on wether we are rendering in svg#1 or svg#2
  
   if (svg_number == '1'){
     var lookup = {my_tooltip : ".my-tooltip", my_tooltip_name : "my-tooltip",tooltip : ".tooltip", tooltip_name : "tooltip", tree_box : ".tree_box", svg_id : "#svg_1",svg : "svg_1", master_buttons :"master_buttons", button: "all_button" }
