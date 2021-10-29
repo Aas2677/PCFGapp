@@ -487,7 +487,7 @@ function update(source) {
 
 function diagonal(s, d) {
 
-  // Function to create linked bwttn nodes, needs to be different depending on if tree is vertical of horizontal (number of nodes)
+  // Function to create linked butt0n nodes, needs to be different depending on if tree is vertical of horizontal (number of nodes)
 
   if (num_nodes < 40){
     link_path = 
