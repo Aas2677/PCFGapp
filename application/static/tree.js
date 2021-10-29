@@ -60,7 +60,7 @@ function render(num,parses,tables,probs,svg_number){
 
   /*
 
-  Function responsible for rendering all parse tree and derivation table graphics
+  Function responsible for rendering all parse tree and derivation table graphicss
   
   
   
