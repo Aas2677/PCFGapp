@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Grammar home</title>
+        <link rel="icon" href="{{ url_for('static', filename='makeicon.png') }}">
+        <!-- bootstrap,custom and tabulator stylesheets -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+        <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Titillium+Web&display=swap" rel="stylesheet">
+
+     
+       
+
+       
+
+    </head>
+    <body>
+
+        <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #b7d5eb;">
+        <a class="navbar-brand" style="font-family: 'Titillium Web', sans-serif; font-size: 1.2vw;" href="#">Grammar Explorer</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+            <a class="nav-link" style="color:blue">About</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="{{url_for('main.string_input')}}">Free text input mode </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{url_for('main.file_input')}}">File input mode</a>
+                </li>
+        </ul>
+        </div>
+        
+        </nav>
+            
+        <div class =  "float_container_main">
+           
+
+            <div class = "main_form_float">
+            <form method="POST" action="" class = "main_form" id= "main_form"> 
+               
+    
+                   <div class = grammar_box_home>
+
+                          </div>
+    
+                
+                    <div class = "sentence_box_home">
+                    
+                          </div>
+                    
+                          <div class="table_toggles">
+                
+                         
+                         </div>
+                    <div class = "alert_box_home">
+                    
+                    </div>
+            </form>
+           
+            </div>
+            
+    
+           
+    
+            <div class = top_parse_bar>
+              
+                </div>
+           
+    
+    
+                
+                <div class = "tree_box">
+
+                   
+                    
+    
+                </div>
+    
+                    <div class = "table_box", id="table_box">
+                    
+    
+                    </div>
+    
+                </div>
+           
+          
+        
+        
+       </div>
+    </div>
+        
+       
+    </body>
+</html>
