@@ -58,6 +58,17 @@ Part of this program is adapted from the following example from Mike Bostock: ht
 function render(num,parses,tables,probs,svg_number){
 
 
+  /*
+
+  Function responsible for rndering all parse tree and derivation table graphics
+  
+  
+  
+  
+  
+  */
+
+
     // setup html elements depending on wether we are rendering in svg# or svg#2
  
   if (svg_number == '1'){
@@ -118,13 +129,16 @@ function render(num,parses,tables,probs,svg_number){
     
 
 
+
+
+    // Setup table based on whether its probabilistic or not
     if (!probs){
       var table = new Tabulator("#table_box", {
 
         data:list_data,
     
         layout:"fitDataFill",
-        // virtualDomHoz:true,
+        
         columns:[
           {title:"step",field:"step"},
           {title:"Nonterminal expanded",field:"nonterminal"},
@@ -141,7 +155,7 @@ function render(num,parses,tables,probs,svg_number){
         data:list_data,
        
         layout:"fitDataFill",
-        // virtualDomHoz:true,
+       
         columns:[
           {title:"step",field:"step"},
           {title:"Nonterminal expanded",field:"nonterminal"},
@@ -163,13 +177,13 @@ function render(num,parses,tables,probs,svg_number){
 
 
 
-  
+// ###### CODE FOR RENDERING PARSE TREES  ################ //
 
 
 
 
-
-  var tooltip = d3.select("body")
+//setup the tooltip
+var tooltip = d3.select("body")
         .append("div")
         .attr("class", lookup.my_tooltip_name)
         .style("position", "absolute")
@@ -213,6 +227,8 @@ var vis = d3.select(lookup.tree_box)
         .attr("transform", "translate(" + margin.bottom + "," + margin.top + ")");
         
 
+
+// declare root variable and the animation duration        
 var i = 0,
     root,
     duration = 705;
@@ -240,6 +256,7 @@ root = d3.hierarchy(treedata, function(d) { return d.children; });
 
 
 
+// Depending on the number of nodes, setup the root position
 if (num_nodes < 40){
 root.x0 =  height/2;
 root.y0 = 0 ;
@@ -344,7 +361,6 @@ function update(source) {
 
 
   // Add circle for each enter node
-
   nodeEnter.append('circle')
       .attr('class', 'node')
       .attr('r', 1e-6)
@@ -352,8 +368,8 @@ function update(source) {
           return d._children ? "#95c4e6" : "#fff";
       });
 
-  // Add text to the nodes
 
+  // Add text to the nodes
   nodeEnter.append('text')
     .attr("dy", ".32em")
     .attr("x", function(d) {
@@ -367,7 +383,8 @@ function update(source) {
   var nodeUpdate = nodeEnter.merge(node);
 
 
-  
+   
+  // Node logic and physics depends on whether we are rendering horizontally or vertically
   if (num_nodes < 40){
     nodeUpdate.select('circle.node')
     .attr('r', 10)
@@ -493,7 +510,7 @@ function diagonal(s, d) {
 
 
 
-
+// Define on-click behaviour
 function click(d)
 {
   if (d.children) {
@@ -512,6 +529,8 @@ function mouseover() {
   .duration(0)
   .style("opacity", 1);
 }
+
+// Renders the node information popup
 function mousemove(d) {
   
 
@@ -566,7 +585,7 @@ function mousemove(d) {
  
 
 
-
+// Renders the node information popup in nonprobabilistic mode
 function mousemove_non(d) {
   if(d.data.rule == 'Leaf - not applicable'){
   div
@@ -640,7 +659,7 @@ function collapseAll(){
   update(root);
 }
 
-// creating some master contorl buttons 
+// creating the master control buttons 
 
 function createButton(div, func,text) {
   var button = document.createElement("button");
