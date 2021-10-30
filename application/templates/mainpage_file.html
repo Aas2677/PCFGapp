@@ -1,236 +1,236 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Probabilistic file input</title>
-        <link rel="icon" href="{{ url_for('static', filename='makeicon.png') }}">
-        <!-- bootstrap,custom and tabulator stylesheets -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-        <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" rel="stylesheet">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Titillium+Web&display=swap" rel="stylesheet">
-        
-
-        <!-- scripts for d3,tabulator and jquery -->
-        <script src="https://d3js.org/d3.v4.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
+{% extends "layout.html" %}
 
 
-         <!-- We prefer to load d3 from the CDN due to load time, however if this breaks for whatever reason, we have the minified code for it in our own static.  -->
-        <!-- <script src="{{url_for('static', filename='d3.min.js')}}"></script> -->
+{% block pagetitle %} 
+
+<title>Probabilistic file input</title>
+
+{% endblock %}
 
 
-       
 
-    </head>
-    <body>
 
-        <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #b7d5eb;">
-        <a class="navbar-brand" style="font-family: 'Titillium Web', sans-serif; font-size: 1.2vw;" href="{{url_for('main.home')}}">Grammar Explorer</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-            <a class="nav-link" href="{{url_for('main.home')}}">About</a>
+{% block thirdscripts %}
+
+       <!-- scripts for d3,tabulator and jquery -->
+       <script src="https://d3js.org/d3.v4.js"></script>
+       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+       <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.9.3/dist/js/tabulator.min.js"></script>
+
+
+        <!-- We prefer to load d3 from the CDN due to load time, however if this breaks for whatever reason, we have the minified code for it in our own static.  -->
+       <!-- <script src="{{url_for('static', filename='d3.min.js')}}"></script> -->
+
+{% endblock %}
+
+
+
+
+
+
+{% block navbar %}
+
+<ul class="navbar-nav">
+    <li class="nav-item">
+    <a class="nav-link" href="{{url_for('main.home')}}">About</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{url_for('main.string_input')}}">Free text input mode</a>
+        </li>
+    <li class="nav-item">
+        <a class="nav-link" style="color:blue;">File input  mode </a>
+        </li>
+</ul>
+
+{% endblock %}
+
+
+
+
+{% block mainform %}
+<button id="syntaxbutton" >Grammar file structure guide</button>
+              
+                     
+<div id="infopopup" class="modal">
+
+  
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>
+          <h5 style="color:blue"> File structure for probabilistic grammars</h5>
+
+          The rules for your grammar should be written as a list of production rules in Chomsky normal form:<br>
+          A -> B C  or  <br>
+          A -> b  <br>
+
+          where A,B,C are non-terminals and b is a terminal. Empty productions can't be used.
+
+          The JSON file upload should consist of the following fields: <br>
+          <ul>
+            <li> The start symbol of your grammar. This should be entered like this: "start_symbol":"S"</li>
+            <li>The non-terminal symbols. This should be entered as a list like this: "non_terminals": ["S","NP","VP","N","V","P","PP","Det"] </li>
+            <li> The terminal symbols. Ths should be entered as a list like this: "terminals": ["time","flies","like","an","arrow"] </li>
+            <li>The rules of the grammar. This should be a list of nested JSONs for each rule. Alternate rules cannot be chained in the same rule and must appear as a separate rule object. As an example, the rules should be entered like this: <br>
+                <br>
+                "rules": [{"nonterminal":"S","expansion":["NP","VP"],"probability":0.5}, {"nonterminal":"S","expansion":["S","PP"],"probability":0.25}]<br>
+                <br>
+                Each rule object should have a "non_terminal" field, an "expansion" field which is a list of the left-hand side elements, even if the rule is terminal.
+                If the grammar is probabilistic, the  rule should contain a "probability" field too.If the probabiity field is left out then the parser will ignore the rule, unlike in free-text mode where the rule will be assigned a probability of 1. The parser will allow any probabilities to be entered, but if you expect a proper probability distribution over parses, then the sum of probabilities for expansions of each nonterminal should equal 1. There is an example JSON grammar file  <a href="static/example.json" download>here</a>.
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{url_for('main.string_input')}}">Free text input mode</a>
-                </li>
-            <li class="nav-item">
-                <a class="nav-link" style="color:blue;">File input  mode </a>
-                </li>
-        </ul>
-        </div>
-        </nav>
-            
-        <div class =  "float_container_main">
-           
+          </ul>
+          <br>
+          <br>
+          <br>
+          <h5 style="color:blue"> Warnings and restrictions</h5>
+          <ul>
+              <li>
+                  Please do not overlap your terminal and non-terminal alphabets.
+              </li>
+              <li>
+                  The character limit for non-terminal symbols is 4.
+              </li>
+              <li>
+                  The character limit for terminal symbols is 18.
+              </li>
+              <li>
+                  The precision limit on your rule probabilites is 10 decimal places.
+              </li>
+          </ul>
 
-        <div class = "main_form_float">
-            <button id="syntaxbutton" >Grammar file structure guide</button>
-              
-                     
-            <div id="infopopup" class="modal">
-            
-              
-                <div class="modal-content">
-                  <span class="close">&times;</span>
-                  <p>
-                      <h5 style="color:blue"> File structure for probabilistic grammars</h5>
-
-                      The rules for your grammar should be written as a list of production rules in Chomsky normal form:<br>
-                      A -> B C  or  <br>
-                      A -> b  <br>
-
-                      where A,B,C are non-terminals and b is a terminal. Empty productions can't be used.
-
-                      The JSON file upload should consist of the following fields: <br>
-                      <ul>
-                        <li> The start symbol of your grammar. This should be entered like this: "start_symbol":"S"</li>
-                        <li>The non-terminal symbols. This should be entered as a list like this: "non_terminals": ["S","NP","VP","N","V","P","PP","Det"] </li>
-                        <li> The terminal symbols. Ths should be entered as a list like this: "terminals": ["time","flies","like","an","arrow"] </li>
-                        <li>The rules of the grammar. This should be a list of nested JSONs for each rule. Alternate rules cannot be chained in the same rule and must appear as a separate rule object. As an example, the rules should be entered like this: <br>
-                            <br>
-                            "rules": [{"nonterminal":"S","expansion":["NP","VP"],"probability":0.5}, {"nonterminal":"S","expansion":["S","PP"],"probability":0.25}]<br>
-                            <br>
-                            Each rule object should have a "non_terminal" field, an "expansion" field which is a list of the left-hand side elements, even if the rule is terminal.
-                            If the grammar is probabilistic, the  rule should contain a "probability" field too.If the probabiity field is left out then the parser will ignore the rule, unlike in free-text mode where the rule will be assigned a probability of 1. The parser will allow any probabilities to be entered, but if you expect a proper probability distribution over parses, then the sum of probabilities for expansions of each nonterminal should equal 1. There is an example JSON grammar file  <a href="static/example.json" download>here</a>.
-                        </li>
-                      </ul>
-                      <br>
-                      <br>
-                      <br>
-                      <h5 style="color:blue"> Warnings and restrictions</h5>
-                      <ul>
-                          <li>
-                              Please do not overlap your terminal and non-terminal alphabets.
-                          </li>
-                          <li>
-                              The character limit for non-terminal symbols is 4.
-                          </li>
-                          <li>
-                              The character limit for terminal symbols is 18.
-                          </li>
-                          <li>
-                              The precision limit on your rule probabilites is 10 decimal places.
-                          </li>
-                      </ul>
-
-                    
-                      
-
-
-                      
-                  </p>
-                </div>
-              
-              </div>
-        <form method="POST" action="" class = "main_form" id= "main_form" enctype="multipart/form-data"> 
-            {{form.hidden_tag()}}
-
-            <div class = "probability_toggle">
-                <div class ="probabilistic">
-                    <a  href="#" style="color: blue;text-decoration: none;">Probabilistic</a>  &nbsp;&nbsp;  <a  style="color:black;text-decoration: none;" href="{{url_for('main.non_prob_file_input')}}">Non-probabilistic</a>  
-                </div>
-                
-            </div>
-
-               <div class = grammar_box_file>
-            
-               
-                <small id="grammar_instructions" class = "form-text text-muted">Upload your grammar as JSON</small>
-
-                      <div>{{ form.grammar_file()}}</div>
-                      </div>
-
-            
-                <div class = " sentence_box">
-            
-                      <div>
-                          {{ form.sentence(placeholder="Enter your test string here.\nSpaces are used to delimit each token to be evaluated.\nFor example, if you were testing the word aabb, you must enter a a b b.")}}
-
-                      </div>
-                      </div>
-                
-                      <div class="table_toggles">
-
-                        <div class="total_prob">
-                            <div class="pretty p-switch">
-                                {{form.show_total}}
-                                <div class="state">
-                                    <label>Suppress total probability</label>
-                                </div>
-                            </div>
-                            
-                        </div>
-
-                      <div class = "leftmost_toggle">
-                       
-                        <div class="pretty p-switch">
-                            {{form.show_table}}
-                            <div class="state">
-                                <label>Suppress leftmost derivation table</label>
-                            </div>
-                        </div>
-                      </div>
-                      <div>
-                        <div class = "comparison_toggle">
-                        <div class="pretty p-switch">
-                            {{form.comparison_mode}}
-                            <div class="state">
-                                <label>Parse comparison mode</label>
-                            </div>
-                        </div>
-                      </div>
-                    </div>
-                
-                <div class = "submit_area">
-                   
-                    <div class = "number_parses">
-                     {{form.n_parses(class="rounded")}}
-                    </div>
-                    <div class = "final_submit">
-                {{ form.submitgrammar() }}
-                </div>
-                </div>
-                </div>
-                <div class = "alert_box">
-                    {%with messages = get_flashed_messages(with_categories=true) %}
-                      {% if messages %}
-                      <ul>
-                      {% for category,message in messages %}
-                         {% if category == '1'%}
-                         <li class = "alert1" >{{message}}</li>
-                         {% elif category == '2' %}
-                         <li class = "alert2" >{{message}}</li>
-                         {% else %}
-                         <li class = "alert3">{{message}}</li>
-                         {% endif %}
-
-                     
-                      {% endfor %}
-                      </ul>
-                      {% endif %}
-                    {% endwith %}
-                </div>
-        </form>
-       
-        </div>
         
-
-       
-
-        <div class = top_parse_bar>
-            {% if accepted %}
-            <span> </span>
-            
-            <span hidden id = "parses">
-                {{ parses }}
-            </span>
-            <span hidden id = "max_number_parses">
-                {{ num_parses }}
-            </span>
-            {% if tables %}
-            <span hidden id = "derivation_tables">
-                {{ tables }}
-            </span>
-            {% endif %}
+          
 
 
-            {% endif %}
+          
+      </p>
+    </div>
+  
+  </div>
+<form method="POST" action="" class = "main_form" id= "main_form" enctype="multipart/form-data"> 
+{{form.hidden_tag()}}
+
+<div class = "probability_toggle">
+    <div class ="probabilistic">
+        <a  href="#" style="color: blue;text-decoration: none;">Probabilistic</a>  &nbsp;&nbsp;  <a  style="color:black;text-decoration: none;" href="{{url_for('main.non_prob_file_input')}}">Non-probabilistic</a>  
+    </div>
+    
+</div>
+
+   <div class = grammar_box_file>
+
+   
+    <small id="grammar_instructions" class = "form-text text-muted">Upload your grammar as JSON</small>
+
+          <div>{{ form.grammar_file()}}</div>
+          </div>
+
+
+    <div class = " sentence_box">
+
+          <div>
+              {{ form.sentence(placeholder="Enter your test string here.\nSpaces are used to delimit each token to be evaluated.\nFor example, if you were testing the word aabb, you must enter a a b b.")}}
+
+          </div>
+          </div>
+    
+          <div class="table_toggles">
+
+            <div class="total_prob">
+                <div class="pretty p-switch">
+                    {{form.show_total}}
+                    <div class="state">
+                        <label>Suppress total probability</label>
+                    </div>
+                </div>
+                
             </div>
+
+          <div class = "leftmost_toggle">
+           
+            <div class="pretty p-switch">
+                {{form.show_table}}
+                <div class="state">
+                    <label>Suppress leftmost derivation table</label>
+                </div>
+            </div>
+          </div>
+          <div>
+            <div class = "comparison_toggle">
+            <div class="pretty p-switch">
+                {{form.comparison_mode}}
+                <div class="state">
+                    <label>Parse comparison mode</label>
+                </div>
+            </div>
+          </div>
+        </div>
+    
+    <div class = "submit_area">
        
+        <div class = "number_parses">
+         {{form.n_parses(class="rounded")}}
+        </div>
+        <div class = "final_submit">
+    {{ form.submitgrammar() }}
+    </div>
+    </div>
+    </div>
+    <div class = "alert_box">
+        {%with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+          <ul>
+          {% for category,message in messages %}
+             {% if category == '1'%}
+             <li class = "alert1" >{{message}}</li>
+             {% elif category == '2' %}
+             <li class = "alert2" >{{message}}</li>
+             {% else %}
+             <li class = "alert3">{{message}}</li>
+             {% endif %}
+
+         
+          {% endfor %}
+          </ul>
+          {% endif %}
+        {% endwith %}
+    </div>
+</form>
 
 
-            
-            <div class = "tree_box">
+{% endblock %}
 
-                {% if accepted %}
+
+
+{% block top_parse_bar %}
+
+
+    {% if accepted %}
+    <span> </span>
+    
+    <span hidden id = "parses">
+        {{ parses }}
+    </span>
+    <span hidden id = "max_number_parses">
+        {{ num_parses }}
+    </span>
+    {% if tables %}
+    <span hidden id = "derivation_tables">
+        {{ tables }}
+    </span>
+    {% endif %}
+
+
+    {% endif %}
+    
+
+{% endblock %}
+
+
+{% block trees %}
+
+
+{% if accepted %}
+
                 <div class = show_parses>
                
             
@@ -256,7 +256,14 @@
                 {% endif %}
                 
 
-            </div>
+{% endblock %}
+
+
+
+
+
+{% block secondary_content %} 
+
             {% if comparison_mode %}
             <div class = "tree_box_2">
 
@@ -293,16 +300,18 @@
                 </div>
            {% endif %}
 
-            </div>
-            <script src="{{url_for('static', filename='monitoring.js')}}"></script>
-            <script src="{{url_for('static', filename='modalscript.js')}}"></script>
-           
-          
-        
-        
-       </div>
-    </div>
-        
-       
-    </body>
-</html>
+{% endblock %}
+
+
+
+
+
+{% block monitor %}
+
+<script src="{{url_for('static', filename='monitoring.js')}}"></script>
+<script src="{{url_for('static', filename='modalscript.js')}}"></script>
+
+
+                
+{% endblock %}
+

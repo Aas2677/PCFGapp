@@ -1,291 +1,293 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Grammar home</title>
-        <link rel="icon" href="{{ url_for('static', filename='makeicon.png') }}">
-        <!-- bootstrap,custom and tabulator stylesheets -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-        <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" rel="stylesheet">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Titillium+Web&display=swap" rel="stylesheet">
+{% extends "layout.html" %}
 
-     
-       
 
-       
+{% block pagetitle %} 
 
-    </head>
-    <body>
+<title>Grammar home</title>
 
-        <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #b7d5eb;">
-        <a class="navbar-brand" style="font-family: 'Titillium Web', sans-serif; font-size: 1.2vw;" href="#">Grammar Explorer</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-            <a class="nav-link" style="color:blue">About</a>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link" href="{{url_for('main.string_input')}}">Free text input mode </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{url_for('main.file_input')}}">File input mode</a>
-                </li>
-        </ul>
-        </div>
-        
-        </nav>
-            
-        <div class =  "float_container_main">
-           
+{% endblock %}
 
-            <div class = "main_form_float">
-            <form method="POST" action="" class = "main_form" id= "main_form"> 
+
+
+
+{% block thirdscripts %}
+
+<!-- No scripts needed -->
+
+{% endblock %}
+
+
+
+
+
+
+{% block navbar %}
+
+<ul class="navbar-nav">
+    <li class="nav-item">
+    <a class="nav-link" style="color:blue">About</a>
+    </li>
+    <li class="nav-item">
+    <a class="nav-link" href="{{url_for('main.string_input')}}">Free text input mode </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{url_for('main.file_input')}}">File input mode</a>
+        </li>
+</ul>
+
+{% endblock %}
+
+
+
+
+{% block mainform %}
+
+<form method="POST" action="" class = "main_form" id= "main_form"> 
                
     
-                   <div class = grammar_box_home>
+    <div class = grammar_box_home>
 
-                    <h5 style="color: rgb(10, 10, 192);">Constructing your grammar</h5>
-                    <p>This is the area for inputting your context-free grammar.
-                    This can be done either as a <a href="{{url_for('main.string_input')}}">free text input</a>, or as a <a href="{{url_for('main.file_input')}}">JSON file input</a>.</p> 
+     <h5 style="color: rgb(10, 10, 192);">Constructing your grammar</h5>
+     <p>This is the area for inputting your context-free grammar.
+     This can be done either as a <a href="{{url_for('main.string_input')}}">free text input</a>, or as a <a href="{{url_for('main.file_input')}}">JSON file input</a>.</p> 
 
-                    
-                    <p> This tool expects grammars to be input in Chomsky normal form, meaning all rules should be of the form:
-                        A → BC ( an expsnion rule),   or
-                        A → a, (a terminal rule)
+     
+     <p> This tool expects grammars to be input in Chomsky normal form, meaning all rules should be of the form:
+         A → BC ( an expsnion rule),   or
+         A → a, (a terminal rule)
 
-                        Where A,B,C are non-terminals and a is a terminal. The start symbol of your grammar is allowed to appear on the left hand side of rules, unlike in strict Chomsky normal form. 
-                        However, there is no facility to add the empty symbol to your grammar. If you attempt to add the empty symbol, it will not be treated as a special character and simply be interpreted 
-                        as just another terminal or non-terminal symbol.
-                    </p>
-                    <p>
-                        <h6 style="color: rgb(10, 10, 192);">Free text input mode</h6>
-                        The <a href="{{url_for('main.string_input')}}">free text input mode</a> is designed to be the most flexible option.
-                        Your grammar is interpreted simply from the rules you enter, details of the syntax can be found in the intruction box on the text input mode page.
-                        There is an example file <a href="static/example.txt" download>here</a>, which you can use to test out the tool.
-                    </p>
-                    <p>
-                        <h6 style="color: rgb(10, 10, 192);">File input mode</h6>
-                        The <a href="{{url_for('main.file_input')}}">File input mode</a> accepts grammars as a structured file input, where all elements of the grammar are explicitly specified.
-                        There is an example grammar file  <a href="static/example.json" download>here</a> for you to observe the structure of the file inputs expected and to try exploring the features of the tool.
-                        Simply paste the contents of the text file into the grammar box.
-                    </p>
-                    <p>
-                        <h6 style="color: rgb(10, 10, 192);">Grammar size</h6>
-                        Currently the maximum grammar size you can input is 200. This means the grammar cannot have more than 200 rules.
-                    </p>
-                    <p>
-                        <h6 style="color: rgb(10, 10, 192);">Non-probabilistic grammars</h6>
-                        The tool allows you to toggle between probabilistic and non-probabilistic grammars. If you choose to use non-probabilistic grammars then the syntax for the free text input is 
-                        identical to the probabilistic mode just without entering the probabilities. For file inputs, there is no difference at all in file structure, the parser simply won't read the 
-                        rule probability field in the JSON file. In non-probabilistic mode, the tool operates as a standard parser and will simply return the number of parses you ask for, in a random order. All probability 
-                        information is removed. The non-probabilistic mode is useful for exploring grammar ambiguity without wanting to consider how probable different parses of the same sentence are. If you'd like to try using the tool in 
-                        non-probabilistic mode, the example grammar JSON file will work unedited. There is also a non-probabilistic grammar in string format in the syntax popup on the corresponding page.
-                    </p>
-                   
-                   
-
-                
-                   
-                     
-                          </div>
+         Where A,B,C are non-terminals and a is a terminal. The start symbol of your grammar is allowed to appear on the left hand side of rules, unlike in strict Chomsky normal form. 
+         However, there is no facility to add the empty symbol to your grammar. If you attempt to add the empty symbol, it will not be treated as a special character and simply be interpreted 
+         as just another terminal or non-terminal symbol.
+     </p>
+     <p>
+         <h6 style="color: rgb(10, 10, 192);">Free text input mode</h6>
+         The <a href="{{url_for('main.string_input')}}">free text input mode</a> is designed to be the most flexible option.
+         Your grammar is interpreted simply from the rules you enter, details of the syntax can be found in the intruction box on the text input mode page.
+         There is an example file <a href="static/example.txt" download>here</a>, which you can use to test out the tool.
+     </p>
+     <p>
+         <h6 style="color: rgb(10, 10, 192);">File input mode</h6>
+         The <a href="{{url_for('main.file_input')}}">File input mode</a> accepts grammars as a structured file input, where all elements of the grammar are explicitly specified.
+         There is an example grammar file  <a href="static/example.json" download>here</a> for you to observe the structure of the file inputs expected and to try exploring the features of the tool.
+         Simply paste the contents of the text file into the grammar box.
+     </p>
+     <p>
+         <h6 style="color: rgb(10, 10, 192);">Grammar size</h6>
+         Currently the maximum grammar size you can input is 200. This means the grammar cannot have more than 200 rules.
+     </p>
+     <p>
+         <h6 style="color: rgb(10, 10, 192);">Non-probabilistic grammars</h6>
+         The tool allows you to toggle between probabilistic and non-probabilistic grammars. If you choose to use non-probabilistic grammars then the syntax for the free text input is 
+         identical to the probabilistic mode just without entering the probabilities. For file inputs, there is no difference at all in file structure, the parser simply won't read the 
+         rule probability field in the JSON file. In non-probabilistic mode, the tool operates as a standard parser and will simply return the number of parses you ask for, in a random order. All probability 
+         information is removed. The non-probabilistic mode is useful for exploring grammar ambiguity without wanting to consider how probable different parses of the same sentence are. If you'd like to try using the tool in 
+         non-probabilistic mode, the example grammar JSON file will work unedited. There is also a non-probabilistic grammar in string format in the syntax popup on the corresponding page.
+     </p>
     
-                
-                    <div class = "sentence_box_home">
-                        <p>
-                            <h5 style="color: rgb(10, 10, 192);">Test strings and sentences</h5>
-                            To test an input sentence or string, simply type it in this box. The parser needs to know
-                            how terminal symbols are delimited, so it assumes that spaces between inputs delimit them. If 
-                            you are using a grammar that defines words rather than sentences, then you will need to separate 
-                            letters in your test word with a space. If you are using a grammar where a space is a terminal character,
-                            then you will need to replace this with some other special character. Currently the maximum length of string the parser
-                            will accept is 50. Note that this means 50 terminals , whether they are letters or words. If your test string exceeds 21 terminals,
-                            then the parser will render your parse trees horizontally rather than vertically. This is to prevent node labels from overlapping, but the 
-                            horizontal trees are entireley equivalent to a vertical tree.
-                           
-                            
-                        </p>
     
-                 
-                    
+
+ 
     
-                   
-                    
-    
-                         
-                          </div>
-                    
-                          <div class="table_toggles">
-                            <p>
-                                <h5 style="color: rgb(10, 10, 192);">Parser options and submit</h5>
-                                <h6 style="color: rgb(10, 10, 192);">Number of parses</h6>
-                                <p>
-                                This tool is designed to parse the n-best parses of a test string, or find n arbitrary parses if your grammar is non-probabilistic. The number input box here asks 
-                                how many parses you would like to find  for your test string. As an example, if you ask for 5 parses,
-                                the parser will find the 5 most likely parses for that string and return them in order of likelihood.
-                                In the case that there are less possible parses than you ask for, then the parser will simply find all
-                                the possible parses in order of probability. The maximum number of parses you can request for a string is 99. 
-                                </p>
-                                <p>
-                                 <h6 style="color: rgb(10, 10, 192);">Total probability</h6>
+      
+           </div>
 
-                                 Regardless of how many parses you ask to visualise, you can ask to find the total probability 
-                                 that your grammar generates the string. This is a summation of all the possible parses of that string.
-                                 This feature is especially useful for highly ambiguous grammars where a sentence could have 100s of possible parses.
-
-                                </p>
-                                <h6 style="color: rgb(10, 10, 192);">Number of unique parses</h6>
-
-                                Regardless of how many parses you ask to visualise, the parser will find exactly how many exist. In some cases, the number of possible parses is 
-                                extremely high, which is why there is a limit on how many you can request to produce.
-
-                               </p>
-                                <p>
-                                    <h6 style="color: rgb(10, 10, 192);">Leftmost Derivations</h6>
-   
-                                    By default, the parser will generate the parse trees for your parses. As an option you can also
-                                    generate the corresponding leftmost derivation tables for those parses.
-                                   
-   
-                                   </p>
-   
-
-                                
-                            </p>
-        
-    
-                            
-    
-                         
-                         </div>
-                    <div class = "alert_box_home">
-                        <p>
-                            <h6 style="color: rgb(10, 10, 192);">Errors and warnings</h6>
-
-                            <p>
-
-                            The parser is designed to easy to use. If there are errors in your grammar text or file input,
-                            then the parser will attempt to ignore certain rules where errors occur and then warn the user. 
-                            If this is not possible due to multipule errors in the input format, then the user will be warned that 
-                            their input cannot be parsed.
-                            </p>
-                            <p>
-                                The following errors will interrupt the parser and reject your inputs:
-                                <ul>
-                                    <li>
-                                        Entering a grammar not in Chomsky normal form.
-                                    </li>
-                                    <li>
-                                        Exceeding the size limit of the grammar or test string.
-                                    </li>
-                                    <li>
-                                        A test string not generated by the grammar.
-                                    </li>
-                                    <li>
-                                        Breaking the conventions of the free text input syntax in  a major way.
-                                    </li>
-                                    <li>
-                                        Parser timeout - If the parser takes too long to find your parses, it will timeout.
-                                    </li>
-                                
-                                </ul>
-
-                                The following issues will generate a warning, but not stop the parsing:
-                                <ul>
-                                    <li>
-                                        Asking for more parses than exist
-                                    </li>
-                                    <li>
-                                        Minor contraventions of input syntax - a warning will be generated informing the user that some rules have been ignored,
-                                        for example entering a rule wthout giving a probablity.
-                                    </li>
-                                    <li>
-                                        An inconsistent grammar - If the sum of probabilities for rules for each non-terminal does not equal 1, the grammar is 
-                                        inconsistent and therefore there will not be a proper probability distribution over parses, but the ordering of likelihood will be preserved.
-                                    </li>
-                                </ul>
-
-                            </p>
-                           
-
-                           </p>
-
-                        
-                    </div>
-            </form>
-           
-            </div>
+ 
+     <div class = "sentence_box_home">
+         <p>
+             <h5 style="color: rgb(10, 10, 192);">Test strings and sentences</h5>
+             To test an input sentence or string, simply type it in this box. The parser needs to know
+             how terminal symbols are delimited, so it assumes that spaces between inputs delimit them. If 
+             you are using a grammar that defines words rather than sentences, then you will need to separate 
+             letters in your test word with a space. If you are using a grammar where a space is a terminal character,
+             then you will need to replace this with some other special character. Currently the maximum length of string the parser
+             will accept is 50. Note that this means 50 terminals , whether they are letters or words. If your test string exceeds 21 terminals,
+             then the parser will render your parse trees horizontally rather than vertically. This is to prevent node labels from overlapping, but the 
+             horizontal trees are entireley equivalent to a vertical tree.
             
+             
+         </p>
+
+  
+     
+
     
-           
-    
-            <div class = top_parse_bar>
-              
-                </div>
-           
-    
-    
-                
-                <div class = "tree_box">
+     
 
-                    <p>
-                        <h5 style="color: rgb(10, 10, 192);">Parse trees</h5>
+          
+           </div>
+     
+           <div class="table_toggles">
+             <p>
+                 <h5 style="color: rgb(10, 10, 192);">Parser options and submit</h5>
+                 <h6 style="color: rgb(10, 10, 192);">Number of parses</h6>
+                 <p>
+                 This tool is designed to parse the n-best parses of a test string, or find n arbitrary parses if your grammar is non-probabilistic. The number input box here asks 
+                 how many parses you would like to find  for your test string. As an example, if you ask for 5 parses,
+                 the parser will find the 5 most likely parses for that string and return them in order of likelihood.
+                 In the case that there are less possible parses than you ask for, then the parser will simply find all
+                 the possible parses in order of probability. The maximum number of parses you can request for a string is 99. 
+                 </p>
+                 <p>
+                  <h6 style="color: rgb(10, 10, 192);">Total probability</h6>
 
-                        Once your grammar and test sentence have been submitted, you can view the parse trees here. If your grammar is probabilistic then the parse number in the top left 
-                        refers to the probability ranking of the parse, otherwise it is simply a random ordering of parses. You can zoom or scroll on the tree and can collapse or expand nodes by clicking on them. Hovering on a node shows information 
-                        about that node, including the rule used and the probability of that sub-tree. The cumulative probability of root node therefore shows the overall probability of that parse tree.
-                        If you asked for the total probability, then the total probability over all parses will be displayed in the top left corner. Please remember that if your grammar is inconsistent, meaning you havent defined a proper probability distribution over the rules for each non-terminal,
-                        then the probabilies are no longer true probabilities, so you should interpret the probabilities as relative weights. If your grammar is non-probabiistic then the information
-                        regarding probabilities will not appear.The derivation step number for each node associates that node with 
-                        the corresponding step in the leftmost derivation. The leftmost derivation steps correspond to the nodes in a depth first then left to right fashion. If your tree exceeds 40 nodes, then it will be rendered horizontally instead. In this case the derivation step order 
-                        is still depth first, but the left-right orientation becomes top-bottom. 
+                  Regardless of how many parses you ask to visualise, you can ask to find the total probability 
+                  that your grammar generates the string. This is a summation of all the possible parses of that string.
+                  This feature is especially useful for highly ambiguous grammars where a sentence could have 100s of possible parses.
 
-                        <p>
-                            If there is an issue with the parse tree rendering, you can click the 'Show Parse' button to re-render the tree.
-                        </p>
+                 </p>
+                 <h6 style="color: rgb(10, 10, 192);">Number of unique parses</h6>
 
+                 Regardless of how many parses you ask to visualise, the parser will find exactly how many exist. In some cases, the number of possible parses is 
+                 extremely high, which is why there is a limit on how many you can request to produce.
 
+                </p>
+                 <p>
+                     <h6 style="color: rgb(10, 10, 192);">Leftmost Derivations</h6>
 
+                     By default, the parser will generate the parse trees for your parses. As an option you can also
+                     generate the corresponding leftmost derivation tables for those parses.
+                    
 
                     </p>
-    
-                    
-                    
-    
-                </div>
-    
-                    <div class = "table_box", id="table_box">
-                        <p>
-                            <h5 style="color: rgb(10, 10, 192);">Leftmost derivations</h5>
-    
-                            If you have asked for leftmost derivation tables, they will appear in this area. The derivation table always corresponds to the parse tree, so to see the derivation 
-                            of different parses, you use the button in the parse tree area to reload a different parse. The purpose of the leftmost derivation table is to link each step in the 
-                            derivation to the parse tree and to show the working string changing in each step. If your grammar is probabilistic the table will show the probability of the rules used 
-                            as well as the ranking of that rule among all rules with the same non-terminal. In non-probabilistic mode, all fields relating to probability are stripped out.
-                            A leftmost derivation means that the non-terminal expanded at any point in the derivation is the leftmost non-terminal in the current string, meaning that it corresponds to the parse tree 
-                            in a depth first fashion. 
-    
-                           
-    
-    
-    
-                        </p>
-    
-                    </div>
-    
-                </div>
-           
+
+
+                 
+             </p>
+
+
+             
+
           
-        
-        
-       </div>
-    </div>
-        
+          </div>
+     <div class = "alert_box_home">
+         <p>
+             <h6 style="color: rgb(10, 10, 192);">Errors and warnings</h6>
+
+             <p>
+
+             The parser is designed to easy to use. If there are errors in your grammar text or file input,
+             then the parser will attempt to ignore certain rules where errors occur and then warn the user. 
+             If this is not possible due to multipule errors in the input format, then the user will be warned that 
+             their input cannot be parsed.
+             </p>
+             <p>
+                 The following errors will interrupt the parser and reject your inputs:
+                 <ul>
+                     <li>
+                         Entering a grammar not in Chomsky normal form.
+                     </li>
+                     <li>
+                         Exceeding the size limit of the grammar or test string.
+                     </li>
+                     <li>
+                         A test string not generated by the grammar.
+                     </li>
+                     <li>
+                         Breaking the conventions of the free text input syntax in  a major way.
+                     </li>
+                     <li>
+                         Parser timeout - If the parser takes too long to find your parses, it will timeout.
+                     </li>
+                 
+                 </ul>
+
+                 The following issues will generate a warning, but not stop the parsing:
+                 <ul>
+                     <li>
+                         Asking for more parses than exist
+                     </li>
+                     <li>
+                         Minor contraventions of input syntax - a warning will be generated informing the user that some rules have been ignored,
+                         for example entering a rule wthout giving a probablity.
+                     </li>
+                     <li>
+                         An inconsistent grammar - If the sum of probabilities for rules for each non-terminal does not equal 1, the grammar is 
+                         inconsistent and therefore there will not be a proper probability distribution over parses, but the ordering of likelihood will be preserved.
+                     </li>
+                 </ul>
+
+             </p>
+            
+
+            </p>
+
+         
+     </div>
+</form>
+
+
+{% endblock %}
+
+
+
+{% block top_parse_bar %}
+
+<!-- none  -->
+
+{% endblock %}
+
+
+{% block trees %}
+
+<p>
+    <h5 style="color: rgb(10, 10, 192);">Parse trees</h5>
+
+    Once your grammar and test sentence have been submitted, you can view the parse trees here. If your grammar is probabilistic then the parse number in the top left 
+    refers to the probability ranking of the parse, otherwise it is simply a random ordering of parses. You can zoom or scroll on the tree and can collapse or expand nodes by clicking on them. Hovering on a node shows information 
+    about that node, including the rule used and the probability of that sub-tree. The cumulative probability of root node therefore shows the overall probability of that parse tree.
+    If you asked for the total probability, then the total probability over all parses will be displayed in the top left corner. Please remember that if your grammar is inconsistent, meaning you havent defined a proper probability distribution over the rules for each non-terminal,
+    then the probabilies are no longer true probabilities, so you should interpret the probabilities as relative weights. If your grammar is non-probabiistic then the information
+    regarding probabilities will not appear.The derivation step number for each node associates that node with 
+    the corresponding step in the leftmost derivation. The leftmost derivation steps correspond to the nodes in a depth first then left to right fashion. If your tree exceeds 40 nodes, then it will be rendered horizontally instead. In this case the derivation step order 
+    is still depth first, but the left-right orientation becomes top-bottom. 
+
+    <p>
+        If there is an issue with the parse tree rendering, you can click the 'Show Parse' button to re-render the tree.
+    </p>
+
+
+
+
+</p>
+
+
+{% endblock %}
+
+
+
+
+
+{% block secondary_content %} 
+
+<div class = "table_box", id="table_box">
+    <p>
+        <h5 style="color: rgb(10, 10, 192);">Leftmost derivations</h5>
+
+        If you have asked for leftmost derivation tables, they will appear in this area. The derivation table always corresponds to the parse tree, so to see the derivation 
+        of different parses, you use the button in the parse tree area to reload a different parse. The purpose of the leftmost derivation table is to link each step in the 
+        derivation to the parse tree and to show the working string changing in each step. If your grammar is probabilistic the table will show the probability of the rules used 
+        as well as the ranking of that rule among all rules with the same non-terminal. In non-probabilistic mode, all fields relating to probability are stripped out.
+        A leftmost derivation means that the non-terminal expanded at any point in the derivation is the leftmost non-terminal in the current string, meaning that it corresponds to the parse tree 
+        in a depth first fashion. 
+
        
-    </body>
-</html>
+
+
+
+    </p>
+
+</div>
+
+
+{% endblock %}
+
+
+
+
+
+{% block monitor %}
+
+                
+{% endblock %}
+

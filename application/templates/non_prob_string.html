@@ -1,18 +1,18 @@
+{% extends "layout.html" %}
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Non-probabilistic free-text</title>
-        <link rel="icon" href="{{ url_for('static', filename='makeicon.png') }}">
-        <!-- bootstrap,custom and tabulator stylesheets -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-        <link href="https://unpkg.com/tabulator-tables@4.9.3/dist/css/tabulator.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css" rel="stylesheet">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Titillium+Web&display=swap" rel="stylesheet">
-        
+
+{% block pagetitle %} 
+
+<title>Non-probabilistic free-text</title>
+
+{% endblock %}
+
+
+
+
+{% block thirdscripts %}
+
+
 
         <!-- scripts for d3,tabulator and jquery -->
         <script src="https://d3js.org/d3.v4.js"></script>
@@ -23,248 +23,259 @@
         <!-- <script src="{{url_for('static', filename='d3.min.js')}}"></script> -->
 
 
-       
+{% endblock %}
 
-    </head>
-    <body>
 
-        <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #b7d5eb;">
-        <a class="navbar-brand" style="font-family: 'Titillium Web', sans-serif; font-size: 1.2vw;" href="{{url_for('main.home')}}">Grammar Explorer</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-            <a class="nav-link" href="{{url_for('main.home')}}">About</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="color:blue;">Free text input  mode </a>
-                </li>
-            <li class="nav-item">
-            <a class="nav-link" href="{{url_for('main.non_prob_file_input')}}">File input mode</a>
-            </li>
-        </ul>
-        </div>
-        </nav>
-            
-        <div class =  "float_container_main">
-           
+
+
+
+
+{% block navbar %}
+
+<ul class="navbar-nav">
+    <li class="nav-item">
+    <a class="nav-link" href="{{url_for('main.home')}}">About</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" style="color:blue;">Free text input  mode </a>
+        </li>
+    <li class="nav-item">
+    <a class="nav-link" href="{{url_for('main.non_prob_file_input')}}">File input mode</a>
+    </li>
+</ul>
+
+{% endblock %}
+
+
+
+
+{% block mainform %}
+
+<button id="syntaxbutton" >Grammar syntax guide</button>
+              
+                     
+<div id="infopopup" class="modal">
+
+  
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>
+          <h5 style="color:blue"> Syntax for non-probabilistic grammars</h5>
+
+          The rules for your grammar should be written as a list of production rules in Chomsky normal form:<br>
+          A -> B C  or  <br>
+          A -> b  <br>
+
+          where A,B,C are non-terminals and b is a terminal. Empty productions can't be used.
+
+          Each rule should start with the left-hand side nonterminal followed by an -> symbol. 
+          In expansion rules, a space should be used to delimit separate nonterminals on the left-hand side.
+          The parser will assume that the lefhand side nonterminal of your first rule is the start symbol.
+          
+          Alternate left-hand side expansion can be chained using the | symbol, or entered separately.
+          After the end of each chain of expansions for a rule, a comma delimits the next rule. New rules do not need to be placed onto a new line. As an example, the following grammar shows the syntax structure: <br>
+
+          <br>
+          <br>
+
+          S -> NP VP | S PP |V NP | V PP | flies| like | time ,<br>
+          VP -> V NP | V PP | flies | like | time ,<br>
+          NP -> Det N | N N | NP PP | arrow | flies | time ,<br>
+          PP -> P NP,<br>
+          N -> arrow | flies| time,<br>
+          V -> flies| like | time ,<br>
+          P -> like,<br>
+          Det -> an<br>
+          <br>
+          <br>
+          <br>
+          <h5 style="color:blue"> Warnings and restrictions</h5>
+          <ul>
+              <li>
+                  Please do not overlap your terminal and non-terminal alphabets.
+              </li>
+              <li>
+                  The character limit for non-terminal symbols is 4.
+              </li>
+              <li>
+                  The character limit for terminal symbols is 18.
+              </li>
+        
+          </ul>
+
         
 
-        <div class = "main_form_float">
-                 <button id="syntaxbutton" >Grammar syntax guide</button>
-              
-                     
-            <div id="infopopup" class="modal">
-            
-              
-                <div class="modal-content">
-                  <span class="close">&times;</span>
-                  <p>
-                      <h5 style="color:blue"> Syntax for non-probabilistic grammars</h5>
-
-                      The rules for your grammar should be written as a list of production rules in Chomsky normal form:<br>
-                      A -> B C  or  <br>
-                      A -> b  <br>
-
-                      where A,B,C are non-terminals and b is a terminal. Empty productions can't be used.
-
-                      Each rule should start with the left-hand side nonterminal followed by an -> symbol. 
-                      In expansion rules, a space should be used to delimit separate nonterminals on the left-hand side.
-                      The parser will assume that the lefhand side nonterminal of your first rule is the start symbol.
-                      
-                      Alternate left-hand side expansion can be chained using the | symbol, or entered separately.
-                      After the end of each chain of expansions for a rule, a comma delimits the next rule. New rules do not need to be placed onto a new line. As an example, the following grammar shows the syntax structure: <br>
-
-                      <br>
-                      <br>
-
-                      S -> NP VP | S PP |V NP | V PP | flies| like | time ,<br>
-                      VP -> V NP | V PP | flies | like | time ,<br>
-                      NP -> Det N | N N | NP PP | arrow | flies | time ,<br>
-                      PP -> P NP,<br>
-                      N -> arrow | flies| time,<br>
-                      V -> flies| like | time ,<br>
-                      P -> like,<br>
-                      Det -> an<br>
-                      <br>
-                      <br>
-                      <br>
-                      <h5 style="color:blue"> Warnings and restrictions</h5>
-                      <ul>
-                          <li>
-                              Please do not overlap your terminal and non-terminal alphabets.
-                          </li>
-                          <li>
-                              The character limit for non-terminal symbols is 4.
-                          </li>
-                          <li>
-                              The character limit for terminal symbols is 18.
-                          </li>
-                    
-                      </ul>
-
-                    
-
-                      
+          
 
 
-                      
-                  </p>
-                </div>
-              
-              </div>
-            
-           
-        <form method="POST" action="" class = "main_form" id= "main_form"> 
-            {{form.hidden_tag()}}
+          
+      </p>
+    </div>
+  
+  </div>
 
-            <div class = "probability_toggle">
-                <div class ="probabilistic">
-                    <a style="color:black;text-decoration: none;" href="{{url_for('main.string_input')}}">Probabilistic</a>  &nbsp;&nbsp;  <a  style= "color: blue;text-decoration: none;" href="#">Non-probabilistic</a>                </div>
-                
-            </div>
 
-               <div class = grammar_box>
-            
-               
+<form method="POST" action="" class = "main_form" id= "main_form"> 
+{{form.hidden_tag()}}
 
-                      <div>{{ form.grammar(placeholder="Enter your non-probabilistic grammar here. Check the syntax guide for instructions.
-                " )}}</div>
-                      </div>
+<div class = "probability_toggle">
+    <div class ="probabilistic">
+        <a style="color:black;text-decoration: none;" href="{{url_for('main.string_input')}}">Probabilistic</a>  &nbsp;&nbsp;  <a  style= "color: blue;text-decoration: none;" href="#">Non-probabilistic</a>                </div>
+    
+</div>
 
-            
-                <div class = " sentence_box">
-             
-                
+   <div class = grammar_box>
 
-               
-                
-
-                      <div>
-                        {{ form.sentence(placeholder="Enter your test string here.\nSpaces are used to delimit each token to be evaluated.\nFor example, if you were testing the word aabb, you must enter a a b b.")}}
-
-                      </div>
-                      </div>
-                
-                      <div class="table_toggles">
-
-                    
-                      <div class = "leftmost_toggle">
-                       
-                        <div class="pretty p-switch">
-                            {{form.show_table}}
-                            <div class="state">
-                                <label>Suppress leftmost derivation table</label>
-                            </div>
-                        </div>
-                      </div>
-                      <div class = "comparison_toggle">
-                        <div class="pretty p-switch">
-                            {{form.comparison_mode}}
-                            <div class="state">
-                                <label>Parse comparison mode</label>
-                            </div>
-                        </div>
-                      </div>
-                     
-                    
-                        
-                        
    
-               
-               
-                
-                <div class = "submit_area">
-                   
-                    <div class = "number_parses">
-                     {{form.n_parses(class="rounded")}}
-                    </div>
-                    <div class = "final_submit">
-                {{ form.submitgrammar() }}
-                </div>
-                </div>
-                </div>
-                <div class = "alert_box">
-                    {%with messages = get_flashed_messages(with_categories=true) %}
-                      {% if messages %}
-                      <ul>
-                      {% for category,message in messages %}
-                         {% if category == '1'%}
-                         <li class = "alert1" >{{message}}</li>
-                         {% elif category == '2' %}
-                         <li class = "alert2" >{{message}}</li>
-                         {% else %}
-                         <li class = "alert3">{{message}}</li>
-                         {% endif %}
 
-                     
-                      {% endfor %}
-                      </ul>
-                      {% endif %}
-                    {% endwith %}
-                </div>
-        </form>
-       
-        </div>
+          <div>{{ form.grammar(placeholder="Enter your non-probabilistic grammar here. Check the syntax guide for instructions.
+    " )}}</div>
+          </div>
+
+
+    <div class = " sentence_box">
+ 
+    
+
+   
+    
+
+          <div>
+            {{ form.sentence(placeholder="Enter your test string here.\nSpaces are used to delimit each token to be evaluated.\nFor example, if you were testing the word aabb, you must enter a a b b.")}}
+
+          </div>
+          </div>
+    
+          <div class="table_toggles">
+
         
-
-       
-
-        <div class = top_parse_bar>
-            {% if accepted %}
-            <span> </span>
-            
-            <span hidden id = "parses">
-                {{ parses }}
-            </span>
-            <span hidden id = "max_number_parses">
-                {{ num_parses }}
-            </span>
-            {% if tables %}
-            <span hidden id = "derivation_tables">
-                {{ tables }}
-            </span>
-            {% endif %}
+          <div class = "leftmost_toggle">
            
-
-            {% endif %}
+            <div class="pretty p-switch">
+                {{form.show_table}}
+                <div class="state">
+                    <label>Suppress leftmost derivation table</label>
+                </div>
             </div>
+          </div>
+          <div class = "comparison_toggle">
+            <div class="pretty p-switch">
+                {{form.comparison_mode}}
+                <div class="state">
+                    <label>Parse comparison mode</label>
+                </div>
+            </div>
+          </div>
+         
+        
+            
+            
+
+   
+   
+    
+    <div class = "submit_area">
        
+        <div class = "number_parses">
+         {{form.n_parses(class="rounded")}}
+        </div>
+        <div class = "final_submit">
+    {{ form.submitgrammar() }}
+    </div>
+    </div>
+    </div>
+    <div class = "alert_box">
+        {%with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+          <ul>
+          {% for category,message in messages %}
+             {% if category == '1'%}
+             <li class = "alert1" >{{message}}</li>
+             {% elif category == '2' %}
+             <li class = "alert2" >{{message}}</li>
+             {% else %}
+             <li class = "alert3">{{message}}</li>
+             {% endif %}
+
+         
+          {% endfor %}
+          </ul>
+          {% endif %}
+        {% endwith %}
+    </div>
+</form>
+
+{% endblock %}
 
 
-            
-            <div class = "tree_box">
 
-                {% if accepted %}
-                <div class = show_parses>
-               
-            
-                    <input type = "number" min="1",max="100" id="nth_parse" ,name = "input_a">
-               
-                   <div class = "master_buttons" id="master_buttons">
-                    <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=false,svg_number = '1',num_nodes = {{num_nodes}})"> Show Parse</button>
-                   
-                   <button class="all_button" onclick="render.expandAll()">Expand All</button>
-                   <button class = "all_button" onclick="render.collapseAll()">Collapse All</button>
-                   
-                   </div>
-                   
-                   {% if total %}
-                      <div  class = "total_probability" id = "total_probability">
-                          Total probability: {{total}}
-                     </div>
-                   {% endif %}
-                   
-               
-                    </div>
-                <script src="{{url_for('static', filename='tree.js')}}"></script>
-                {% endif %}
-                
 
-            </div>
-            {% if comparison_mode %}
+
+{% block top_parse_bar %}
+
+{% if accepted %}
+<span> </span>
+
+<span hidden id = "parses">
+    {{ parses }}
+</span>
+<span hidden id = "max_number_parses">
+    {{ num_parses }}
+</span>
+{% if tables %}
+<span hidden id = "derivation_tables">
+    {{ tables }}
+</span>
+{% endif %}
+
+
+{% endif %}
+
+{% endblock %}
+
+
+
+
+
+
+
+
+{% block trees %}
+
+{% if accepted %}
+<div class = show_parses>
+
+
+    <input type = "number" min="1",max="100" id="nth_parse" ,name = "input_a">
+
+   <div class = "master_buttons" id="master_buttons">
+    <button id = "show_parses" onclick = "render(document.getElementById('nth_parse').value,parses = {{parses}},tables = {{tables}},probs=false,svg_number = '1',num_nodes = {{num_nodes}})"> Show Parse</button>
+   
+   <button class="all_button" onclick="render.expandAll()">Expand All</button>
+   <button class = "all_button" onclick="render.collapseAll()">Collapse All</button>
+   
+   </div>
+   
+   {% if total %}
+      <div  class = "total_probability" id = "total_probability">
+          Total probability: {{total}}
+     </div>
+   {% endif %}
+   
+
+    </div>
+<script src="{{url_for('static', filename='tree.js')}}"></script>
+{% endif %}
+
+{% endblock %}
+
+
+
+
+
+{% block secondary_content %} 
+
+{% if comparison_mode %}
             <div class = "tree_box_2">
 
                 {% if accepted %}
@@ -300,17 +311,21 @@
                 </div>
            {% endif %}
 
-            </div>
-            <script src="{{url_for('static', filename='monitoring.js')}}"></script>
-            <script src="{{url_for('static', filename='modalscript.js')}}"></script>
-           
-           
-          
-        
-        
-       </div>
-    </div>
-        
-       
-    </body>
-</html>
+
+{% endblock %}
+
+
+
+
+
+
+
+{% block monitor %}
+
+<script src="{{url_for('static', filename='monitoring.js')}}"></script>
+<script src="{{url_for('static', filename='modalscript.js')}}"></script>
+
+
+                
+{% endblock %}
+
