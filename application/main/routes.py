@@ -33,6 +33,15 @@ main = Blueprint('main',__name__)
 
 
 
+# @main.route("/guestbook")
+# def guestbook():
+#     return render_template("guestbook.html")
+
+
+
+# @main.rote("/guestbook/create-entry", methods =["POST"])
+# def create_entry():
+#     return "Thanks"
 
 
 @main.route("/home",methods=['GET','POST'])
