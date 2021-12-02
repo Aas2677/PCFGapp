@@ -750,10 +750,10 @@ class MiniBuilder:
             child["step"] = self.step 
             self.step += 1 
         
-        c_o_c = list(itertools.chain(*[child["children"] for child in children]))
+        children_of_chidren = list(itertools.chain(*[child["children"] for child in children]))
 
-        if c_o_c:
-            self.recurse_steps(c_o_c)
+        if children_of_chidren:
+            self.recurse_steps(children_of_chidren)
         
 
 
