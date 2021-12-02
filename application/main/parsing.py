@@ -261,7 +261,7 @@ class ProbabilisticCYKParser:
         root_token = node.rule._left._token
 
         # for reference, get the spans of the whole tree (or subtree, depending on whether the call is recursive), left and right children
-        start_root,stop_root = node.span
+        starting,stop_root = node.span
         start_left,stop_left =  node.left_child.span 
         start_right,stop_right = node.right_child.span
 
@@ -273,14 +273,14 @@ class ProbabilisticCYKParser:
             if self._grammar.expansion_lhs_lookup[root_token]:
                 for rule in self._grammar.expansion_lhs_lookup_logs[root_token]:
                     left,right = rule._right[0]._token,rule._right[1]._token
-                    for (left_start,left_stop),(right_start,right_stop) in self.partitions_2(start_root,stop_root):
+                    for (left_start,left_stop),(right_start,right_stop) in self.partitions_2(starting,stop_root):
                         if self._n_best_table[left_start,left_stop,left] and self._n_best_table[right_start,right_stop,right]:
                             this_weight = math.fsum([rule._probability,self._n_best_table[left_start,left_stop,left].cumulative_prob, self._n_best_table[right_start,right_stop,right].cumulative_prob])
-                            self._n_best_consider[start_root,stop_root,root_token].append(ProbabilisticNode(rule, self._n_best_table[left_start,left_stop,left],self._n_best_table[right_start,right_stop,right],this_weight,node.span,rank=2))
+                            self._n_best_consider[starting,stop_root,root_token].append(ProbabilisticNode(rule, self._n_best_table[left_start,left_stop,left],self._n_best_table[right_start,right_stop,right],this_weight,node.span,rank=2))
 
-                candidates = sorted(self._n_best_consider[start_root,stop_root,node.rule._left._token], key = lambda x : x.cumulative_prob)
+                candidates = sorted(self._n_best_consider[starting,stop_root,node.rule._left._token], key = lambda x : x.cumulative_prob)
                 candidates.pop(0)
-                self._n_best_consider[start_root,stop_root,node.rule._left._token] = candidates
+                self._n_best_consider[starting,stop_root,node.rule._left._token] = candidates
                                 
 
         
@@ -295,7 +295,7 @@ class ProbabilisticCYKParser:
 
             new_left_tree = self._n_best_dict[start_left,stop_left,node.left_child.rule._left._token][node.left_child.rank]
             probability = math.fsum([node.rule._probability,new_left_tree.cumulative_prob,node.right_child.cumulative_prob])
-            self._n_best_consider[start_root,stop_root,node.rule._left._token].append((ProbabilisticNode(node.rule,new_left_tree,node.right_child,probability,node.span,rank=n)))
+            self._n_best_consider[starting,stop_root,node.rule._left._token].append((ProbabilisticNode(node.rule,new_left_tree,node.right_child,probability,node.span,rank=n)))
            
         # If the next best tree for the righthand subtree as not been computed, we need to compute it recursivley.
         if stop_root > (start_right + 1) and len(self._n_best_dict[start_right,stop_right,node.right_child.rule._left._token]) < node.right_child.rank + 1:
@@ -309,13 +309,13 @@ class ProbabilisticCYKParser:
 
             new_right_tree = self._n_best_dict[start_right,stop_right,node.right_child.rule._left._token][node.right_child.rank]
             probability = math.fsum([node.rule._probability,node.left_child.cumulative_prob,new_right_tree.cumulative_prob])
-            self._n_best_consider[start_root,stop_root,node.rule._left._token].append((ProbabilisticNode(node.rule,node.left_child,new_right_tree,probability,node.span,rank=n)))
+            self._n_best_consider[starting,stop_root,node.rule._left._token].append((ProbabilisticNode(node.rule,node.left_child,new_right_tree,probability,node.span,rank=n)))
         
 
 
         # We should now have all the trees in our consider set to decide which is the nth best parse
 
-        candidates = sorted(self._n_best_consider[start_root,stop_root,node.rule._left._token], key = lambda x : x.cumulative_prob)
+        candidates = sorted(self._n_best_consider[starting,stop_root,node.rule._left._token], key = lambda x : x.cumulative_prob)
         
         
         if candidates:
@@ -324,8 +324,8 @@ class ProbabilisticCYKParser:
             
             next_best_tree.rank = n
             candidates.pop(0)
-            self._n_best_dict[start_root,stop_root,node.rule._left._token].append(next_best_tree)
-            self._n_best_consider[start_root,stop_root,node.rule._left._token] = candidates
+            self._n_best_dict[starting,stop_root,node.rule._left._token].append(next_best_tree)
+            self._n_best_consider[starting,stop_root,node.rule._left._token] = candidates
         else:
             # next best tree doesn't exist 
             pass 
