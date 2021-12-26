@@ -1,9 +1,0 @@
-ip: 139.162.228.237
-
-
-sudo supervisorctl reload ---- reload the server 
-sudo systemctl restart nginx --- restart nginx 
-
-
-scp "my_files" alexs!139.162.228.237:~/PCGGapp     --- copy files to server 
-
